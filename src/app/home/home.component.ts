@@ -10,19 +10,26 @@ export class HomeComponent implements OnInit {
   curClass = '';
   code = '';
   isValidCode = false;
-
+  isShowFireWork = false;
   constructor() { }
 
   ngOnInit() {
-    $('#inputModal').modal('show');
+    // $('#inputModal').modal('show');
   }
 
   start = () => {
     let that = this;
     this.curClass = "rotate";
 		setTimeout(function(){
-			that.curClass = "rotate" + that.getRamdomNum();
-		}, 3000);    
+      that.curClass = "rotate" + that.getRamdomNum();
+    }, 3000); 
+    setTimeout(function(){
+      that.isShowFireWork = true;
+    }, 5000);    
+  }
+
+  fireworkClick = () => {
+    this.isShowFireWork = false;
   }
 
   getRamdomNum = (): number => {
