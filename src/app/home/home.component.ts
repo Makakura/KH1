@@ -1,0 +1,55 @@
+declare var $ :any;
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+  curClass = '';
+  code = '';
+  isValidCode = false;
+
+  constructor() { }
+
+  ngOnInit() {
+    $('#inputModal').modal('show');
+  }
+
+  start = () => {
+    let that = this;
+    this.curClass = "rotate";
+		setTimeout(function(){
+			that.curClass = "rotate" + that.getRamdomNum();
+		}, 3000);    
+  }
+
+  getRamdomNum = (): number => {
+		var randomNum = Math.round((Math.random() * 10));
+		if (randomNum == 9)
+			randomNum = 3;
+		else if (randomNum == 10)
+			randomNum = 5;
+		return randomNum;
+  }
+  
+  completeInput = () => {
+    $('#inputModal').modal('hide');
+    
+  }
+  
+  checkValidCode = (code) => {
+    if (code.length >= 9) {
+      this.isValidCode = true;
+      $('#codeCheckButton').prop('disabled', true);
+    } else {
+      this.isValidCode = false;
+      $('#codeCheckButton').prop('disabled', false);
+    }
+  }
+  codeInputKeyUp = () => {
+    this.isValidCode = false;
+    $('#codeCheckButton').prop('disabled', false);    
+  }
+}

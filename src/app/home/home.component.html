@@ -1,0 +1,48 @@
+
+<div class="containter">
+  <div class="text-center" style="color:white; margin-top: 20px;">
+      <h1>GIAN HÀNG: SỮA NUTRI FOOD</h1>
+  </div>
+  <div class="wheel-box" class="text-center">
+    <div class="wheel-container" (click) ="start()">
+        <img class = "wheel {{curClass}}" src="../../assets/img/wheel_tab.png">
+    </div>
+    <div class="archor-container" (click) ="start()">
+        <img class = "archor" src="../../assets/img/archor.png">
+    </div>
+  </div>
+
+<div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background: crimson">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >Nhập thông tin quay và nhận thưởng</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Mã dự thưởng:</label>
+            <input #codeInput type="text" (keyup)="codeInputKeyUp()" class="form-control">
+          </div>
+          <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Họ và tên:</label>
+              <input type="text" [disabled] = '!isValidCode' class="form-control">
+          </div>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Số điện thoại:</label>
+              <input type="number" [disabled] = '!isValidCode' class="form-control">
+          </div>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Số CMND hoặc Hộ chiếu:</label>
+              <input type="number" [disabled] = '!isValidCode' class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled] = '!isValidCode' (click) = 'completeInput()' class="btn btn-danger">Bắt đầu quay</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

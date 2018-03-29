@@ -1,0 +1,145 @@
+html, body {margin: 0; height: 100%; overflow: hidden}
+
+.box{
+    position: absolute;
+    top: 50%;
+}
+
+.wheel-container {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 100%;
+}
+
+.archor-container {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 100%;
+}
+
+.wheel-button:active {
+  background-color: #3e8e41;
+  transform: translateY(4px);
+}
+
+.wheel-container .wheel{
+    margin-top: 30px; 
+    width: 80%;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.archor-container .archor{
+    margin-top: 30px; 
+    width: 80%;
+    min-width: 300px; 
+    max-width: 500px;
+}
+.wheel-container .rotate{
+    -webkit-animation:spin 500ms linear infinite;
+    -moz-animation:spin 500ms linear infinite;
+    animation:spin 500ms linear infinite;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+
+.wheel-container .rotate0{
+    -webkit-animation:spin 500ms linear both;
+    -moz-animation:spin 500ms linear both;
+    animation:spin 500ms linear both;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+.wheel-container .rotate1{
+    -webkit-animation:spin1 0.5s linear both;
+    -moz-animation:spin1 0.5s linear both;
+    animation:spin1 0.5s linear both;
+}
+
+@-moz-keyframes spin1 { 100% { -moz-transform: rotate(45deg); } }
+@-webkit-keyframes spin1 { 100% { -webkit-transform: rotate(45deg); } }
+@keyframes spin1 { 100% { -webkit-transform: rotate(45deg); transform:rotate(45deg); } }
+
+.wheel-container .rotate2{
+    -webkit-animation:spin2 0.5s linear both;
+    -moz-animation:spin2 0.5s linear both;
+    animation:spin2 0.5s linear both;
+}
+
+@-moz-keyframes spin2 { 100% { -moz-transform: rotate(90deg); } }
+@-webkit-keyframes spin2 { 100% { -webkit-transform: rotate(90deg); } }
+@keyframes spin2 { 100% { -webkit-transform: rotate(90deg); transform:rotate(90deg); } }
+
+.wheel-container .rotate3{
+    -webkit-animation:spin3 0.5s linear both;
+    -moz-animation:spin3 0.5s linear both;
+    animation:spin3 0.5s linear both;
+}
+
+@-moz-keyframes spin3 { 100% { -moz-transform: rotate(135deg); } }
+@-webkit-keyframes spin3 { 100% { -webkit-transform: rotate(135deg); } }
+@keyframes spin3 { 100% { -webkit-transform: rotate(135deg); transform:rotate(135deg); } }
+
+.wheel-container .rotate4{
+    -webkit-animation:spin4 0.5s linear both;
+    -moz-animation:spin4 0.5s linear both;
+    animation:spin4 0.5s linear both;
+}
+
+@-moz-keyframes spin4 { 100% { -moz-transform: rotate(180deg); } }
+@-webkit-keyframes spin4 { 100% { -webkit-transform: rotate(180deg); } }
+@keyframes spin4 { 100% { -webkit-transform: rotate(180deg); transform:rotate(180deg); } }
+
+.wheel-container .rotate5{
+    -webkit-animation:spin5 0.5s linear both;
+    -moz-animation:spin5 0.5s linear both;
+    animation:spin5 0.5s linear both;
+}
+
+@-moz-keyframes spin5 { 100% { -moz-transform: rotate(225deg); } }
+@-webkit-keyframes spin5 { 100% { -webkit-transform: rotate(225deg); } }
+@keyframes spin5 { 100% { -webkit-transform: rotate(225deg); transform:rotate(225deg); } }
+
+.wheel-container .rotate6{
+    -webkit-animation:spin6 0.5s linear both;
+    -moz-animation:spin6 0.5s linear both;
+    animation:spin6 0.5s linear both;
+}
+
+@-moz-keyframes spin6 { 100% { -moz-transform: rotate(270deg); } }
+@-webkit-keyframes spin6 { 100% { -webkit-transform: rotate(270deg); } }
+@keyframes spin6 { 100% { -webkit-transform: rotate(270deg); transform:rotate(270deg); } }
+
+.wheel-container .rotate7{
+    -webkit-animation:spin7 0.5s linear both;
+    -moz-animation:spin7 0.5s linear both;
+    animation:spin7 0.5s linear both;
+}
+
+@-moz-keyframes spin7 { 100% { -moz-transform: rotate(315deg); } }
+@-webkit-keyframes spin7 { 100% { -webkit-transform: rotate(315deg); } }
+@keyframes spin7 { 100% { -webkit-transform: rotate(315deg); transform:rotate(315deg); } }
+
+.wheel-container .rotate8{
+    -webkit-animation:spin8 0.5s linear both;
+    -moz-animation:spin8 0.5s linear both;
+    animation:spin8 0.5s linear both;
+}
+
+@-moz-keyframes spin8 { 
+    100% {-moz-transform: rotate(360deg);}
+}
+@-webkit-keyframes spin8 { 
+    100% {-webkit-transform: rotate(360deg);}
+}
+@keyframes spin8 { 
+    100% {-webkit-transform: rotate(360deg);}
+}
