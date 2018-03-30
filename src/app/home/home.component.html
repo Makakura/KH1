@@ -1,16 +1,52 @@
+<div class="container">
+    <div class="header text-center">
+        <p class="head1">GIAN HÀNG</p>
+        <p class="head2">SỮA NUTRI FOOD</p>
+    </div>
+    <div class="h-100 wheel-container">
+      <div class="row h-100">
+          <div class="col-12 h-100">
+              <div class="card h-100 justify-content-center" style="background: transparent; border: none;">
+                  <div>
+                      <div class="card-body">
+                          <div class="wheel-box" class="text-center">
+                              <img class = "wheel {{curClass}}" (click)='start()' src="../../assets/img/wheel_tab.png">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+    <div class="h-100 wheel-container">
+      <div class="row h-100">
+          <div class="col-12 h-100">
+              <div class="card h-100 justify-content-center" style="background: transparent; border: none;">
+                  <div>
+                      <div class="card-body">
+                          <div class="wheel-box" class="text-center">
+                              <img class = "archor" (click)='start()' src="../../assets/img/archor.png">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
 
+<!-- 
 <div class="containter">
   <div class="text-center" style="color:white; margin-top: 20px;">
-      <h1>GIAN HÀNG: SỮA NUTRI FOOD</h1>
+      <p class="header">GIAN HÀNG SỮA NUTRI FOOD</p>
   </div>
   <div class="wheel-box" class="text-center">
     <div class="wheel-container">
         <img class = "wheel {{curClass}}" src="../../assets/img/wheel_tab.png">
         
     </div>
-    <div class="archor-container" (click) ="start()">
-        <img class = "archor" src="../../assets/img/archor.png">
-    </div>
+    
     <div class="archor-container" (click) ="fireworkClick()" [hidden] = "!isShowFireWork">
         <canvas id="canvas"></canvas>
     </div>
@@ -49,5 +85,4 @@
     </div>
   </div>
 </div>
-
-</div>
+</div> -->

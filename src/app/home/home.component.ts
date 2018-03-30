@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    $('#inputModal').modal('show');
+    //$('#inputModal').modal('show');
   }
 
   start = () => {
