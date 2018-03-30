@@ -20,7 +20,7 @@ export class EventManagementComponent implements OnInit {
     this.addGift();
     this.addGift();
     $('body').css('background-color', 'black');
-    $('#create-event').modal('show');
+    // $('#create-event').modal('show');
     $("#myInput").on("keyup", function() {
       var value = $(this).val().toLowerCase();
       $("#myTable tr").filter(function() {

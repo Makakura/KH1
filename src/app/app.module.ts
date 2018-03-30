@@ -19,9 +19,8 @@ import { EventManagementComponent } from './event-management/event-management.co
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: HomeComponent},
-      {path: 'form', component: InputInfoComponent},
-      {path: 'event', component: EventManagementComponent}
+      {path: '', component: EventManagementComponent},
+      {path: 'wheel', component: HomeComponent }
     ])
   ],
   providers: [],
