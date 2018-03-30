@@ -49,4 +49,8 @@ export class EventManagementComponent implements OnInit {
     this.isShowImage = true;
   }
 
+  addEvent = () => {
+    $('#create-event').modal('hide');
+  }
+
 }
