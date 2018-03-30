@@ -26,7 +26,7 @@
                   <div>
                       <div class="card-body">
                           <div class="wheel-box" class="text-center">
-                              <img class = "archor" (click)='start()' src="../../assets/img/archor.png">
+                              <img class = "archor" src="../../assets/img/archor.png">
                           </div>
                       </div>
                   </div>
@@ -35,23 +35,11 @@
       </div>
     </div>
 </div>
-
-<!-- 
-<div class="containter">
-  <div class="text-center" style="color:white; margin-top: 20px;">
-      <p class="header">GIAN HÀNG SỮA NUTRI FOOD</p>
-  </div>
-  <div class="wheel-box" class="text-center">
-    <div class="wheel-container">
-        <img class = "wheel {{curClass}}" src="../../assets/img/wheel_tab.png">
-        
+<div class="row at-bottom">
+    <div class="col-sm text-center">
+        <button type="button" (click)='start()' class="btn btn-outline-warning"><b>QUAY</b></button>
     </div>
-    
-    <div class="archor-container" (click) ="fireworkClick()" [hidden] = "!isShowFireWork">
-        <canvas id="canvas"></canvas>
-    </div>
-  </div>
-
+</div>
 <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -85,4 +73,24 @@
     </div>
   </div>
 </div>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Bạn phải nhập mã quay thưởng và thông tin để tham gia !</strong>
+</div>
+<!-- 
+<div class="containter">
+  <div class="text-center" style="color:white; margin-top: 20px;">
+      <p class="header">GIAN HÀNG SỮA NUTRI FOOD</p>
+  </div>
+  <div class="wheel-box" class="text-center">
+    <div class="wheel-container">
+        <img class = "wheel {{curClass}}" src="../../assets/img/wheel_tab.png">
+        
+    </div>
+    
+    <div class="archor-container" (click) ="fireworkClick()" [hidden] = "!isShowFireWork">
+        <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+
 </div> -->

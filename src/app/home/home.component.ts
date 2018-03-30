@@ -10,22 +10,28 @@ export class HomeComponent implements OnInit {
   curClass = '';
   code = '';
   isValidCode = false;
+  isPlayed = false;
   isShowFireWork = false;
+  isCompleteInput = false;
   constructor() { }
 
   ngOnInit() {
-    //$('#inputModal').modal('show');
+    $('#inputModal').modal('show');
   }
 
   start = () => {
-    let that = this;
-    this.curClass = "rotate";
-		setTimeout(function(){
-      that.curClass = "rotate" + that.getRamdomNum();
-    }, 3000); 
-    setTimeout(function(){
-      that.isShowFireWork = true;
-    }, 5000);    
+    if (!this.isCompleteInput) {
+      let that = this;
+      this.curClass = "rotate";
+      setTimeout(function(){
+        that.curClass = "rotate" + that.getRamdomNum();
+      }, 3000); 
+      // setTimeout(function(){
+      //   that.isShowFireWork = true;
+      // }, 5000);
+    } else {
+      $('.alert').alert()
+    }
   }
 
   fireworkClick = () => {
@@ -43,7 +49,7 @@ export class HomeComponent implements OnInit {
   
   completeInput = () => {
     $('#inputModal').modal('hide');
-    
+    this.isCompleteInput = true;
   }
   
   checkValidCode = (code) => {
