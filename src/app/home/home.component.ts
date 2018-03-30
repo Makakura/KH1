@@ -20,18 +20,24 @@ export class HomeComponent implements OnInit {
   }
 
   start = () => {
-    if (!this.isCompleteInput) {
-      let that = this;
-      this.curClass = "rotate";
-      setTimeout(function(){
-        that.curClass = "rotate" + that.getRamdomNum();
-      }, 3000); 
-      // setTimeout(function(){
-      //   that.isShowFireWork = true;
-      // }, 5000);
-    } else {
-      $('.alert').alert()
-    }
+    let that = this;
+    this.curClass = "rotate";
+    setTimeout(function(){
+      that.curClass = "rotate" + that.getRamdomNum();
+    }, 3000); 
+
+    // if (!this.isCompleteInput) {
+    //   let that = this;
+    //   this.curClass = "rotate";
+    //   setTimeout(function(){
+    //     that.curClass = "rotate" + that.getRamdomNum();
+    //   }, 3000); 
+    //   // setTimeout(function(){
+    //   //   that.isShowFireWork = true;
+    //   // }, 5000);
+    // } else {
+    //   $('.alert').alert()
+    // }
   }
 
   fireworkClick = () => {
