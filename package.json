@@ -6,7 +6,6 @@
     "ng": "ng",
     "start": "node server.js",
     "build": "ng build --prod",
-    "server": "live-server --entry-file=index.html",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

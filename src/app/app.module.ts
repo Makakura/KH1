@@ -7,7 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { InputInfoComponent } from './input-info/input-info.component';
 import { RouterModule, Routes} from '@angular/router';
 import { EventManagementComponent } from './event-management/event-management.component'
-
+import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -21,9 +21,9 @@ import { EventManagementComponent } from './event-management/event-management.co
     RouterModule.forRoot([
       {path: '', component: EventManagementComponent},
       {path: 'wheel', component: HomeComponent }
-    ], {useHash: true})
+    ])
   ],
-  providers: [],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
