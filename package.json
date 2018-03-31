@@ -4,9 +4,9 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "concurrent \"node server.js\" \"npm run lite\" ",
+    "start": "node server.js",
     "build": "ng build --prod",
-    "lite": "lite-server",
+    "server": "live-server --entry-file=index.html",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
