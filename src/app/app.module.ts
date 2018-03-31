@@ -21,7 +21,7 @@ import { EventManagementComponent } from './event-management/event-management.co
     RouterModule.forRoot([
       {path: '', component: EventManagementComponent},
       {path: 'wheel', component: HomeComponent }
-    ])
+    ], {useHash: true})
   ],
   providers: [],
   bootstrap: [AppComponent]
