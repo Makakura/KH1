@@ -1,7 +1,7 @@
 <div class="container">
     <div class="header text-center">
         <p class="head1">GIAN HÀNG</p>
-        <p class="head2">NUTRI FOOD</p>
+        <p class="head2">{{currentEvent.name}}</p>
     </div>
     <div class="h-100 wheel-container">
       <div class="row h-100">
@@ -10,7 +10,7 @@
                   <div>
                       <div class="card-body">
                           <div class="wheel-box" class="text-center">
-                              <img class = "wheel {{curClass}}" (click)='start()' src="../../assets/img/wheel_tab.png">
+                              <img class = "wheel {{curClass}}" (click)='start()' src="{{currentEvent.linkImageWheel}}">
                           </div>
                       </div>
                   </div>
@@ -50,9 +50,9 @@
         <form>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Mã dự thưởng:</label>
-            <input #codeInput type="text" (keyup)="codeInputKeyUp()" class="form-control">
+            <input #codeInput type="text" (keyup)="codeInputKeyUp(codeInput.value)" maxlength="8" style="text-transform:uppercase" class="form-control">
           </div>
-          <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button>
+          <!-- <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button> -->
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Họ và tên:</label>
               <input type="text" [disabled] = '!isValidCode' class="form-control">
@@ -62,8 +62,11 @@
               <input type="number" [disabled] = '!isValidCode' class="form-control">
           </div>
           <div class="form-group">
-              <label for="recipient-name" class="col-form-label">Số CMND hoặc Hộ chiếu:</label>
+              <label for="recipient-name" class="col-form-label">Tên facebook đã like Page và Share bài:</label>
               <input type="number" [disabled] = '!isValidCode' class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Nếu các bạn chưa thực hiện like Page và share Post thì thực hiện ở đây: <a href="{{currentEvent.linkPostFB}}" target="_blank">{{currentEvent.linkPostFB}}</a></label>
           </div>
         </form>
       </div>

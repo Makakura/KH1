@@ -1,7 +1,8 @@
 export class GiftModel {
     name: string = '';
-    numberReward: number = 0;
-    constructor() {
-      
+    numberOfReward: number = 0;
+    constructor(name, numberOfReward) {
+        this.name = name;
+        this.numberOfReward = numberOfReward;
     }
 }

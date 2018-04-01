@@ -1,43 +1,68 @@
 declare var $ :any;
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { EventWheelModel } from '../../model/eventWheelModel';
+import { EventService } from '../services/event-service';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [EventService]
 })
 export class HomeComponent implements OnInit {
-  curClass = '';
-  code = '';
-  isValidCode = false;
-  isPlayed = false;
-  isShowFireWork = false;
-  isCompleteInput = false;
-  constructor() { }
+  private curClass = '';
+  private code = '';
+  private isValidCode = false;
+  private isPlayed = false;
+  private isShowFireWork = false;
+  private isCompleteInput = false;
+  private sub: any;
+  private currentEvent:EventWheelModel = new EventWheelModel();
+  
+  constructor(private route: ActivatedRoute, 
+              private eventService: EventService,
+              ) { }
 
   ngOnInit() {
-    $('#inputModal').modal('show');
+    this.initCssView();
+    this.getEvent();
   }
 
-  start = () => {
-    let that = this;
-    this.curClass = "rotate";
-    setTimeout(function(){
-      that.curClass = "rotate" + that.getRamdomNum();
-    }, 3000); 
+  initCssView = () => {
+    $('#inputModal').modal({
+      backdrop: 'static',
+      keyboard: false
+    })
+    $('#inputModal').modal('show');
+    $('body').css('background-color', 'darkred');
+  }
 
-    // if (!this.isCompleteInput) {
-    //   let that = this;
-    //   this.curClass = "rotate";
-    //   setTimeout(function(){
-    //     that.curClass = "rotate" + that.getRamdomNum();
-    //   }, 3000); 
-    //   // setTimeout(function(){
-    //   //   that.isShowFireWork = true;
-    //   // }, 5000);
-    // } else {
-    //   $('.alert').alert()
-    // }
+  getEvent = () => {
+    this.sub = this.route.params.subscribe(params => {
+      let id = params['id'];
+      if (id){ 
+        this.eventService.getEventByID(id).subscribe(response => {
+          this.currentEvent = this.eventService.converJsonToEvent(response.json());
+          console.log(this.currentEvent);
+        });
+      }
+      
+   });
+  }
+  
+  start = () => {
+    if (this.isCompleteInput) {
+      let that = this;
+      this.curClass = "rotate";
+      setTimeout(function(){
+        that.curClass = "rotate" + that.getRamdomNum();
+      }, 3000);
+    } else {
+      $('#inputModal').modal('show');
+    }
+    
   }
 
   fireworkClick = () => {
@@ -54,21 +79,30 @@ export class HomeComponent implements OnInit {
   }
   
   completeInput = () => {
+    // Validate input data
     $('#inputModal').modal('hide');
     this.isCompleteInput = true;
   }
   
+
   checkValidCode = (code) => {
-    if (code.length >= 9) {
-      this.isValidCode = true;
-      $('#codeCheckButton').prop('disabled', true);
+    if (code.length >= 8) {
+      return true;
     } else {
-      this.isValidCode = false;
-      $('#codeCheckButton').prop('disabled', false);
+      return false;
     }
   }
-  codeInputKeyUp = () => {
-    this.isValidCode = false;
-    $('#codeCheckButton').prop('disabled', false);    
+
+  // Check code input
+  codeInputKeyUp = (code) => {
+    if (code.length >= 8 && this.checkValidCode(code)) {
+        this.isValidCode = true;
+    } else {
+      this.isValidCode = false;
+    }
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }
