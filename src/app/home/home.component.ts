@@ -12,14 +12,14 @@ import { EventService } from '../services/event-service';
   providers: [EventService]
 })
 export class HomeComponent implements OnInit {
-  private curClass = '';
-  private code = '';
-  private isValidCode = false;
-  private isPlayed = false;
-  private isShowFireWork = false;
-  private isCompleteInput = false;
-  private sub: any;
-  private currentEvent:EventWheelModel = new EventWheelModel();
+  curClass = '';
+  code = '';
+  isValidCode = false;
+  isPlayed = false;
+  isShowFireWork = false;
+  isCompleteInput = false;
+  sub: any;
+  currentEvent:EventWheelModel = new EventWheelModel();
   
   constructor(private route: ActivatedRoute, 
               private eventService: EventService,
