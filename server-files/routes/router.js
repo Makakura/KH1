@@ -41,11 +41,40 @@ router.put('/addcodeinfo', function(req, res){
 	addCodeInfo(req, res);
 });
 
+// Get IP
+router.get('/ip', function(req, res){
+	var ip;
+  if (req.headers['x-forwarded-for']) {
+    ip = req.headers['x-forwarded-for'].split(',').pop();
+  } else if (req.headers['x-forwarded-for']) {
+    ip = req.connection.remoteAddress;
+  } else if (req.headers['x-forwarded-for']) {
+    ip = req.connection.socket.remoteAddress
+  }
+  res.json({
+    result: true,
+    message: 'success',
+    data: {
+      IPAdress: ip
+    }
+  });
+});
+
 
 
 
 // Function Area
 var getAllEvents = function (req, res) {
+  // var ip;
+  // if (req.headers['x-forwarded-for']) {
+  //   ip = req.headers['x-forwarded-for'].split(',').pop();
+  // } else if (req.headers['x-forwarded-for']) {
+  //   ip = req.connection.remoteAddress;
+  // } else if (req.headers['x-forwarded-for']) {
+  //   ip = req.connection.socket.remoteAddress
+  // }
+         
+  // console.log(req);
   EventModel.find({isActive: true},function(err, events){
 		if(err){
 			res.status(500).send(err);

@@ -220,6 +220,11 @@ export class EventManagementComponent implements OnInit {
         break;
     }
   }
+
+  navigateButtonClick = () => {
+    this.resetDataPopup(PopupType.CREATE);
+    this.resetDataPopup(PopupType.EDIT);
+  }
 }
 
 enum PopupType {
