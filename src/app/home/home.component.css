@@ -10,8 +10,9 @@ body {
 .header .head1{
     margin-top: 40px;
     margin-bottom: 0px;
-    font-size: 3vmin;
+    font-size: 3.5vmin;
     white-space: nowrap;
+    font-weight: bold;
     color: white;
 }
 .header .head2{
@@ -31,14 +32,14 @@ body {
 
 .wheel{
     width: 80%;
-    min-width: 100px;
-    max-width: 400px;
+    min-width: 300px;
+    max-width: 30%;
 }
 
 .archor{
     width: 80%;
-    min-width: 100px; 
-    max-width: 400px;
+    min-width: 300px; 
+    max-width: 30%;
 }
 
 .at-bottom {
