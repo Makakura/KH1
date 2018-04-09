@@ -53,108 +53,164 @@
 }
 
 .wheel-container .rotate{
-    -webkit-animation:spin 500ms linear infinite;
-    -moz-animation:spin 500ms linear infinite;
-    animation:spin 500ms linear infinite;
+    -webkit-animation:spin 1000ms linear infinite;
+    -moz-animation:spin 1000ms linear infinite;
+    animation:spin 1000ms linear infinite;
 }
-
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
 
 .wheel-container .rotate0{
-    -webkit-animation:spin 500ms linear both;
-    -moz-animation:spin 500ms linear both;
-    animation:spin 500ms linear both;
+    -webkit-animation:spin0 10s ease-out both;;
+    -moz-animation:spin0 10s ease-out both;;
+    animation:spin0 10s ease-out both;;
 }
 
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
-
-.wheel-container .rotate7{
-    -webkit-animation:spin1 0.5s linear both;
-    -moz-animation:spin1 0.5s linear both;
-    animation:spin1 0.5s linear both;
+@-moz-keyframes spin0 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1800deg); } 
 }
-
-@-moz-keyframes spin1 { 100% { -moz-transform: rotate(45deg); } }
-@-webkit-keyframes spin1 { 100% { -webkit-transform: rotate(45deg); } }
-@keyframes spin1 { 100% { -webkit-transform: rotate(45deg); transform:rotate(45deg); } }
-
-.wheel-container .rotate6{
-    -webkit-animation:spin2 0.5s linear both;
-    -moz-animation:spin2 0.5s linear both;
-    animation:spin2 0.5s linear both;
+@-webkit-keyframes spin0 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1800deg); } 
 }
-
-@-moz-keyframes spin2 { 100% { -moz-transform: rotate(90deg); } }
-@-webkit-keyframes spin2 { 100% { -webkit-transform: rotate(90deg); } }
-@keyframes spin2 { 100% { -webkit-transform: rotate(90deg); transform:rotate(90deg); } }
-
-.wheel-container .rotate5{
-    -webkit-animation:spin3 0.5s linear both;
-    -moz-animation:spin3 0.5s linear both;
-    animation:spin3 0.5s linear both;
+@keyframes spin0 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1800deg); transform:rotate(1800deg); } 
 }
-
-@-moz-keyframes spin3 { 100% { -moz-transform: rotate(135deg); } }
-@-webkit-keyframes spin3 { 100% { -webkit-transform: rotate(135deg); } }
-@keyframes spin3 { 100% { -webkit-transform: rotate(135deg); transform:rotate(135deg); } }
-
-.wheel-container .rotate4{
-    -webkit-animation:spin4 0.5s linear both;
-    -moz-animation:spin4 0.5s linear both;
-    animation:spin4 0.5s linear both;
-}
-
-@-moz-keyframes spin4 { 100% { -moz-transform: rotate(180deg); } }
-@-webkit-keyframes spin4 { 100% { -webkit-transform: rotate(180deg); } }
-@keyframes spin4 { 100% { -webkit-transform: rotate(180deg); transform:rotate(180deg); } }
-
-.wheel-container .rotate3{
-    -webkit-animation:spin5 0.5s linear both;
-    -moz-animation:spin5 0.5s linear both;
-    animation:spin5 0.5s linear both;
-}
-
-@-moz-keyframes spin5 { 100% { -moz-transform: rotate(225deg); } }
-@-webkit-keyframes spin5 { 100% { -webkit-transform: rotate(225deg); } }
-@keyframes spin5 { 100% { -webkit-transform: rotate(225deg); transform:rotate(225deg); } }
-
-.wheel-container .rotate2{
-    -webkit-animation:spin6 0.5s linear both;
-    -moz-animation:spin6 0.5s linear both;
-    animation:spin6 0.5s linear both;
-}
-
-@-moz-keyframes spin6 { 100% { -moz-transform: rotate(270deg); } }
-@-webkit-keyframes spin6 { 100% { -webkit-transform: rotate(270deg); } }
-@keyframes spin6 { 100% { -webkit-transform: rotate(270deg); transform:rotate(270deg); } }
 
 .wheel-container .rotate1{
-    -webkit-animation:spin7 0.5s linear both;
-    -moz-animation:spin7 0.5s linear both;
-    animation:spin7 0.5s linear both;
+    
+    -webkit-animation:spin1 10s ease-out both;
+    -moz-animation:spin1 10s ease-out both;
+    animation:spin1 10s ease-out both;
 }
 
-@-moz-keyframes spin7 { 100% { -moz-transform: rotate(315deg); } }
-@-webkit-keyframes spin7 { 100% { -webkit-transform: rotate(315deg); } }
-@keyframes spin7 { 100% { -webkit-transform: rotate(315deg); transform:rotate(315deg); } }
-
-.wheel-container .rotate8{
-    -webkit-animation:spin8 0.5s linear both;
-    -moz-animation:spin8 0.5s linear both;
-    animation:spin8 0.5s linear both;
+@-moz-keyframes spin1 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1755deg); } 
+}
+@-webkit-keyframes spin1 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1755deg); } 
+}
+@keyframes spin1 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1755deg); transform:rotate(1755deg); } 
 }
 
-@-moz-keyframes spin8 { 
-    100% {-moz-transform: rotate(360deg);}
+.wheel-container .rotate2 {
+    -webkit-animation:spin2 10s ease-out both;;
+    -moz-animation:spin2 10s ease-out both;;
+    animation:spin2 10s ease-out both;;
 }
-@-webkit-keyframes spin8 { 
-    100% {-webkit-transform: rotate(360deg);}
+
+@-moz-keyframes spin2 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1710deg); } 
 }
-@keyframes spin8 { 
-    100% {-webkit-transform: rotate(360deg);}
+@-webkit-keyframes spin2 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1710deg); } 
+}
+@keyframes spin2 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1710deg); transform:rotate(1710deg); } 
+}
+
+.wheel-container .rotate3 {
+    -webkit-animation:spin3 10s ease-out both;;
+    -moz-animation:spin3 10s ease-out both;;
+    animation:spin3 10s ease-out both;;
+}
+
+@-moz-keyframes spin3 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1665deg); } 
+}
+@-webkit-keyframes spin3 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1665deg); } 
+}
+@keyframes spin3 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1665deg); transform:rotate(1665deg); } 
+}
+
+.wheel-container .rotate4 {
+    -webkit-animation:spin4 10s ease-out both;;
+    -moz-animation:spin4 10s ease-out both;;
+    animation:spin4 10s ease-out both;;
+}
+
+@-moz-keyframes spin4 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1620deg); } 
+}
+@-webkit-keyframes spin4 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1620deg); } 
+}
+@keyframes spin4 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1620deg); transform:rotate(1620deg); } 
+}
+
+.wheel-container .rotate5 {
+    -webkit-animation:spin5 10s ease-out both;;
+    -moz-animation:spin5 10s ease-out both;;
+    animation:spin5 10s ease-out both;;
+}
+
+@-moz-keyframes spin5 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1575deg); } 
+}
+@-webkit-keyframes spin5 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1575deg); } 
+}
+@keyframes spin5 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1575deg); transform:rotate(1575deg); } 
+}
+
+.wheel-container .rotate6 {
+    -webkit-animation:spin6 10s ease-out both;;
+    -moz-animation:spin6 10s ease-out both;;
+    animation:spin6 10s ease-out both;;
+}
+
+@-moz-keyframes spin6 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1530deg); } 
+}
+@-webkit-keyframes spin6 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1530deg); } 
+}
+@keyframes spin6 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1530deg); transform:rotate(1530deg); } 
+}
+
+.wheel-container .rotate7 {
+    -webkit-animation:spin7 10s ease-out both;;
+    -moz-animation:spin7 10s ease-out both;;
+    animation:spin7 10s ease-out both;;
+}
+
+@-moz-keyframes spin7 { 
+    0% { -moz-transform: rotate(0deg); } 
+    100% { -moz-transform: rotate(1485deg); } 
+}
+@-webkit-keyframes spin7 {
+    0% { -webkit-transform: rotate(0deg); } 
+    100% { -webkit-transform: rotate(1485deg); } 
+}
+@keyframes spin7 { 
+    0% { -webkit-transform: rotate(0deg); transform:rotate(0deg); } 
+    100% { -webkit-transform: rotate(1485deg); transform:rotate(1485deg); } 
 }

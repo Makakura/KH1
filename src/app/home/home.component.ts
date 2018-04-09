@@ -20,7 +20,8 @@ export class HomeComponent implements OnInit {
   sub: any;
   isCheckingCode = false;
   currentEvent:EventWheelModel = new EventWheelModel();
-  audio: any;
+  audioYeah: any;
+  audioRotate: any;
   codeItem = {
     "code": "",
     "name": "",
@@ -37,7 +38,8 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.initCssView();
     this.getEvent();
-    this.audio = new Audio();
+    this.initSoundRotate();
+    this.initSoundCheer();
   }
 
   initCssView = () => {
@@ -74,23 +76,28 @@ export class HomeComponent implements OnInit {
   start = () => {
     if (this.isCompleteInput && this.currentNumber > -1  && this.giftName) {
       this.isCompleteInput = false;
-      this.playSoundRotate();
+      this.audioRotate.play();
       let that = this;
+
       this.curClass = "rotate";
+
       setTimeout(function(){
         that.curClass = "rotate" + that.currentNumber;
       }, 3000);
+
       setTimeout(function(){
-        that.playSoundCheer();
+        that.audioRotate.pause();
+        that.audioYeah.play();
         that.sendResult();
-      }, 3500);
+      }, 13500);
+
       setTimeout(function(){
         that.displayNotify(
           "CHÚC MỪNG !!!", 
         "Bạn đã nhận được 01 " + that.giftName, 
         "Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.",
         that.currentEvent.linkPostFB);
-      }, 4500);
+      }, 14500);
     } else {
       console.log('Đã có lỗi xảy ra, xin vui lòng thử lại')
     }
@@ -148,19 +155,16 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  playSoundRotate = () => {
-    this.audio = new Audio();
-    this.audio.src = "../../../assets/audio/rotate.mp3";
-    this.audio.load();
-    this.audio.play();
+  initSoundRotate = () => {
+    this.audioRotate = new Audio();
+    this.audioRotate.src = "../../../assets/audio/rotate.mp3";
+    this.audioRotate.load();
   }
 
-  playSoundCheer = () => {
-    this.audio.pause();
-    this.audio = new Audio();
-    this.audio.src = "../../../assets/audio/cheer.mp3";
-    this.audio.load();
-    this.audio.play();
+  initSoundCheer = () => {
+    this.audioYeah = new Audio();
+    this.audioYeah.src = "../../../assets/audio/cheer.mp3";
+    this.audioYeah.load();
   }
 
   sendResult = () => {
