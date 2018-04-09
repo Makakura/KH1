@@ -1,5 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 html, body {margin: 0; height: 100%; overflow: hidden}
 body {
-    background: darkred;
+    background: url("/assets/img/background.jpg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.search-box {
+    width: 20% !important;
+}
+.search-box input{
+    width: 100% !important;
+}
+
+table {
+    background-color: rgba(0, 0, 0, 0.71) !important;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.modal {
+    padding-left: 0px !important;
 }

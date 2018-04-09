@@ -1,47 +1,94 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-    <a class="navbar-brand" href="#">TRANG QUẢN MÃ QUAY THƯỞNG GIAN HÀNG VINAMILK</a>
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm" aria-label="Search">
-    </form>
-  </div>
-</nav>
-<div class="input-group" style="width: 20%">
-    <div class="input-group-prepend" >
-      <label class="input-group-text" style="background: black; color:white" for="inputGroupSelect01">Gifts filter:</label>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="#">VỀ TRANG CHỦ</a>
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+              <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)="goTo('code', eventModel._id)">Quản lí mã</button>
+          </li>
+          <li class="nav-item active">
+              <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)='showPopupCreateCode()'>Xuất kết quả</button>
+          </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0 search-box">
+        <input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm" aria-label="Search">
+      </form>
     </div>
-    <select class="custom-select" id="inputGroupSelect01"  >
-      <option>Vé giảm giá 100%</option>
-      <option>Vé giảm giá 50%</option>
-      <option>Tượng tô</option>
-      <option>Bút vẽ</option>
-    </select>
+  </nav>
+  <div class="text-center">
+    <p class="title">{{eventModel.name}}</p>
   </div>
-<table class="event-table" class="table table-dark">
-<thead>
-  <tr>
-    <th scope="col">#</th>
-    <th scope="col">Mã</th>
-    <!-- <th scope="col">Tên Công Ty</th> -->
-    <th scope="col">Giải thưởng</th>
-    <th scope="col">Tên người nhận</th>
-    <th scope="col">SĐT</th>
-  </tr>
-</thead>
-<tbody id="myTable">
-  <tr *ngFor="let item of [1,2,3,4,5,6,7,8]; let i = index" (click) = 'selectEvent(item)' [attr.data-index]="i">
-    <th scope="row">{{i+1}}</th>
-    <td>GTX53ET7</td>
-    <!-- <td>{{item.nameOfCompany}}</td> -->
-    <td>Vé giảm giá 50%</td>
-    <td>Nguyễn Hồng Ngân</td>
-    <td>01649051057</td>
-  </tr>
-</tbody>
-</table>
+  <div class="row select-container" style="padding: 10px;">
+    <div class="col">
+      <div class="input-group">
+        <select #select class="custom-select" id="select-gift" (change)="selectGift(select)" >
+          <option value="-1">All</option>
+          <option  *ngFor="let gift of eventModel.giftArray; let i = index" value="{{i}}">{{gift.name}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="padding: 10px;">
+    <div class="col text-center">
+      <p class="header-text"><b>SUM: {{currentTotalCode}}</b></p>
+    </div>
+  </div>
+  
+  <div style="width: 100%; height: 60%; overflow-y: scroll;">
+    <table class="event-table table-fixed" class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Mã</th>
+          <th scope="col">Giải thưởng</th>
+          <th scope="col">Người nhận</th>
+          <th scope="col">SĐT</th>
+        </tr>
+      </thead>
+      <tbody id="myTable" *ngFor="let gift of eventModel.giftArray">
+        <tr *ngFor="let codeItem of gift.codeArray; let i = index" (click) = 'selectCode(codeItem)' [attr.data-index]="i">
+            <td>{{codeItem.code}}</td>
+            <td>{{gift.name}}</td>
+            <td>{{codeItem.name}}</td>
+            <td>{{codeItem.phone}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  
+  
+  <div class="modal fade" id="create-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-dark">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:white" >TẠO MÃ CHO PHẦN THƯỞNG</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+                <div class="row" 
+                *ngFor="let item of eventModel.giftArray; let i = index" 
+                style="margin-top: 5px;">
+                  <div class="col float-container">
+                      <p><b>{{i + ". " +item.name+ ':'}}</b></p>
+                      <img [hidden]="!item.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
+                  </div>
+                  <div class="col-3">
+                      <input [disabled]="item.isLimited" type="number" 
+                      value="{{item.numberOfReward}}"
+                      (input)="item.numberOfCode = $event.target.value" 
+                      (keyup)="numberOfCodeChange($event)" 
+                      class="form-control" placeholder="SL mã">
+                  </div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click) = 'createCode()' class="btn btn-success">Tạo mã</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  

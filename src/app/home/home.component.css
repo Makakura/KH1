@@ -1,10 +1,6 @@
-
 .container {
     width: 100%;
     height: 100%;
-}
-body {
-    background: darkred;
 }
 
 .header .head1{
@@ -56,57 +52,6 @@ body {
     padding-right: 70px; 
 }
 
-/* .box{
-    position: absolute;
-    top: 50%;
-}
-
-.wheel-container {
-    position: absolute;
-    top: 10%;
-    left: 0;
-    width: 100%;
-}
-
-.archor-container {
-    position: absolute;
-    top: 10%;
-    left: 0;
-    width: 100%;
-}
-
-.wheel-button:active {
-  background-color: #3e8e41;
-  transform: translateY(4px);
-}
-
-.wheel-container .wheel{
-    margin-top: 60px; 
-    width: 80%;
-    min-width: 300px;
-    max-width: 500px;
-}
-
-.archor-container .archor{
-    margin-top: 60px;
-    width: 80%;
-    min-width: 300px; 
-    max-width: 500px;
-}
-.wheel-container .rotate{
-    -webkit-animation:spin 500ms linear infinite;
-    -moz-animation:spin 500ms linear infinite;
-    animation:spin 500ms linear infinite;
-} */
-
-
-
-
-
-
-
-
-
 .wheel-container .rotate{
     -webkit-animation:spin 500ms linear infinite;
     -moz-animation:spin 500ms linear infinite;
@@ -128,7 +73,7 @@ body {
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
-.wheel-container .rotate1{
+.wheel-container .rotate7{
     -webkit-animation:spin1 0.5s linear both;
     -moz-animation:spin1 0.5s linear both;
     animation:spin1 0.5s linear both;
@@ -138,7 +83,7 @@ body {
 @-webkit-keyframes spin1 { 100% { -webkit-transform: rotate(45deg); } }
 @keyframes spin1 { 100% { -webkit-transform: rotate(45deg); transform:rotate(45deg); } }
 
-.wheel-container .rotate2{
+.wheel-container .rotate6{
     -webkit-animation:spin2 0.5s linear both;
     -moz-animation:spin2 0.5s linear both;
     animation:spin2 0.5s linear both;
@@ -148,7 +93,7 @@ body {
 @-webkit-keyframes spin2 { 100% { -webkit-transform: rotate(90deg); } }
 @keyframes spin2 { 100% { -webkit-transform: rotate(90deg); transform:rotate(90deg); } }
 
-.wheel-container .rotate3{
+.wheel-container .rotate5{
     -webkit-animation:spin3 0.5s linear both;
     -moz-animation:spin3 0.5s linear both;
     animation:spin3 0.5s linear both;
@@ -168,7 +113,7 @@ body {
 @-webkit-keyframes spin4 { 100% { -webkit-transform: rotate(180deg); } }
 @keyframes spin4 { 100% { -webkit-transform: rotate(180deg); transform:rotate(180deg); } }
 
-.wheel-container .rotate5{
+.wheel-container .rotate3{
     -webkit-animation:spin5 0.5s linear both;
     -moz-animation:spin5 0.5s linear both;
     animation:spin5 0.5s linear both;
@@ -178,7 +123,7 @@ body {
 @-webkit-keyframes spin5 { 100% { -webkit-transform: rotate(225deg); } }
 @keyframes spin5 { 100% { -webkit-transform: rotate(225deg); transform:rotate(225deg); } }
 
-.wheel-container .rotate6{
+.wheel-container .rotate2{
     -webkit-animation:spin6 0.5s linear both;
     -moz-animation:spin6 0.5s linear both;
     animation:spin6 0.5s linear both;
@@ -188,7 +133,7 @@ body {
 @-webkit-keyframes spin6 { 100% { -webkit-transform: rotate(270deg); } }
 @keyframes spin6 { 100% { -webkit-transform: rotate(270deg); transform:rotate(270deg); } }
 
-.wheel-container .rotate7{
+.wheel-container .rotate1{
     -webkit-animation:spin7 0.5s linear both;
     -moz-animation:spin7 0.5s linear both;
     animation:spin7 0.5s linear both;

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var GiftModel = require('./gift-model');
-var EventModel = mongoose.Schema({
+const EventModel = mongoose.Schema({
     name: {
         type: String,
         required : true
@@ -8,15 +8,15 @@ var EventModel = mongoose.Schema({
     nameOfCompany:{
         type: String
     },
-    isDone:{
-        type: String,
+    status: {
+        type: String, // Prepare, Running, Pause, Done 
         required : true,
-        default: 'DOING'
+        default: 1
     },
-    isActive:{
+    isDeleted:{
         type: Boolean,
         required : true,
-        default: true
+        default: false
     },
     linkImageWheel: {
         type: String,

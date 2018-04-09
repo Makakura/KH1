@@ -1,21 +1,22 @@
 var mongoose = require('mongoose');
 var CodeModel = mongoose.Schema({
     code: {
-        type: String,
-        required : true
+        type: String
     },
     name: {
-        type: String
+        type: String,
+        default: ''
     },
     phone:{
-        type: String
+        type: String,
+        default: ''
     },
     fb: {
-        type: String
+        type: String,
+        default: ''
     },
     isPlayed: {
         type: Boolean,
-        required : true,
         default: false
     }
 });

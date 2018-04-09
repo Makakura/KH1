@@ -10,8 +10,11 @@ var GiftModel = mongoose.Schema({
         required : true
     },
     numberOfReward:{
-        type: Number,
-        required : true
+        type: Number  
+    },
+    isLimited:{
+        type: Boolean,
+        default: false  
     },
     codeArray: {
         type: [CodeModel]

@@ -7,39 +7,17 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    private url = 'http://localhost:8080/api';
-    //private url = 'https://quaythuong.herokuapp.com/api';
+    //private url = 'http://localhost:8080/api';
+    private url = 'https://quaythuong.herokuapp.com/api';
     
     constructor (private http: Http) {}
-    getService(): any { 
-        let eventList = [];
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        eventList.push(this.createAEvent());
-        return eventList; 
-    } 
-
-    createAEvent = (): EventWheelModel => {
-        var event = new EventWheelModel();
-        event.name = "NUTRI FOOD EVENT";
-        event.dateCreate =  new Date();
-        event.isDone = false;
-        event.nameOfCompany = "NUTRI FOOD";
-        event.giftArray = [
-            new GiftModel(1,'01 Máy giặt', 100),
-            new GiftModel(2,'01 Tủ lạnh', 100),
-            new GiftModel(3,'01 Tivi', 100),
-            new GiftModel(4,'01 Máy sấy tóc', 100)
-        ]
-        return event;
-    }
 
     getEventByID = (id): any => {
         return this.http.get(this.url + '/events/'+ id);
+    }
+
+    getEventByIDForClient = (id): any => {
+        return this.http.get(this.url + '/getevent/'+ id);
     }
 
     converJsonToEvent = (event): EventWheelModel => {
@@ -49,11 +27,11 @@ import { map } from 'rxjs/operators';
             event.name,
             event.nameOfCompany,
             event.dateCreate,
-            event.isDone,
+            event.status,
             event.linkImageWheel,
             event.giftArray,
             event.linkPostFB,
-            event.isActive
+            event.isDeleted
         );
         return newEvent
     }
@@ -85,5 +63,25 @@ import { map } from 'rxjs/operators';
                 eventTo[p] = eventFromClone[p];
             }
         }
+    }
+
+    createCode = (bodyData) => {
+        return this.http.put(this.url + '/createcode', bodyData)
+    }
+
+    checkCode = (codeParam, eventIDParam) => {
+        let bodyData = {
+            eventID: eventIDParam,
+            code: codeParam
+        }
+        return this.http.post(this.url + '/checkcode', bodyData)
+    }
+
+    sendResult = (codeItemParam, eventIDParam): any => {
+        let bodyData = {
+            eventID: eventIDParam,
+            codeItem: codeItemParam
+        }
+        return this.http.put(this.url + '/addcodeinfo/', bodyData)
     }
  } 

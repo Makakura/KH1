@@ -37,7 +37,7 @@
 </div>
 <div class="row at-bottom">
     <div class="col-sm text-center">
-        <button type="button" (click)='start()' class="btn btn-outline-warning"><b>QUAY</b></button>
+        <button [hidden] = "!isCompleteInput" type="button" (click)='start()' class="btn btn-outline-warning"><b>QUAY</b></button>
     </div>
 </div>
 <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -50,20 +50,20 @@
         <form>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Mã dự thưởng:</label>
-            <input #codeInput type="text" (keyup)="codeInputKeyUp(codeInput.value)" maxlength="8" style="text-transform:uppercase" class="form-control">
+            <input #codeInput type="text" [disabled] = 'isCheckingCode' (keyup)="codeInputKeyUp(codeInput.value)" (input)="codeItem.code = $event.target.value" maxlength="8" style="text-transform:uppercase" class="form-control">
           </div>
           <!-- <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button> -->
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Họ và tên:</label>
-              <input type="text" [disabled] = '!isValidCode' class="form-control">
+              <input type="text" [disabled] = '!isValidCode' (input)="codeItem.name = $event.target.value" class="form-control">
           </div>
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Số điện thoại:</label>
-              <input type="number" [disabled] = '!isValidCode' class="form-control">
+              <input type="number" [disabled] = '!isValidCode' (input)="codeItem.phone = $event.target.value" class="form-control">
           </div>
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Tên facebook đã like Page và Share bài:</label>
-              <input type="number" [disabled] = '!isValidCode' class="form-control">
+              <input type="number" [disabled] = '!isValidCode' (input)="codeItem.fb = $event.target.value" class="form-control">
           </div>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Nếu các bạn chưa thực hiện like Page và share Post thì thực hiện ở đây: <a href="{{currentEvent.linkPostFB}}" target="_blank">{{currentEvent.linkPostFB}}</a></label>
@@ -76,24 +76,25 @@
     </div>
   </div>
 </div>
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <strong>Bạn phải nhập mã quay thưởng và thông tin để tham gia !</strong>
-</div>
-<!-- 
-<div class="containter">
-  <div class="text-center" style="color:white; margin-top: 20px;">
-      <p class="header">GIAN HÀNG SỮA NUTRI FOOD</p>
-  </div>
-  <div class="wheel-box" class="text-center">
-    <div class="wheel-container">
-        <img class = "wheel {{curClass}}" src="../../assets/img/wheel_tab.png">
-        
+<div class="modal fade" id="notify-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background: crimson">
+          <label for="recipient-name" id = "notify-header" class="modal-title" style="color:white; font-weight: bold;"></label>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+                <label for="recipient-name" id = "notify-body" class="col-form-label"></label>
+            </div>
+            <div class="form-group">
+                <label for="recipient-name" id = "notify-body-sub" class="col-form-label"></label>
+            </div>
+            <div class="form-group">
+                <a href="" id = "notify-body-link" target="_blank"></a>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    
-    <div class="archor-container" (click) ="fireworkClick()" [hidden] = "!isShowFireWork">
-        <canvas id="canvas"></canvas>
-    </div>
   </div>
-
-
-</div> -->

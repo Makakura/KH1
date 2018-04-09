@@ -1,0 +1,55 @@
+.header-text {
+    padding: 5px;
+    color: white;
+}
+
+table tbody tr:hover{
+    color: gold;
+    background: #35393d;
+}
+
+table thead {
+    background: black;
+}
+
+table tr{
+    border-left: 5px solid transparent;
+}
+
+#myTable {
+    border-top-width: 1px;
+}
+
+.body-wheel { 
+    background: url("https://www.digitalplatforms.co.za/wp-content/uploads/2015/11/Website-Design-Background.png") no-repeat center center fixed !important; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+table {
+    background-color: rgba(0, 0, 0, 0.71);
+}
+
+
+.title {
+    margin-top: 2%;
+    font-size: 4vmin;
+    font-weight: bold;
+    color: gold;
+}
+
+.select-container {
+    width: 100%;
+}
+
+.select-container select{
+    background-color: rgba(0, 0, 0, 0.71);
+    color: white;
+}
+
+.select-container select option{
+    background-color: rgba(0, 0, 0, 0.71);
+    color: white;
+}

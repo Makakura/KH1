@@ -26,6 +26,11 @@ router.get('/events/:_id', function(req, res){
 	getEventByID(req, res);
 });
 
+// Get event by id for client
+router.get('/getevent/:_id', function(req, res){
+	getEventByIDForClient(req, res);
+});
+
 // Get event by id
 router.put('/events/:_id', function(req, res){
 	editEventByID(req, res);
@@ -60,22 +65,17 @@ router.get('/ip', function(req, res){
   });
 });
 
+// Get IP
+router.put('/createcode', function(req, res){
+	createCode(req, res);
+});
+
 
 
 
 // Function Area
 var getAllEvents = function (req, res) {
-  // var ip;
-  // if (req.headers['x-forwarded-for']) {
-  //   ip = req.headers['x-forwarded-for'].split(',').pop();
-  // } else if (req.headers['x-forwarded-for']) {
-  //   ip = req.connection.remoteAddress;
-  // } else if (req.headers['x-forwarded-for']) {
-  //   ip = req.connection.socket.remoteAddress
-  // }
-         
-  // console.log(req);
-  EventModel.find({isActive: true},function(err, events){
+  EventModel.find({isDeleted: false},function(err, events){
 		if(err){
 			res.status(500).send(err);
 		} else if(events){
@@ -116,6 +116,30 @@ var getEventByID = function (req, res) {
 	});
 }
 
+var getEventByIDForClient = function (req, res) {
+  EventModel.findById(req.params._id,function(err,event){
+		if(err){
+			res.status(500).send(err);
+		} else if(event){
+      event.giftArray.forEach(gift => {
+        gift.codeArray = [];
+      });
+      res.json({
+        result: true,
+        message: 'success',
+        data: event
+      });
+		}
+		else{
+			res.json({
+        result: false,
+        message: 'Lấy sự kiện thất bại, vui lòng thử lại sau',
+        data: {}
+      });
+		}
+	});
+}
+
 var addNewEvent = function (req, res) {
   var jsonString = '';
   req.on('data', function (data) {
@@ -124,7 +148,7 @@ var addNewEvent = function (req, res) {
   req.on('end', function () {
     var event = JSON.parse(jsonString)
     var eventmodel = new EventModel(event);
-    eventmodel.save(function(err){
+    eventmodel.save(function(err, savedEvent){
       if(err){
         res.json({
           result: false,
@@ -135,7 +159,7 @@ var addNewEvent = function (req, res) {
         res.json({
           result: true,
           message: 'success',
-          data: event
+          data: savedEvent
         });
       }
     });
@@ -149,37 +173,30 @@ var editEventByID = function (req, res) {
   });
   req.on('end', function () {
     var eventNew = JSON.parse(jsonString)
-    EventModel.findById(req.params._id,function(err, event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event){
-        if(eventNew._id){
-          delete eventNew._id;
-        }
-        for(var p in eventNew){
-          event[p] = eventNew[p];
-        }
-        event.save(function(err){
-          if(err){
-              res.status(500).send(err);
-          }
-          else{
-            res.json({
-              result: true,
-              message: 'success',
-              data: event
-            });
-          }
-        });
+    editEvent(req, res, eventNew);
+  });
+}
+
+var editEvent = function(req, res, eventNew){
+  EventModel.findById(req.params._id,function(err, event){
+    if(err){
+      res.status(500).send(err);
+    } else if(event){
+      if(eventNew._id){
+        delete eventNew._id;
       }
-      else{
-        res.json({
-          result: false,
-          message: 'Sửa sự kiện thất bại, vui lòng thử lại sau',
-          data: {}
-        });
+      for(var p in eventNew){
+        event[p] = eventNew[p];
       }
-    });
+      saveThisEvent(res, event, true);
+    }
+    else{
+      res.json({
+        result: false,
+        message: 'Sửa sự kiện thất bại, vui lòng thử lại sau',
+        data: {}
+      });
+    }
   });
 }
 
@@ -193,25 +210,37 @@ var checkCode = function (req, res) {
     var eventID = jsonData.eventID;
     var codeParam = jsonData.code;
     var isValidParam = false;
+    var number = -1;
+    var giftName = '';
     EventModel.findById(eventID, function(err,event){
       if(err){
         res.status(500).send(err);
       } else if(event){
-        for(var i = 0; i < event.giftArray.length; i++) {
-          var gift = event.giftArray[i];
-          for(var j = 0; j < gift.codeArray.length; j++) {
-            var codeItem = gift.codeArray[j];
-            if (codeItem.code === codeParam && !codeItem.isPlayed) {
-              isValidParam = true;
-              break;
+        if (event.status === 'Running') {
+          for(var i = 0; i < event.giftArray.length; i++) {
+            var gift = event.giftArray[i];
+            for(var j = 0; j < gift.codeArray.length; j++) {
+              var codeItem = gift.codeArray[j];
+              if (codeItem.code === codeParam && !codeItem.isPlayed && !codeItem.name && !codeItem.phone) {
+                isValidParam = true;
+                number = gift.id;
+                giftName = gift.name;
+                break;
+              }
             }
           }
+          res.json({
+            result: true,
+            message: 'success',
+            data: { isValid: isValidParam, number: number, giftName: giftName}
+          });
+        } else {
+          res.json({
+            result: false,
+            message: 'Sự kiện chưa bắt đầu, liên hệ với ban tổ chức để biết thêm chi tiết'
+          });
         }
-        res.json({
-          result: true,
-          message: 'success',
-          data: { isValid: isValidParam }
-        });
+        
       }
       else{
         res.json({
@@ -244,28 +273,13 @@ var addCodeInfo = function (req, res) {
           for(var j = 0; j < gift.codeArray.length; j++) {
             var codeItem = gift.codeArray[j];
             if (codeItem.code === codeParam) {
-              if (!codeItem.isPlayed) {
+              if (!codeItem.isPlayed) { // Code chưa được sử dụng
                 codeItem.name = codeItemParam.name;
                 codeItem.phone = codeItemParam.phone;
                 codeItem.fb = codeItemParam.fb;
                 codeItem.isPlayed = true;
                 isCatched = true;
-                event.save(function(err){
-                  if(err) {
-                    res.json(
-                      {
-                        result: false, 
-                        message: 'Lưu kết quả thất bại, xin vui lòng thử lại',  errMsg: err
-                      });
-                  }
-                  else {
-                    res.json( 
-                      {
-                        result: true,
-                        message:'success'
-                      });
-                  }
-                });
+                saveThisEvent(res, event, false);
                 break;
               } else {
                 isCatched = true;
@@ -297,5 +311,138 @@ var addCodeInfo = function (req, res) {
       }
     });
   });
+}
+
+var createCode = function (req, res) {
+  var jsonString = '';
+  req.on('data', function (data) {
+      jsonString += data;
+  });
+  req.on('end', function () {
+    var jsonData = JSON.parse(jsonString);
+    var eventID = jsonData.eventID;
+    var giftArrayParam = jsonData.giftArray;
+    EventModel.findById(eventID, function(err, event){
+      if(err){
+        res.status(500).send(err);
+      } else if(event) {
+        for(var i = 0; i < event.giftArray.length; i++) {
+          var gift = event.giftArray[i];
+          for(var j = 0; j < giftArrayParam.length; j++) {
+            var giftParam = giftArrayParam[j];
+            if (gift.id === giftParam.id) {
+              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event);
+            }
+          }
+        }
+        console.log(event);
+        saveThisEvent(res, event, true);
+      } else {
+        res.json(
+          {
+            result: false, 
+            message: 'Không tìm thấy sự kiện, xin vui lòng liên hệ với ban tổ chức'
+          });
+      }
+    });
+  });
+}
+
+var generateCodeForEvent = function (numberOfCode, giftID, event) {
+  for(var i = 0; i < event.giftArray.length; i++) {
+    var gift = event.giftArray[i];
+    if (gift.id === giftID) {
+      for(var z = 0; z < numberOfCode; z++) {
+        var code = {
+          code: generateACode(8, event),
+          name: "",
+          phone: "",
+          fb: "",
+          isPlayed: false
+        };
+        gift.codeArray.push(code);
+      }
+    }
+    // if (!gift.isLimited) {
+    //   // Generate one code
+    //   var code = {
+    //     code: generateACode(8, event),
+    //     name: "",
+    //     phone: "",
+    //     fb: "",
+    //     isPlayed: false
+    //   };
+    //   gift.codeArray.push(code);
+    // } else {
+    //   // Generate code by number of gift
+    //   for(var z = 0; z < gift.numberOfReward; z++) {
+    //     var code = {
+    //       code: generateACode(8, event),
+    //       name: "",
+    //       phone: "",
+    //       fb: "",
+    //       isPlayed: false
+    //     };
+    //     gift.codeArray.push(code);
+    //   }
+    // }
+  }
+}
+
+var generateACode = function(length, event) {
+  possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  var text = "";
+
+  for ( var i = 0; i < length; i++ ) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  if (!checkCodeIsExistInEvent(text, event)) {
+    return text;
+  } else {
+    generateACode(length, event);
+  }
+}
+
+var saveThisEvent = function(res, event, isReturnData) {
+  event.save(function(err){
+    if(err) {
+      res.json(
+        {
+          result: false, 
+          message: 'Lưu kết quả thất bại, xin vui lòng thử lại',  errMsg: err
+        });
+    }
+    else {
+      if (isReturnData) {
+        res.json( 
+          {
+            result: true,
+            message:'success',
+            data: event
+          });
+      } else {
+        res.json( 
+          {
+            result: true,
+            message:'success'
+          });
+      }
+      
+    }
+  });
+}
+
+var checkCodeIsExistInEvent = function(code, event) {
+  for(var i = 0; i < event.giftArray.length; i++) {
+    var gift = event.giftArray[i];
+    for(var j = 0; j < gift.codeArray.length; j++) {
+      var codeItem = gift.codeArray[j];
+      if (codeItem.code === code) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 module.exports = router;

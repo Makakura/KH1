@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventWheelModel } from "../../model/eventWheelModel";
 import { GiftModel } from "../../model/giftModel";
 import { EventService } from "../services/event-service";
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-event-management',
   templateUrl: './event-management.component.html',
@@ -13,7 +13,7 @@ import { EventService } from "../services/event-service";
 
 export class EventManagementComponent implements OnInit {
   listEvent = [];
-  listGift = [new GiftModel(1,'', 0), new GiftModel(2,'', 0), new GiftModel(3,'', 0), new GiftModel(4,'', 0)];
+  listGift = [new GiftModel(0,'', 0, false), new GiftModel(1,'', 0, false), new GiftModel(2,'', 0, false), new GiftModel(3,'', 0, false)];
   isHideAddGiftButton = false; // For create popup
   isShowImage = false; // For create popup
   newEvent:EventWheelModel; // For create popup
@@ -21,7 +21,7 @@ export class EventManagementComponent implements OnInit {
   editingEvent: EventWheelModel; // For edit popup
   isShowEditGift = false; // For edit popup  
 
-  constructor(private eventService: EventService) { }
+  constructor(private eventService: EventService, private router: Router) { }
 
   ngOnInit() {
     this.newEvent = new EventWheelModel();
@@ -68,7 +68,7 @@ export class EventManagementComponent implements OnInit {
   
   addGift = () => {
     if(this.listGift.length < 8) {
-      this.listGift.push(new GiftModel(this.listGift.length + 1,"", 0));
+      this.listGift.push(new GiftModel(this.listGift.length, "", 0, false));
     }
     if(this.listGift.length >= 8) {
       this.isHideAddGiftButton = true;
@@ -92,8 +92,8 @@ export class EventManagementComponent implements OnInit {
     }
 
     this.newEvent.dateCreate = new Date();
-    this.newEvent.isDone = false;
-    this.newEvent.isActive = true;
+    this.newEvent.status = 'Preparing'; // 1 Preparing, 2 Running, 3 Pause, 4 Done 
+    this.newEvent.isDeleted = false;
     this.newEvent.giftArray = this.listGift;
     delete this.newEvent._id;
     this.eventService.addEvent(this.newEvent).subscribe(
@@ -159,7 +159,7 @@ export class EventManagementComponent implements OnInit {
 
   editEvent = () => {
     if(this.selectingEvent && this.editingEvent) {
-      if (this.checkIsNeedToUpdateEvent(this.selectingEvent, this.editingEvent)) {
+      if (this.checkIsNeedToUpdateEvent(this.selectingEvent, this.editingEvent)) {     
         this.eventService.updateEvent(this.editingEvent).subscribe(
           res => {
             let resJson = res.json();
@@ -221,9 +221,19 @@ export class EventManagementComponent implements OnInit {
     }
   }
 
-  navigateButtonClick = () => {
+  goTo = (page, param) => {
+    this.router.navigate(['/' + page, param]);
     this.resetDataPopup(PopupType.CREATE);
     this.resetDataPopup(PopupType.EDIT);
+  }
+
+  handleChange = (e,i) => {
+    console.log(e);
+    console.log(i);
+  }
+
+  selectEditStatus = (selector) => {
+    this.editingEvent.status =  $('#select-status').val();
   }
 }
 

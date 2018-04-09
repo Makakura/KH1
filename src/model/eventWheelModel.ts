@@ -5,24 +5,23 @@ export class EventWheelModel {
     nameOfCompany: string = '';
     giftArray:any = [];
     dateCreate: any = {};
-    isDone: boolean = false; // true: done
-    isActive: boolean = true; // true: done
+    status: String = 'Preparing'; // true: done
+    isDeleted: boolean = true; // true: done
     linkImageWheel: string = '';
     linkPostFB: string = '';
-
     constructor () {
     }
 
-    setValue = (_id, name, nameOfCompany, dateCreate, isDone, linkImageWheel, giftArray, linkPostFB, isActive) => {
+    setValue = (_id, name, nameOfCompany, dateCreate, status, linkImageWheel, giftArray, linkPostFB, isDeleted) => {
         this._id = _id;
         this.name = name;
         this.nameOfCompany = nameOfCompany;
         this.dateCreate = dateCreate;
-        this.isDone = isDone;
+        this.status = status;
         this.linkImageWheel = linkImageWheel;
         this.giftArray = giftArray;
         this.linkPostFB = linkPostFB;
-        this.isActive = isActive;
+        this.isDeleted = isDeleted;
     }
 
     clone = () => {
