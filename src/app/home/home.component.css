@@ -11,11 +11,16 @@
     font-weight: bold;
     color: white;
 }
+
 .header .head2{
     font-size:calc(12px + 4vmin);
     margin: 0.5vmin;
     color: white;    
     font-weight: bold;
+}
+
+label {
+    font-weight: 600;
 }
 
 .wheel-container {

@@ -154,6 +154,7 @@ export class EventManagementComponent implements OnInit {
     this.editingEvent = event.clone();
     if ( this.selectingEvent) {
       $('#show-event').modal('show');
+      $('#select-status').val(this.selectingEvent.status);
     }
   }
 
