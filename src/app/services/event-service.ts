@@ -7,8 +7,8 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    //private url = 'http://localhost:8080/api';
-    private url = 'https://quaythuong.herokuapp.com/api';
+    private url = 'http://localhost:8080/api';
+    //private url = 'https://quaythuong.herokuapp.com/api';
     
     constructor (private http: Http) {}
 
@@ -31,7 +31,8 @@ import { map } from 'rxjs/operators';
             event.linkImageWheel,
             event.giftArray,
             event.linkPostFB,
-            event.isDeleted
+            event.isDeleted,
+            event.linkToPrivacy
         );
         return newEvent
     }

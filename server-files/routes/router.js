@@ -70,8 +70,47 @@ router.put('/createcode', function(req, res){
 	createCode(req, res);
 });
 
+// Get code
+router.put('/getcode', function(req, res){
+	res.json({
+    code: [
+      '0BNVBLQL',
+      '0BNVBLQL',
+      '0BNVBLQL',
+      '0BNVBLQL',
+      '0BNVBLQL',
+      '0BNVBLQX'
+    ]
+  });
+});
 
+// Get code
+router.put('/getphone', function(req, res){
+	res.json({
+    code: [
+      '123456789',
+      '123456789',
+      '123456789',
+      '123456789',
+      '123456789',
+      '123456780'
+    ]
+  });
+});
 
+// Get code
+router.put('/name', function(req, res){
+	res.json({
+    code: [
+      'Nguyen Van A',
+      'Nguyen Van A',
+      'Nguyen Van A',
+      'Nguyen Van A',
+      'Nguyen Van A',
+      'Nguyen Van B'
+    ]
+  });
+});
 
 // Function Area
 var getAllEvents = function (req, res) {

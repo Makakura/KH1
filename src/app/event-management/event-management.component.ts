@@ -36,7 +36,7 @@ export class EventManagementComponent implements OnInit {
       res => {
         let resJson = res.json();
         if (resJson.result) {
-          this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data);
+          this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
         } else {
           console.log(resJson.message);
         }
@@ -101,7 +101,7 @@ export class EventManagementComponent implements OnInit {
         let resJson = res.json();
         if (resJson.result) {
           let createdEvent = this.eventService.converJsonToEvent(resJson.data);
-          this.listEvent.push(createdEvent);
+          this.listEvent.splice(0, 0, createdEvent);
           this.resetDataPopup(PopupType.CREATE);
           console.log('Success');
         } else {
@@ -138,8 +138,12 @@ export class EventManagementComponent implements OnInit {
     return true;
   }
   numberOfRewardChange = (event) => {
-    if (!event.target.value || event.target.value < 0 ) {
-      event.target.value = '';
+    if (event.target.value < 0 ) {
+      event.target.value = 0;
+    }
+
+    if (event.target.value > 99999) {
+      event.target.value = 99999;
     }
   }
 

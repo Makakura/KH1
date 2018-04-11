@@ -9,10 +9,11 @@ export class EventWheelModel {
     isDeleted: boolean = true; // true: done
     linkImageWheel: string = '';
     linkPostFB: string = '';
+    linkToPrivacy: string = '';
     constructor () {
     }
 
-    setValue = (_id, name, nameOfCompany, dateCreate, status, linkImageWheel, giftArray, linkPostFB, isDeleted) => {
+    setValue = (_id, name, nameOfCompany, dateCreate, status, linkImageWheel, giftArray, linkPostFB, isDeleted, linkToPrivacy) => {
         this._id = _id;
         this.name = name;
         this.nameOfCompany = nameOfCompany;
@@ -22,6 +23,7 @@ export class EventWheelModel {
         this.giftArray = giftArray;
         this.linkPostFB = linkPostFB;
         this.isDeleted = isDeleted;
+        this.linkToPrivacy = linkToPrivacy;
     }
 
     clone = () => {

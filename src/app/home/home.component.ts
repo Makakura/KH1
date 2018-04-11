@@ -109,10 +109,21 @@ export class HomeComponent implements OnInit {
   
   completeInput = () => {
     // Validate input data
-    $('#inputModal').modal('hide');
-    this.isCompleteInput = true;
+    if (this.validateInputData()) {
+      $('#inputModal').modal('hide');
+      this.isCompleteInput = true;
+    } else {
+      this.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin để tiếp tục !");
+    }
+    
   }
   
+  validateInputData = () => {
+    if (this.codeItem.name && this.codeItem.phone && this.codeItem.fb) {
+       return true;
+    }
+    return false ;
+  }
 
   checkValidCode = (code) => {
     this.eventService.checkCode(code, this.currentEvent._id).subscribe(
@@ -123,6 +134,8 @@ export class HomeComponent implements OnInit {
           this.giftName = resJson.data.giftName;
           this.isValidCode = true;
           this.isCheckingCode = true;
+          // focus next textbox
+          $('#input-name').focus();
         } else if (!resJson.result){
           this.displayNotify("THÔNG BÁO", resJson.message);
           this.isValidCode = false;
@@ -152,6 +165,15 @@ export class HomeComponent implements OnInit {
       this.checkValidCode(code);
     } else {
       this.isValidCode = false;
+    }
+  }
+
+  // Limit length phone
+  phoneKeyUp = () => {
+    let temp = $('#phoneInput').val()
+    if (temp.length > 11) {
+      let limited = temp.slice(0,11);
+      $('#phoneInput').val(limited);
     }
   }
 

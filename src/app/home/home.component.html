@@ -62,26 +62,26 @@
           <!-- <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button> -->
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Họ và tên*:</label>
-              <input type="text" [disabled] = '!isValidCode' (input)="codeItem.name = $event.target.value" maxlength="40" class="form-control">
+              <input id="input-name" type="text" [disabled] = '!isValidCode' (input)="codeItem.name = $event.target.value" maxlength="40" class="form-control">
           </div>
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Số điện thoại*:</label>
-              <input type="number" [disabled] = '!isValidCode' (input)="codeItem.phone = $event.target.value"  maxlength="11" class="form-control">
+              <input id="phoneInput" type="number" [disabled] = '!isValidCode' (keyup)="phoneKeyUp()" (input)="codeItem.phone = $event.target.value" class="form-control">
           </div>
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Tên facebook đã like Page và Share bài*:</label>
-              <input type="text" [disabled] = '!isValidCode' (input)="codeItem.fb = $event.target.value" class="form-control">
+              <input type="text" [disabled] = '!isValidCode' (input)="codeItem.fb = $event.target.value" maxlength="40" class="form-control">
           </div>
           <div class="form-group">
             <p for="recipient-name" class="col-form-label">Nếu các bạn chưa thực hiện like Page và share Post thì thực hiện ở đây: <a href="{{currentEvent.linkPostFB}}" target="_blank">{{currentEvent.linkPostFB}}</a></p>
           </div>
           <div class="form-group">
-            <p for="recipient-name" class="col-form-label">Bằng việc tham gia chương trình đồng nghĩa với việc bạn sẽ chấp nhận các quy định và điều khoản của chúng tôi: <a href="https://google.com.vn" target="_blank">Term and privacy</a></p>
+            <p for="recipient-name" class="col-form-label">Bằng việc tham gia chương trình đồng nghĩa với việc bạn sẽ chấp nhận các quy định và điều khoản của chúng tôi: <a href="{{currentEvent.linkToPrivacy}}" target="_blank">Term and privacy</a></p>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" [disabled] = '!isValidCode' (click) = 'completeInput()' class="btn btn-danger">Bắt đầu quay</button>
+        <button type="button" [disabled] = '!isValidCode' (click) = 'completeInput()' class="btn btn-danger">Tiếp tục</button>
       </div>
     </div>
   </div>

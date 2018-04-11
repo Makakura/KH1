@@ -26,6 +26,10 @@ const EventModel = mongoose.Schema({
         type: String,
         required : true
     },
+    linkToPrivacy: {
+        type: String,
+        required : true
+    },
     dateCreate: {
         type: Date,
         required : true

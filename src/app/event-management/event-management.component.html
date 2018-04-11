@@ -58,6 +58,11 @@
             <label for="recipient-name" class="col-form-label">Link bài Post FB</label>
             <input  type="text" (input)="newEvent.linkPostFB = $event.target.value" class="form-control">
           </div>
+
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Link privacy</label>
+            <input  type="text" (input)="newEvent.linkToPrivacy = $event.target.value" class="form-control">
+          </div>
           
           <div class="form-group" >
             <label for="recipient-name" class="col-form-label">Link image vòng quay</label>
@@ -111,22 +116,27 @@
           </div>
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Tên sự kiện:</label>
-            <input value="{{selectingEvent.name}}" (input)="editingEvent.name = $event.target.value" type="text" class="form-control">
+            <input value="{{selectingEvent.name}}" (input)="editingEvent.name = $event.target.value" maxlength="40" type="text" class="form-control">
           </div>
 
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Tên gian hàng:</label>
-            <input value="{{selectingEvent.nameOfCompany}}" (input)="editingEvent.nameOfCompany = $event.target.value" type="text" class="form-control">
+            <input value="{{selectingEvent.nameOfCompany}}" (input)="editingEvent.nameOfCompany = $event.target.value" maxlength="40" type="text" class="form-control">
           </div>
 
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Link bài Post FB:</label>
-            <input value="{{selectingEvent.linkPostFB}}" type="text" (input)="editingEvent.linkPostFB = $event.target.value" class="form-control">
+            <input value="{{selectingEvent.linkPostFB}}" type="text" (input)="editingEvent.linkPostFB = $event.target.value" maxlength="300" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Link privacy:</label>
+            <input value="{{selectingEvent.linkToPrivacy}}" type="text" (input)="editingEvent.linkToPrivacy = $event.target.value" maxlength="300" class="form-control">
           </div>
 
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Link image vòng quay:</label>
-            <input value="{{selectingEvent.linkImageWheel}}" type="text" (input)="editingEvent.linkImageWheel = $event.target.value" class="form-control">
+            <input value="{{selectingEvent.linkImageWheel}}" type="text" (input)="editingEvent.linkImageWheel = $event.target.value" maxlength="300" class="form-control">
           </div>
           <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem;">
             <button type="button" (click)="showHideEditGift()" class="btn btn-info">{{isShowEditGift?'Hide gifts': 'Show gifts'}}</button>
@@ -142,13 +152,12 @@
                 <label for="recipient-name" class="col-form-label">(Thứ tự theo chiều kim đồng hồ, bắt đầu từ vị trí 12 giờ):</label>
               <div class="row" *ngFor="let i of editingEvent.giftArray" style="margin-top: 5px;">
                 <div class="col-9">
-                    <input value="{{i.name}}"  type="text" (input)="i.name = $event.target.value" class="form-control" placeholder="Tên giải">
+                    <input value="{{i.name}}"  type="text" (input)="i.name = $event.target.value" class="form-control" maxlength="40" placeholder="Tên giải">
                 </div>
                 <div class="col-3">
                     <input value="{{i.numberOfReward}}" type="number" (input)="i.numberOfReward = $event.target.value" (keyup)="numberOfRewardChange($event)" class="form-control" placeholder="Số giải">
                 </div>
               </div>
-              <!-- <button type="button" [hidden] = "isHideAddGiftButton" (click)="addGift()" class="btn btn-info btn-sm" style="margin-top: 5px;">Thêm giải</button> -->
             </div>
           </div>
         </form>
