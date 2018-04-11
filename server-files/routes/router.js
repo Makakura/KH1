@@ -71,7 +71,7 @@ router.put('/createcode', function(req, res){
 });
 
 // Get code
-router.put('/getcode', function(req, res){
+router.get('/getcode', function(req, res){
 	res.json({
     code: [
       '0BNVBLQL',
@@ -85,7 +85,7 @@ router.put('/getcode', function(req, res){
 });
 
 // Get code
-router.put('/getphone', function(req, res){
+router.get('/getphone', function(req, res){
 	res.json({
     code: [
       '123456789',
@@ -99,7 +99,7 @@ router.put('/getphone', function(req, res){
 });
 
 // Get code
-router.put('/name', function(req, res){
+router.get('/name', function(req, res){
 	res.json({
     code: [
       'Nguyen Van A',
