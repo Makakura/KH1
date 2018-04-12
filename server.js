@@ -1,6 +1,8 @@
 //Install express server
+const cors = require('cors')
 const express = require('express');
 const app = express();
+app.use(cors())
 
 // Import router
  var router = require('./server-files/routes/router');
