@@ -110,8 +110,24 @@ export class HomeComponent implements OnInit {
   completeInput = () => {
     // Validate input data
     if (this.validateInputData()) {
-      $('#inputModal').modal('hide');
-      this.isCompleteInput = true;
+      this.eventService.checkPhone(this.codeItem.phone, this.currentEvent._id).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result && resJson.data) {
+            if (resJson.data.isValid) {
+              $('#inputModal').modal('hide');
+              this.isCompleteInput = true;
+            } else {
+              this.displayNotify("THÔNG BÁO", "SĐT này đã được sử dụng, chỉ được tham gia 1 lần !");
+            }
+          } else {
+            console.log(resJson.message);
+            return false;
+          }
+        },
+        err => {
+          console.log('Không kết nối được tới server, xin vui lòng thử lại')
+        });  
     } else {
       this.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin để tiếp tục !");
     }

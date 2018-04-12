@@ -93,16 +93,17 @@ export class CodeManagementComponent implements OnInit {
   createCode = () => {
     let bodydata = {
       eventID: this.eventModel._id,
-      giftArray: []
-    }
+      giftArray: [],
+      dateCreated: new Date()
+    };
+
     for (let i = 0; i < this.eventModel.giftArray.length; i++) {
       let gift = this.eventModel.giftArray[i];
       if (gift.numberOfCode > 0) {
         bodydata.giftArray.push({id: gift.id, numberOfCode: gift.numberOfCode})
       }
     }
-    console.log(this.eventModel);
-    console.log(bodydata);
+
     this.eventService.createCode(bodydata).subscribe(
       res => {
         let resJson = res.json();

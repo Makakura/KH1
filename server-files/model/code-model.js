@@ -18,6 +18,12 @@ var CodeModel = mongoose.Schema({
     isPlayed: {
         type: Boolean,
         default: false
+    },
+    createdDate: {
+        type: Date,
+    },
+    playedDate: {
+        type: Date,
     }
 });
 module.exports = CodeModel;

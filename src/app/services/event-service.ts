@@ -78,10 +78,19 @@ import { map } from 'rxjs/operators';
         return this.http.post(this.url + '/checkcode', bodyData)
     }
 
+    checkPhone = (phoneParam, eventIDParam) => {
+        let bodyData = {
+            eventID: eventIDParam,
+            phone: phoneParam
+        }
+        return this.http.post(this.url + '/checkphone', bodyData)
+    }
+
     sendResult = (codeItemParam, eventIDParam): any => {
         let bodyData = {
             eventID: eventIDParam,
-            codeItem: codeItemParam
+            codeItem: codeItemParam,
+            playedDate: new Date()
         }
         return this.http.put(this.url + '/addcodeinfo/', bodyData)
     }

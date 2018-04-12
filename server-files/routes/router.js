@@ -112,6 +112,12 @@ router.get('/name', function(req, res){
   });
 });
 
+// Get code
+router.post('/checkphone', function(req, res){
+	checkPhone(req, res);
+});
+
+
 // Function Area
 var getAllEvents = function (req, res) {
   EventModel.find({isDeleted: false},function(err, events){
@@ -302,6 +308,7 @@ var addCodeInfo = function (req, res) {
     var eventID = jsonData.eventID;
     var codeItemParam = jsonData.codeItem;
     var codeParam = codeItemParam.code;
+    var playedDateParam = jsonData.playedDate;
     var isCatched = false;
     EventModel.findById(eventID, function(err, event){
       if(err){
@@ -317,6 +324,7 @@ var addCodeInfo = function (req, res) {
                 codeItem.phone = codeItemParam.phone;
                 codeItem.fb = codeItemParam.fb;
                 codeItem.isPlayed = true;
+                codeItem.playedDate;
                 isCatched = true;
                 saveThisEvent(res, event, false);
                 break;
@@ -361,6 +369,7 @@ var createCode = function (req, res) {
     var jsonData = JSON.parse(jsonString);
     var eventID = jsonData.eventID;
     var giftArrayParam = jsonData.giftArray;
+    var dateParam = jsonData.createDate;
     EventModel.findById(eventID, function(err, event){
       if(err){
         res.status(500).send(err);
@@ -370,7 +379,7 @@ var createCode = function (req, res) {
           for(var j = 0; j < giftArrayParam.length; j++) {
             var giftParam = giftArrayParam[j];
             if (gift.id === giftParam.id) {
-              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event);
+              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam);
             }
           }
         }
@@ -387,7 +396,46 @@ var createCode = function (req, res) {
   });
 }
 
-var generateCodeForEvent = function (numberOfCode, giftID, event) {
+var checkPhone = function (req, res) {
+  var jsonString = '';
+  req.on('data', function (data) {
+      jsonString += data;
+  });
+  req.on('end', function () {
+    var jsonData = JSON.parse(jsonString)
+    var eventID = jsonData.eventID;
+    var phoneParam = jsonData.phone;
+    EventModel.findById(eventID, function(err,event){
+      if(err){
+        res.status(500).send(err);
+      } else if(event){
+        if (checkPhoneIsValidInEvent(phoneParam, event)) {
+          res.json({
+            result: true,
+            message: 'success',
+            data: { isValid: true}
+          });
+        } else {
+          res.json({
+            result: true,
+            message: 'success',
+            data: { isValid: false}
+          });
+        }
+      }
+      else{
+        res.json({
+          result: false,
+          message: 'Đã xảy ra lỗi, vui lòng liên hệ với chúng tôi',
+          data: {}
+        });
+      }
+    });
+  });
+}
+
+
+var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam) {
   for(var i = 0; i < event.giftArray.length; i++) {
     var gift = event.giftArray[i];
     if (gift.id === giftID) {
@@ -397,34 +445,12 @@ var generateCodeForEvent = function (numberOfCode, giftID, event) {
           name: "",
           phone: "",
           fb: "",
-          isPlayed: false
+          isPlayed: false,
+          createdDate: dateParam
         };
         gift.codeArray.push(code);
       }
     }
-    // if (!gift.isLimited) {
-    //   // Generate one code
-    //   var code = {
-    //     code: generateACode(8, event),
-    //     name: "",
-    //     phone: "",
-    //     fb: "",
-    //     isPlayed: false
-    //   };
-    //   gift.codeArray.push(code);
-    // } else {
-    //   // Generate code by number of gift
-    //   for(var z = 0; z < gift.numberOfReward; z++) {
-    //     var code = {
-    //       code: generateACode(8, event),
-    //       name: "",
-    //       phone: "",
-    //       fb: "",
-    //       isPlayed: false
-    //     };
-    //     gift.codeArray.push(code);
-    //   }
-    // }
   }
 }
 
@@ -484,4 +510,18 @@ var checkCodeIsExistInEvent = function(code, event) {
   }
   return false;
 }
+
+var checkPhoneIsValidInEvent = function(phone, event) {
+  for(var i = 0; i < event.giftArray.length; i++) {
+    var gift = event.giftArray[i];
+    for(var j = 0; j < gift.codeArray.length; j++) {
+      var codeItem = gift.codeArray[j];
+      if (codeItem.phone === phone) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 module.exports = router;
