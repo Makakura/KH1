@@ -152,25 +152,21 @@ export class HomeComponent implements OnInit {
           this.isCheckingCode = true;
           // focus next textbox
           $('#input-name').focus();
-        } else if (!resJson.result){
+        } else if (!resJson.result || !resJson.data.isValid){
           this.displayNotify("THÔNG BÁO", resJson.message);
           this.isValidCode = false;
           this.isCheckingCode = false;
-        } else if (!resJson.data.isValid) {
-          this.displayNotify("THÔNG BÁO", "Mã không hợp lệ");
-          this.isValidCode = false;
-          this.isCheckingCode = false;
         } else {
-          this.displayNotify("THÔNG BÁO", "Không kiểm tra được mã xin hãy thử lại sau");
+          this.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
           this.isValidCode = false;
           this.isCheckingCode = false;
         }
         
       },
       err => {
-        console.log('Không kết nối được tới server, xin vui lòng thử lại');
-        this.isCheckingCode = false;
+        this.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
         this.isValidCode = false;
+        this.isCheckingCode = false;
       });
   }
 
