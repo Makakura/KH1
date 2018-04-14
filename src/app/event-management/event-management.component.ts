@@ -13,13 +13,15 @@ import { Router } from '@angular/router';
 
 export class EventManagementComponent implements OnInit {
   listEvent = [];
-  listGift = [new GiftModel(0,'', 0, false), new GiftModel(1,'', 0, false), new GiftModel(2,'', 0, false), new GiftModel(3,'', 0, false)];
-  isHideAddGiftButton = false; // For create popup
-  isShowImage = false; // For create popup
-  newEvent:EventWheelModel; // For create popup
-  selectingEvent: EventWheelModel; // For edit popup
-  editingEvent: EventWheelModel; // For edit popup
-  isShowEditGift = false; // For edit popup  
+  listGift = [new GiftModel(0,'', 0, 0, false), new GiftModel(1,'', 0, 0, false), new GiftModel(2,'', 0, 0, false), new GiftModel(3,'', 0, 0, false)];
+  // For create popup
+  isHideAddGiftButton = false;
+  isShowImage = false; 
+  newEvent:EventWheelModel;
+  // For edit popup
+  selectingEvent: EventWheelModel;
+  editingEvent: EventWheelModel;
+  isShowEditGift = false;  
 
   constructor(private eventService: EventService, private router: Router) { }
 
@@ -68,7 +70,7 @@ export class EventManagementComponent implements OnInit {
   
   addGift = () => {
     if(this.listGift.length < 8) {
-      this.listGift.push(new GiftModel(this.listGift.length, "", 0, false));
+      this.listGift.push(new GiftModel(this.listGift.length, "", 0, 0, false));
     }
     if(this.listGift.length >= 8) {
       this.isHideAddGiftButton = true;
