@@ -257,6 +257,7 @@ var checkCode = function (req, res) {
     var isValidParam = false;
     var number = -1;
     var giftName = '';
+    var messageParam = 'Mã không hợp lệ, xin vui lòng kiểm tra lại'
     EventModel.findById(eventID, function(err,event){
       if(err){
         res.status(500).send(err);
@@ -267,16 +268,22 @@ var checkCode = function (req, res) {
             for(var j = 0; j < gift.codeArray.length; j++) {
               var codeItem = gift.codeArray[j];
               if (codeItem.code === codeParam && !codeItem.isPlayed && !codeItem.name && !codeItem.phone) {
-                isValidParam = true;
-                number = gift.id;
-                giftName = gift.name;
-                break;
+                if (gift.numberOfReward > gift.playedCounter) {
+                  isValidParam = true;
+                  number = gift.id;
+                  giftName = gift.name;
+                  messageParam = 'success'
+                  break;
+                } else {
+                  isValidParam = false;
+                  messageParam = 'Quà của sự kiện đã được phát hết, hẹn quý khách đợt sau <3'
+                }
               }
             }
           }
           res.json({
             result: true,
-            message: 'success',
+            message: messageParam,
             data: { isValid: isValidParam, number: number, giftName: giftName}
           });
         } else {
@@ -326,6 +333,7 @@ var addCodeInfo = function (req, res) {
                 codeItem.isPlayed = true;
                 codeItem.playedDate;
                 isCatched = true;
+                gift.playedCounter++;
                 saveThisEvent(res, event, false);
                 break;
               } else {

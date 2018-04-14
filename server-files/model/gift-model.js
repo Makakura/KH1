@@ -12,6 +12,10 @@ var GiftModel = mongoose.Schema({
     numberOfReward:{
         type: Number  
     },
+    playedCounter:{
+        type: Number,
+        default: 0
+    },
     isLimited:{
         type: Boolean,
         default: false  
