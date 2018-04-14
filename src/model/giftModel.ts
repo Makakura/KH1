@@ -4,6 +4,7 @@ export class GiftModel {
     numberOfReward: number = 0;
     playedCounter: number = 0;
     isLimited: boolean = false;
+    codeArray = [];
     constructor(id, name, numberOfReward, isLimited, playedCounter) {
         this.id = id;
         this.name = name;

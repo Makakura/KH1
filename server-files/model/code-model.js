@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var CodeModel = mongoose.Schema({
     code: {
-        type: String
+        type: String,
+        default: ''
     },
     name: {
         type: String,
@@ -21,9 +22,11 @@ var CodeModel = mongoose.Schema({
     },
     createdDate: {
         type: Date,
+        default: new Date()
     },
     playedDate: {
         type: Date,
+        default: new Date()
     }
 });
 module.exports = CodeModel;

@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit {
       setTimeout(function(){
         that.displayNotify(
           "CHÚC MỪNG !!!", 
-        "Bạn đã nhận được 01 " + that.giftName, 
+        "Bạn đã nhận được: " + that.giftName, 
         "Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.",
         that.currentEvent.linkPostFB);
       }, 14500);
