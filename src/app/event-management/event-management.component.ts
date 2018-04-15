@@ -61,7 +61,9 @@ export class EventManagementComponent implements OnInit {
     // on exit edit popup
     $('#show-event').on('hidden.bs.modal', function (e) {
       that.isShowEditGift = false;
-    })
+      that.selectingEvent = new EventWheelModel();
+      that.editingEvent = new EventWheelModel();
+    });
   }
 
   showCreateEventPop = () => {

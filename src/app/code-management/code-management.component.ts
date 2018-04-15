@@ -1,11 +1,12 @@
 declare var $ :any;
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, group } from '@angular/core';
 import { EventWheelModel } from "../../model/eventWheelModel";
 import { GiftModel } from "../../model/giftModel";
 import { EventService } from "../services/event-service";
 import { ActivatedRoute } from '@angular/router';
 import { delay } from 'rxjs/operator/delay';
 import { Router } from '@angular/router';
+import { count } from 'rxjs/operator/count';
 
 @Component({
   selector: 'app-code-management',
@@ -16,32 +17,25 @@ import { Router } from '@angular/router';
 export class CodeManagementComponent implements OnInit {
   eventModel: EventWheelModel = new EventWheelModel();
   codeArray = [];
-  currentTotalCode = 0;
+  currentTotalReward = 0;
   currentTotalCodeUsed = 0;
-  currentTotalCodeAvailable = 0;
   sub: any;
-  giftSelectedIndex = 0;
-  searchFilter = '';
-  giftFilter = '';
-
+  currentGift: GiftModel = new GiftModel(0, '', 0, false, false);
+  currentCodeArrayShow = [];
+  currentCodeOfGiftGroupByDate = [];
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
 
   ngOnInit() {
     let that = this;
-    $('body').css('background-color', 'black');
-    $("#myInput").on("keyup", function() {
-      that.searchFilter = $(this).val().toLowerCase();
-      $("#myTable tr").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(that.giftFilter) > -1)
-        if ($(this).text().toLowerCase().indexOf(that.searchFilter) < 0) {
-          $(this).toggle(false);
-        }
-      });
-    });
     this.getCodeToView();
-    
+    // on exit edit popup
+    $('#gift-detail').on('hidden.bs.modal', function (e) {
+      that.currentGift = new GiftModel(0, '', 0, false, false);
+      that.currentCodeArrayShow = [];
+      that.currentCodeOfGiftGroupByDate = [];
+    });
   }
 
   getCodeToView = () => {
@@ -53,7 +47,7 @@ export class CodeManagementComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.eventModel = this.eventService.converJsonToEvent(resJson.data);
-              this.calValueReport("-1");
+              this.calValueReport();
             } else {
               console.log(resJson.message);
             }
@@ -89,29 +83,32 @@ export class CodeManagementComponent implements OnInit {
       event.target.value = '';
     }
   }
-
+  showConfirmCreateCode = () => {
+    this.displayConfirmDialog("LƯU Ý:", "Bạn có muốn xuất "+ Number.parseInt($('#inputNumberOfCode').val()) +" mã cho phần thưởng: " + this.currentGift.name, 'closeConfirmDialog', 'createCode');
+  }
   createCode = () => {
+    let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
     let bodydata = {
       eventID: this.eventModel._id,
       giftArray: [],
-      dateCreated: new Date()
+      createDate: new Date()
     };
-
-    for (let i = 0; i < this.eventModel.giftArray.length; i++) {
-      let gift = this.eventModel.giftArray[i];
-      if (gift.numberOfCode > 0) {
-        bodydata.giftArray.push({id: gift.id, numberOfCode: gift.numberOfCode})
-      }
-    }
-
+    bodydata.giftArray.push(
+      {
+        id: this.currentGift.id, 
+        numberOfCode: numberOfCode,
+      });
     this.eventService.createCode(bodydata).subscribe(
       res => {
         let resJson = res.json();
         if (resJson.result) {
-          let receiveEvent = this.eventService.converJsonToEvent(resJson.data);
-          this.eventModel = receiveEvent;
-          $('#create-code').modal('hide');
-          console.log('Success');
+          let receiveCodeArray = resJson.data;
+          receiveCodeArray.forEach(element => {
+          this.currentGift.codeArray.push(element);
+          this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
+          this.selectGift(this.currentGift);
+          this.displayNotify("THÔNG BÁO", "ĐÃ TẠO MÃ THÀNH CÔNG");
+          });
         } else {
           console.log(resJson.message);
         }
@@ -119,67 +116,133 @@ export class CodeManagementComponent implements OnInit {
       err => {
         console.log('Không kết nối được tới server, xin vui lòng thử lại')
     });
+    this.closeConfirmDialog();
   }
 
-  selectGift = (selector) => {
-    if (selector.value === "-1" ) {
-      this.giftFilter = '';
+  selectDate = (value) => {
+    if (value === "-1" ) {
+      this.currentCodeArrayShow = this.currentGift.codeArray;
     } else {
-      this.giftFilter = $('#select-gift option:selected').text().toLowerCase();
+      let dateSelected = $('#select-date option:selected').val();
+      this.currentCodeArrayShow = this.getCodeArrayByDate(this.currentCodeOfGiftGroupByDate, dateSelected);
     }
-    let that = this;
-    that.searchFilter = $("#myInput").val().toLowerCase();
-    $("#myTable tr").filter(function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(that.searchFilter) > -1)
-      if ($(this).text().toLowerCase().indexOf(that.giftFilter) < 0) {
-        $(this).toggle(false);
+    this.currentCodeArrayShow = this.sortByKey(this.currentCodeArrayShow, 'isPlayed').reverse();    
+  }
+
+  getUnUsedCodeCount = (codeArr) => {
+    let count = 0;
+    codeArr.forEach(element => {
+      if (!element.isPlayed) {
+        count ++;
       }
     });
-    this.calValueReport(selector.value);
-  }
-  
-  filterCode = () => {
-
-  }
-  
-  calValueReport = (value) => {
-    this.currentTotalCode = 0;
-    this.currentTotalCodeUsed = 0;
-    this.currentTotalCodeAvailable = 0;
-    let gift: any;
-
-    if (value === "-1") {
-      for (let i = 0; i < this.eventModel.giftArray.length; i++) {
-        gift = this.eventModel.giftArray[i];
-        for (let j = 0; j < gift.codeArray.length; j++) {
-          let code = gift.codeArray[j];
-          this.currentTotalCode++;
-          if (code.isPlayed) {
-            this.currentTotalCodeUsed++;
-          } else {
-            this.currentTotalCodeAvailable++;
-          }
-        }
-      }
-    } else {
-      gift = this.eventModel.giftArray[value];
-      for (let j = 0; j < gift.codeArray.length; j++) {
-        let code = gift.codeArray[j];
-        this.currentTotalCode++;
-        if (code.isPlayed) {
-          this.currentTotalCodeUsed++;
-        } else {
-          this.currentTotalCodeAvailable++;
-        }
-      }
-    }
+    return count;
   }
 
-  selectCode = () => {
 
+  selectGift = (gift) => {
+    this.currentGift = gift;
+    this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
+    this.selectDate('-1');
+    $('#gift-detail').modal('show');
   }
   
   goTo = (page, param) => {
     this.router.navigate(['/' + page, param]);
+  }
+
+  sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        let x = a[key]; let y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+  }
+
+  groupByDate = (array, key) => {
+    let groups = [];
+    array.forEach(item => {
+      let keyValue = item[key];
+      if (!this.checkGroupHasThisDate(groups, keyValue)) {
+        groups.push({
+          date: keyValue,
+          codes: []
+        });
+      }
+      for (let i = 0; i < groups.length; i++ ) {
+        if (groups[i].date === keyValue) {
+          groups[i].codes.push(item);
+          break;
+        }
+      }
+    });
+    return groups;
+  }
+
+  checkGroupHasThisDate = (groups, date) => {
+    for (let i = 0; i < groups.length; i++ ) {
+      if (groups[i].date === date) {
+        return true
+      }
+    }
+    return false;
+  }
+
+  getCodeArrayByDate = (groups, date) => {
+    for (let i = 0; i < groups.length; i++ ) {
+      if (groups[i].date === date) {
+        return groups[i].codes;
+      }
+    }
+    return undefined;
+  }
+  calValueReport = () => {
+    this.currentTotalReward = 0;
+    this.currentTotalCodeUsed = 0;
+    let gift: any;
+    for (let i = 0; i < this.eventModel.giftArray.length; i++) {
+      gift = this.eventModel.giftArray[i];
+      this.currentTotalReward += gift.numberOfReward;
+      this.currentTotalCodeUsed += (gift.numberOfReward - gift.playedCounter)
+    }
+  }
+
+  displayConfirmDialog (header, body, cancelFunction, okFunction) {
+    $("#confirm-header").text(header);
+    $("#confirm-body").text(body);
+    $("#confirm-cancel").click(() => {
+      this[cancelFunction]();
+    })
+    $("#confirm-ok").click(() => {
+      this[okFunction]();
+    })
+    $('#confirm-model').modal('show');
+  }
+
+  displayNotify (header, body, sub?, link?) {
+    $("#notify-header").text(header);
+    $("#notify-body").text(body);
+    if (sub) {
+      $("#notify-body-sub").text(sub);
+    } else {
+      $("#notify-body-sub").text('');
+    }
+    if (link) {
+      $("#notify-body-link").text(link);
+      $("#notify-body-link").attr("href", link)
+    } else {
+      $("#notify-body-link").text('');
+    }
+    $('#notify-model').modal('show');
+  }
+
+  closeConfirmDialog = () => {
+    $('#confirm-model').modal('hide');
+  }
+
+  closePopupGift = () => {
+    $('#gift-detail').modal('hide');
+    this.currentGift = new GiftModel(0, '', 0, false, false);
+    this.currentCodeArrayShow = [];
+    this.currentCodeOfGiftGroupByDate = [];
   }
 }

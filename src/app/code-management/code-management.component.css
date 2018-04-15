@@ -1,6 +1,11 @@
 .header-text {
     padding: 5px;
-    color: white;
+    color: gold;
+    white-space: nowrap;
+}
+
+label {
+    font-weight: 600;
 }
 
 table tbody tr:hover{
@@ -32,11 +37,23 @@ table thead {
     background: black;
 }
 
+table thead th{
+    font-weight: 500;
+}
+
 .title {
-    margin-top: 2%;
+    margin-top: 0;    
     font-size: 4vmin;
     font-weight: bold;
     color: gold;
+}
+.title-sub {
+    margin-top: 2%;
+    font-size: 3vmin;
+    font-weight: bold;
+    color: #9fdeaa;
+    margin-bottom: 0%;
+    
 }
 
 .select-container {

@@ -180,6 +180,19 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  // Click button check code
+  buttonCheckCode = (code) => {
+    if (code.length >= 8) {
+      this.isCheckingCode = true;
+      this.checkValidCode(code);
+    } else {
+      this.isValidCode = false;
+      this.displayNotify("THÔNG BÁO", "Bạn nhập mã thiếu thì phải ^^!");
+      this.isValidCode = false;
+      this.isCheckingCode = false;
+    }
+  }
+
   // Limit length phone
   phoneKeyUp = () => {
     let temp = $('#phoneInput').val()

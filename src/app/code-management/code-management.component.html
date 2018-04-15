@@ -8,93 +8,132 @@
         <li class="nav-item active">
             <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)="goTo('result', eventModel._id)">Trang kết quả</button>
         </li>
-        <li class="nav-item active">
-            <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)='showPopupCreateCode()'>Tạo mã</button>
-        </li>
-        <li class="nav-item active">
-            <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; margin-left: 10px; padding-right: 20px;" (click)='showPopupCreateCode()'>Lấy mã</button>
-        </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0 search-box">
-      <input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm" aria-label="Search">
-    </form>
   </div>
 </nav>
 <div class="text-center">
+  <p class="title-sub">TRANG QUẢN LÍ PHẦN THƯỞNG</p>
   <p class="title">{{eventModel.name}}</p>
 </div>
-<div class="row select-container" style="padding: 10px;">
-  <div class="col">
-    <div class="input-group">
-      <select #select class="custom-select" id="select-gift" (change)="selectGift(select)" >
-        <option value="-1">All</option>
-        <option  *ngFor="let gift of eventModel.giftArray; let i = index" value="{{i}}">{{gift.name}}</option>
-      </select>
-    </div>
-  </div>
-</div>
+
 <div class="row" style="padding: 10px;">
   <div class="col text-center">
-    <p class="header-text"><b>SUM: {{currentTotalCode}}</b></p>
+    <p class="header-text"><b>Tổng giải thưởng: {{currentTotalReward}}</b></p>
   </div>
   <div class="col text-center">
-    <p class="header-text"><b>AVAILABLE: {{currentTotalCodeAvailable}}</b></p>
-  </div>
-  <div class="col text-center">
-    <p class="header-text"><b>USED: {{currentTotalCodeUsed}}</b></p>
+    <p class="header-text"><b>Còn lại: {{currentTotalCodeUsed}}</b></p>
   </div>
 </div>
+
 
 <div style="width: 100%; height: 60%; overflow-y: scroll;">
   <table class="event-table table-fixed" class="table table-dark">
     <thead>
       <tr>
-        <th scope="col">Mã</th>
         <th scope="col">Giải thưởng</th>
-        <th scope="col">USED</th>
+        <th scope="col" style="white-space: nowrap;">Tổng giải</th>
+        <th scope="col" style="white-space: nowrap;">Còn lại</th>
       </tr>
     </thead>
-    <tbody id="myTable" *ngFor="let gift of eventModel.giftArray">
-      <tr *ngFor="let codeItem of gift.codeArray; let i = index" (click) = 'selectCode(codeItem)' [attr.data-index]="i">
-          <td>{{codeItem.code}}</td>
+    <tbody id="myTable">
+      <tr *ngFor="let gift of eventModel.giftArray" (click) = 'selectGift(gift)' [attr.data-index]="i">
           <td>{{gift.name}}</td>
-          <td>{{codeItem.isPlayed?'Yes':'No'}}</td>
+          <td style="white-space: nowrap;">{{gift.codeArray.length}}</td>
+          <td style="white-space: nowrap;">{{getUnUsedCodeCount(gift.codeArray)}}</td>
       </tr>
     </tbody>
   </table>
 </div>
 
-
-
-<div class="modal fade" id="create-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header bg-dark">
-          <h5 class="modal-title" id="exampleModalLabel" style="color:white" >TẠO MÃ CHO PHẦN THƯỞNG</h5>
-        </div>
-        <div class="modal-body">
-          <form>
-              <div class="row" 
-              *ngFor="let item of eventModel.giftArray; let i = index" 
-              style="margin-top: 5px;">
-                <div class="col float-container">
-                    <p><b>{{i + ". " +item.name+ ':'}}</b></p>
-                    <img [hidden]="!item.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
-                </div>
-                <div class="col-3">
-                    <input [disabled]="item.isLimited" type="number" 
-                    value="{{item.numberOfReward}}"
-                    (input)="item.numberOfCode = $event.target.value" 
-                    (keyup)="numberOfCodeChange($event)" 
+<div class="modal fade" id="gift-detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >{{currentGift.name}} {{'('+ currentGift.playedCounter + '/' + currentGift.numberOfReward + ')'}}</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Nhập số lượng mã:</label>
+              <div class="row">
+                <div class="col">
+                    <input #inputNumberOfCode id="inputNumberOfCode" type="text" type="number" 
+                    value="{{currentGift.numberOfReward}}"
+                    (input)="currentCodeToBeCreate = $event.target.value" 
                     class="form-control" placeholder="SL mã">
                 </div>
+                <div class="col-4">
+                  <button type="button" (click) = 'showConfirmCreateCode()' class="btn btn-danger">Xuất mã</button>        
+                </div>
               </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" (click) = 'createCode()' class="btn btn-success">Tạo mã</button>
-        </div>
+              
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Lịch sử xuất mã: (Đã xuất: {{currentCodeArrayShow.length}} mã)</label>
+            <div class="input-group">
+              <select #select class="custom-select" id="select-date" (change)="selectDate(select.value)" >
+                <option value="-1">All</option>
+                <option  *ngFor="let group of currentCodeOfGiftGroupByDate; let i = index" value="{{group.date}}">{{group.date | date: 'dd/MM/yyyy hh:mm:ss a'}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div style="width: 100%; max-height: 350px; margin-top: 10px; overflow-y: scroll;">
+                <table class="event-table table-fixed" class="table table-dark">
+                  <thead>
+                    <tr>
+                      <th scope="col">Mã</th>
+                      <th scope="col">USED</th>
+                    </tr>
+                  </thead>
+                  <tbody id="myTable">
+                    <tr *ngFor="let codeItem of currentCodeArrayShow; let i = index" [attr.data-index]="i">
+                        <td>{{codeItem.code}}</td>
+                        <td>{{codeItem.isPlayed?'Yes':'No'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button"  class="btn btn-success">Xuất Excel</button>
+        <button type="button" (click) = 'closePopupGift()' class="btn btn-dark">Đóng</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- <div class="modal fade" id="create-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >TẠO MÃ CHO PHẦN THƯỞNG</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="row" 
+            *ngFor="let item of eventModel.giftArray; let i = index" 
+            style="margin-top: 5px;">
+              <div class="col float-container">
+                  <p><b>{{i + ". " +item.name+ ':'}}</b></p>
+                  <img [hidden]="!item.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
+              </div>
+              <div class="col-3">
+                  <input [disabled]="item.isLimited" type="number" 
+                  value="{{item.numberOfReward}}"
+                  (input)="item.numberOfCode = $event.target.value" 
+                  (keyup)="numberOfCodeChange($event)" 
+                  class="form-control" placeholder="SL mã">
+              </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click) = 'createCode()' class="btn btn-success">Tạo mã</button>
+      </div>
+    </div>
+  </div>
+</div> -->
   

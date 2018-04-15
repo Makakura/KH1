@@ -55,7 +55,7 @@
                     <input #codeInput type="text" [disabled] = 'isCheckingCode' (keyup)="codeInputKeyUp(codeInput.value)" (input)="codeItem.code = $event.target.value" maxlength="8" style="text-transform:uppercase" class="form-control">
                 </div>
                 <div class="col-3">
-                    <button type="button" [disabled] = 'isCheckingCode' (click) = 'codeInputKeyUp(codeInput.value)' class="btn btn-primary">Kiểm tra</button>
+                    <button type="button" [disabled] = 'isCheckingCode' (click) = 'buttonCheckCode(codeInput.value)' class="btn btn-primary">Kiểm tra</button>
                 </div>
             </div>
           </div>
@@ -86,25 +86,3 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="notify-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header" style="background: #073c9a">
-          <label for="recipient-name" id = "notify-header" class="modal-title" style="color:white; font-weight: bold;"></label>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-                <label for="recipient-name" id = "notify-body" class="col-form-label"></label>
-            </div>
-            <div class="form-group">
-                <label for="recipient-name" id = "notify-body-sub" class="col-form-label"></label>
-            </div>
-            <div class="form-group">
-                <a href="" id = "notify-body-link" target="_blank"></a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>

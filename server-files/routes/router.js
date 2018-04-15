@@ -375,9 +375,11 @@ var createCode = function (req, res) {
   });
   req.on('end', function () {
     var jsonData = JSON.parse(jsonString);
+    console.log(jsonData);
     var eventID = jsonData.eventID;
     var giftArrayParam = jsonData.giftArray;
     var dateParam = jsonData.createDate;
+    var arrayCodeCreated = [];
     EventModel.findById(eventID, function(err, event){
       if(err){
         res.status(500).send(err);
@@ -387,12 +389,27 @@ var createCode = function (req, res) {
           for(var j = 0; j < giftArrayParam.length; j++) {
             var giftParam = giftArrayParam[j];
             if (gift.id === giftParam.id) {
-              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam);
+              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam, arrayCodeCreated);
             }
           }
         }
-        console.log(event);
-        saveThisEvent(res, event, true);
+        event.save(function(err){
+          if(err) {
+            res.json(
+              {
+                result: false, 
+                message: 'Lưu kết quả thất bại, xin vui lòng thử lại',  errMsg: err
+              });
+          }
+          else {
+            res.json( 
+              {
+                result: true,
+                message:'success',
+                data: arrayCodeCreated
+              });
+          }
+        });
       } else {
         res.json(
           {
@@ -443,7 +460,7 @@ var checkPhone = function (req, res) {
 }
 
 
-var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam) {
+var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, arrayCodeCreated) {
   for(var i = 0; i < event.giftArray.length; i++) {
     var gift = event.giftArray[i];
     if (gift.id === giftID) {
@@ -456,6 +473,8 @@ var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam) {
           isPlayed: false,
           createdDate: dateParam
         };
+        arrayCodeCreated.push(code);
+        console.log(arrayCodeCreated);
         gift.codeArray.push(code);
       }
     }
