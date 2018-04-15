@@ -329,7 +329,6 @@ var addCodeInfo = function (req, res) {
               if (!codeItem.isPlayed) { // Code chưa được sử dụng
                 codeItem.name = codeItemParam.name;
                 codeItem.phone = codeItemParam.phone;
-                codeItem.fb = codeItemParam.fb;
                 codeItem.isPlayed = true;
                 codeItem.playedDate;
                 isCatched = true;
@@ -375,7 +374,6 @@ var createCode = function (req, res) {
   });
   req.on('end', function () {
     var jsonData = JSON.parse(jsonString);
-    console.log(jsonData);
     var eventID = jsonData.eventID;
     var giftArrayParam = jsonData.giftArray;
     var dateParam = jsonData.createDate;

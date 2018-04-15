@@ -135,7 +135,7 @@ export class HomeComponent implements OnInit {
   }
   
   validateInputData = () => {
-    if (this.codeItem.name && this.codeItem.phone && this.codeItem.fb) {
+    if (this.codeItem.name && this.codeItem.phone) {
        return true;
     }
     return false ;
