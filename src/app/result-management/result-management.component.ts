@@ -14,12 +14,13 @@ import { Router } from '@angular/router';
 })
 export class ResultManagementComponent implements OnInit {
   eventModel: EventWheelModel = new EventWheelModel();
-  codeArray = [];
   currentTotalCode = 0;
   sub: any;
-  giftSelectedIndex = 0;
   searchFilter = '';
   giftFilter = '';
+
+  currentCode = {};
+  currentGift = {};
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
@@ -63,22 +64,6 @@ export class ResultManagementComponent implements OnInit {
     this.sub.unsubscribe();
   }
 
-  showPopupCreateCode() {
-    for (let i = 0; i < this.eventModel.giftArray.length; i++) {
-      let gift = this.eventModel.giftArray[i];
-      gift.numberOfCode = gift.numberOfReward;
-    }
-    $('#create-code').modal('show');
-  }
-
-  numberOfCodeChange = (event) => {
-    if (!event.target.value || event.target.value < 0 ) {
-      event.target.value = '';
-    }
-  }
-
-  createCode = () => {
-  }
 
   selectGift = (selector) => {
     if (selector.value === "-1" ) {
@@ -118,8 +103,11 @@ export class ResultManagementComponent implements OnInit {
     }
   }
 
-  selectCode = () => {
-
+  selectCode = (code, gift) => {
+    console.log('123');
+    this.currentCode = code;
+    this.currentGift = gift;
+    $('#show-code').modal('show');
   }
 
   filterTheCode = (ev) => {

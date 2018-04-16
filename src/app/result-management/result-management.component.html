@@ -6,10 +6,7 @@
       <a class="navbar-brand" href="#">VỀ TRANG CHỦ</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
           <li class="nav-item active">
-              <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)="goTo('code', eventModel._id)">Quản lí mã</button>
-          </li>
-          <li class="nav-item active">
-              <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)='showPopupCreateCode()'>Xuất kết quả</button>
+              <button class="btn btn-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)="goTo('code', eventModel._id)">Quản lý mã</button>
           </li>
       </ul>
       <form class="form-inline my-2 my-lg-0 search-box">
@@ -18,6 +15,7 @@
     </div>
   </nav>
   <div class="text-center">
+    <p class="title-sub">TRANG QUẢN KẾT QUẢ</p>
     <p class="title">{{eventModel.name}}</p>
   </div>
   <div class="row select-container" style="padding: 10px;">
@@ -29,8 +27,6 @@
         </select>
       </div>
     </div>
-  </div>
-  <div class="row" style="padding: 10px;">
     <div class="col text-center">
       <p class="header-text"><b>SUM: {{currentTotalCode}}</b></p>
     </div>
@@ -47,7 +43,7 @@
         </tr>
       </thead>
       <tbody id="myTable" *ngFor="let gift of eventModel.giftArray">
-        <tr *ngFor="let codeItem of gift.codeArray; let i = index" (click) = 'selectCode(codeItem)' [attr.data-index]="i">
+        <tr *ngFor="let codeItem of gift.codeArray; let i = index" (click) = 'selectCode(codeItem, gift)' [attr.data-index]="i">
             <td>{{codeItem.code}}</td>
             <td>{{gift.name}}</td>
             <td>{{codeItem.name}}</td>
@@ -59,33 +55,42 @@
   
   
   
-  <div class="modal fade" id="create-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="show-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header bg-dark">
-            <h5 class="modal-title" id="exampleModalLabel" style="color:white" >TẠO MÃ CHO PHẦN THƯỞNG</h5>
+            <h5 class="modal-title" id="exampleModalLabel" style="color:white" >CHI TIẾT KẾT QUẢ</h5>
           </div>
           <div class="modal-body">
             <form>
-                <div class="row" 
-                *ngFor="let item of eventModel.giftArray; let i = index" 
-                style="margin-top: 5px;">
-                  <div class="col float-container">
-                      <p><b>{{i + ". " +item.name+ ':'}}</b></p>
-                      <img [hidden]="!item.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
-                  </div>
-                  <div class="col-3">
-                      <input [disabled]="item.isLimited" type="number" 
-                      value="{{item.numberOfReward}}"
-                      (input)="item.numberOfCode = $event.target.value" 
-                      (keyup)="numberOfCodeChange($event)" 
-                      class="form-control" placeholder="SL mã">
-                  </div>
-                </div>
+              <table class="table code-detail borderless" style="background-color: transparent;">
+                <tbody>
+                  <tr>
+                      <td>Mã thưởng:</td>
+                      <td class="value">{{currentCode.code}}</td>
+                  </tr>
+                  <tr>
+                      <td>Phần thưởng:</td>
+                      <td class="value">{{currentGift.name}}</td>
+                  </tr>
+                  <tr>
+                      <td>Tên:</td>
+                      <td class="value">{{currentCode.name}}</td>
+                  </tr>
+                  <tr>
+                      <td>Số điện thoại:</td>
+                      <td class="value">{{currentCode.phone}}</td>
+                  </tr>
+                  <tr>
+                      <td>Ngày quay:</td>
+                      <td class="value">{{currentCode.createdDate | date: 'dd/MM/yyyy hh:mma'}}</td>
+                  </tr>
+                </tbody>
+              </table>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" (click) = 'createCode()' class="btn btn-success">Tạo mã</button>
+            <button type="button"  class="btn btn-success">Tạo mã</button>
           </div>
         </div>
       </div>

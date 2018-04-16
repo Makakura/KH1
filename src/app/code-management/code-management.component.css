@@ -29,10 +29,6 @@ table tr{
     background-size: cover;
 }
 
-table {
-    background-color: rgba(0, 0, 0, 0.71);
-}
-
 table thead {
     background: black;
 }
