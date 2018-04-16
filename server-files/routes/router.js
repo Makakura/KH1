@@ -499,13 +499,13 @@ var getResult = function (req, res) {
             }
           }
         }
-        resultArray = [
-          [], // 0 code
-          [], // 1 name
-          [], // 2 phone
-          [], // 3 giftName
-          []  // 4 playedDate
-        ];
+        resultArray = {
+          code: [], // 0 code
+          name: [], // 1 name
+          phone: [], // 2 phone
+          giftName: [], // 3 giftName
+          playedDate: []  // 4 playedDate
+        };
 
         for(var i = 0; i < array.length; i++) {
           let codeItem = array[i];
