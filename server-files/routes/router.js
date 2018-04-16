@@ -46,9 +46,14 @@ router.put('/addcodeinfo', function(req, res){
 	addCodeInfo(req, res);
 });
 
-// Check valid Code
-router.post('/getresult', function(req, res){
-	getResult(req, res);
+// // Get result
+// router.post('/getresult', function(req, res){
+// 	getResult(req, res);
+// });
+
+// Get result
+router.get('/getresult/:_id', function(req, res){
+	getResultEvent(req, res);
 });
 
 // Get IP
@@ -462,72 +467,117 @@ var checkPhone = function (req, res) {
   });
 }
 
-var getResult = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var jsonData = JSON.parse(jsonString)
-    var eventID = jsonData.eventID;
-    var giftIndex = jsonData.giftIndex;
-    EventModel.findById(eventID, function(err,event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event){
-        let array = [];
-        for(var i = 0; i < event.giftArray.length; i++) {
-          var gift = event.giftArray[i];
-          if (giftIndex === -1) {
-            for(var j = 0; j < gift.codeArray.length; j++) {
-              let code = gift.codeArray[j];
-              if (code.isPlayed) {
-                code.giftName = gift.name;
-                array.push(code);
-              }
-            }
-          } else if (giftIndex > -1) {
-            if (giftIndex === gift.id) {
-              for(var j = 0; j < gift.codeArray.length; j++) {
-                let code = gift.codeArray[j];
-                if (code.isPlayed) {
-                  code.giftName = gift.name;
-                  console.log(code);
-                  array.push(code);
-                }
-              }
-            }
-          }
+var getResultEvent = function (req, res) {
+  EventModel.findById(req.params._id, function(err,event){
+  if(err){
+    res.status(500).send(err);
+  } else if(event){
+    let array = [];
+    for(var i = 0; i < event.giftArray.length; i++) {
+      var gift = event.giftArray[i];
+      for(var j = 0; j < gift.codeArray.length; j++) {
+        let code = gift.codeArray[j];
+        if (code.isPlayed) {
+          code.giftName = gift.name;
+          array.push(code);
         }
-        resultArray = {
-          code: [], // 0 code
-          name: [], // 1 name
-          phone: [], // 2 phone
-          giftName: [], // 3 giftName
-          playedDate: []  // 4 playedDate
-        };
-
-        for(var i = 0; i < array.length; i++) {
-          let codeItem = array[i];
-          resultArray.code.push(codeItem.code);
-          resultArray.name.push(codeItem.name);
-          resultArray.phone.push(codeItem.phone);
-          resultArray.giftName.push(codeItem.giftName);
-          resultArray.playedDate.push(codeItem.playedDate);
-        }
-
-        res.json(resultArray);
       }
-      else{
-        res.json({
-          result: false,
-          message: 'Không tìm thấy sự kiện',
-          data: {}
-        });
-      }
+    }
+    resultArray = {
+      code: [], // 0 code
+      name: [], // 1 name
+      phone: [], // 2 phone
+      giftName: [], // 3 giftName
+      playedDate: []  // 4 playedDate
+    };
+
+    for(var i = 0; i < array.length; i++) {
+      let codeItem = array[i];
+      resultArray.code.push(codeItem.code);
+      resultArray.name.push(codeItem.name);
+      resultArray.phone.push(codeItem.phone);
+      resultArray.giftName.push(codeItem.giftName);
+      resultArray.playedDate.push(codeItem.playedDate);
+    }
+
+    res.json(resultArray);
+  }
+  else{
+    res.json({
+      result: false,
+      message: 'Không tìm thấy sự kiện',
+      data: {}
     });
+  }
   });
 }
+
+// var getResult = function (req, res) {
+//   var jsonString = '';
+//   req.on('data', function (data) {
+//       jsonString += data;
+//   });
+//   req.on('end', function () {
+//     var jsonData = JSON.parse(jsonString)
+//     var eventID = jsonData.eventID;
+//     var giftIndex = jsonData.giftIndex;
+//     EventModel.findById(eventID, function(err,event){
+//       if(err){
+//         res.status(500).send(err);
+//       } else if(event){
+//         let array = [];
+//         for(var i = 0; i < event.giftArray.length; i++) {
+//           var gift = event.giftArray[i];
+//           if (giftIndex === -1) {
+//             for(var j = 0; j < gift.codeArray.length; j++) {
+//               let code = gift.codeArray[j];
+//               if (code.isPlayed) {
+//                 code.giftName = gift.name;
+//                 array.push(code);
+//               }
+//             }
+//           } else if (giftIndex > -1) {
+//             if (giftIndex === gift.id) {
+//               for(var j = 0; j < gift.codeArray.length; j++) {
+//                 let code = gift.codeArray[j];
+//                 if (code.isPlayed) {
+//                   code.giftName = gift.name;
+//                   console.log(code);
+//                   array.push(code);
+//                 }
+//               }
+//             }
+//           }
+//         }
+//         resultArray = {
+//           code: [], // 0 code
+//           name: [], // 1 name
+//           phone: [], // 2 phone
+//           giftName: [], // 3 giftName
+//           playedDate: []  // 4 playedDate
+//         };
+
+//         for(var i = 0; i < array.length; i++) {
+//           let codeItem = array[i];
+//           resultArray.code.push(codeItem.code);
+//           resultArray.name.push(codeItem.name);
+//           resultArray.phone.push(codeItem.phone);
+//           resultArray.giftName.push(codeItem.giftName);
+//           resultArray.playedDate.push(codeItem.playedDate);
+//         }
+
+//         res.json(resultArray);
+//       }
+//       else{
+//         res.json({
+//           result: false,
+//           message: 'Không tìm thấy sự kiện',
+//           data: {}
+//         });
+//       }
+//     });
+//   });
+// }
 
 
 
