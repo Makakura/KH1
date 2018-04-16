@@ -19,8 +19,15 @@ export class ResultManagementComponent implements OnInit {
   searchFilter = '';
   giftFilter = '';
 
-  currentCode = {};
-  currentGift = {};
+  currentCode = {
+    name: '',
+    code: '',
+    phone: '',
+    createdDate: ''
+  };
+  currentGift = {
+    name: ''
+  };
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
@@ -104,7 +111,6 @@ export class ResultManagementComponent implements OnInit {
   }
 
   selectCode = (code, gift) => {
-    console.log('123');
     this.currentCode = code;
     this.currentGift = gift;
     $('#show-code').modal('show');
