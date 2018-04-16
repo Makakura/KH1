@@ -523,11 +523,7 @@ var getResult = function (req, res) {
         });
       }
       else{
-        res.json({
-          result: false,
-          message: 'Không tìm thấy sự kiện',
-          data: {}
-        });
+        res.json(resultArray);
       }
     });
   });
