@@ -497,7 +497,7 @@ var getResultEvent = function (req, res) {
       resultArray.name.push(codeItem.name);
       resultArray.phone.push(codeItem.phone);
       resultArray.giftName.push(codeItem.giftName);
-      resultArray.playedDate.push(codeItem.playedDate);
+      resultArray.playedDate.push(codeItem.playedDate.replace(/T/, ' ').replace(/\..+/, ''));
     }
 
     res.json(resultArray);
