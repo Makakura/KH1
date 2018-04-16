@@ -46,6 +46,11 @@ router.put('/addcodeinfo', function(req, res){
 	addCodeInfo(req, res);
 });
 
+// Check valid Code
+router.post('/getresult', function(req, res){
+	getResult(req, res);
+});
+
 // Get IP
 router.get('/ip', function(req, res){
 	var ip;
@@ -456,6 +461,78 @@ var checkPhone = function (req, res) {
     });
   });
 }
+
+var getResult = function (req, res) {
+  var jsonString = '';
+  req.on('data', function (data) {
+      jsonString += data;
+  });
+  req.on('end', function () {
+    var jsonData = JSON.parse(jsonString)
+    var eventID = jsonData.eventID;
+    var giftIndex = jsonData.giftIndex;
+    EventModel.findById(eventID, function(err,event){
+      if(err){
+        res.status(500).send(err);
+      } else if(event){
+        let array = [];
+        for(var i = 0; i < event.giftArray.length; i++) {
+          var gift = event.giftArray[i];
+          if (giftIndex === -1) {
+            for(var j = 0; j < gift.codeArray.length; j++) {
+              let code = gift.codeArray[j];
+              if (code.isPlayed) {
+                code.giftName = gift.name;
+                array.push(code);
+              }
+            }
+          } else if (giftIndex > -1) {
+            if (giftIndex === gift.id) {
+              for(var j = 0; j < gift.codeArray.length; j++) {
+                let code = gift.codeArray[j];
+                if (code.isPlayed) {
+                  code.giftName = gift.name;
+                  console.log(code);
+                  array.push(code);
+                }
+              }
+            }
+          }
+        }
+        resultArray = [
+          [], // 0 code
+          [], // 1 name
+          [], // 2 phone
+          [], // 3 giftName
+          []  // 4 playedDate
+        ];
+
+        for(var i = 0; i < array.length; i++) {
+          let codeItem = array[i];
+          resultArray[0].push(codeItem.code);
+          resultArray[1].push(codeItem.name);
+          resultArray[2].push(codeItem.phone);
+          resultArray[3].push(codeItem.giftName);
+          resultArray[4].push(codeItem.playedDate);
+        }
+
+        res.json({
+          result: true,
+          message: 'success',
+          data: resultArray
+        });
+      }
+      else{
+        res.json({
+          result: false,
+          message: 'Không tìm thấy sự kiện',
+          data: {}
+        });
+      }
+    });
+  });
+}
+
 
 
 var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, arrayCodeCreated) {

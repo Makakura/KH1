@@ -27,6 +27,10 @@ var CodeModel = mongoose.Schema({
     playedDate: {
         type: Date,
         default: new Date()
+    },
+    giftName: {
+        type: String,
+        default: ''
     }
 });
 module.exports = CodeModel;
