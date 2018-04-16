@@ -43,11 +43,6 @@ export class HomeComponent implements OnInit {
   }
 
   initCssView = () => {
-    $('#inputModal').modal({
-      backdrop: 'static',
-      keyboard: false
-    })
-    $('#inputModal').modal('show');
     $('body').css('background-color', 'darkred');
     $('body').css('background-image', 'none');
   }
@@ -75,10 +70,9 @@ export class HomeComponent implements OnInit {
   
   start = () => {
     if (this.isCompleteInput && this.currentNumber > -1  && this.giftName) {
-      this.isCompleteInput = false;
+      this.isPlayed = true;
       this.audioRotate.play();
       let that = this;
-
       this.curClass = "rotate";
 
       setTimeout(function(){
@@ -99,7 +93,7 @@ export class HomeComponent implements OnInit {
         that.currentEvent.linkPostFB);
       }, 14500);
     } else {
-      console.log('Đã có lỗi xảy ra, xin vui lòng thử lại')
+      $('#inputModal').modal('show');
     }
   }
 

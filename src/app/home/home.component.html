@@ -37,7 +37,7 @@
 </div>
 <div class="row at-bottom">
     <div class="col-sm text-center">
-        <button [hidden] = "!isCompleteInput" type="button" (click)='start()' class="btn btn-outline-warning"><b>QUAY</b></button>
+        <button [hidden]="isPlayed" type="button" (click)='start()' class="btn btn-outline-warning"><b>{{isCompleteInput? 'QUAY' : 'NHẬP MÃ DỰ THƯỞNG' }}</b></button>
     </div>
 </div>
 <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
