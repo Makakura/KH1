@@ -516,11 +516,7 @@ var getResult = function (req, res) {
           resultArray.playedDate.push(codeItem.playedDate);
         }
 
-        res.json({
-          result: true,
-          message: 'success',
-          data: resultArray
-        });
+        res.json(resultArray);
       }
       else{
         res.json({
