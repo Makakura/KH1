@@ -509,11 +509,11 @@ var getResult = function (req, res) {
 
         for(var i = 0; i < array.length; i++) {
           let codeItem = array[i];
-          resultArray[0].push(codeItem.code);
-          resultArray[1].push(codeItem.name);
-          resultArray[2].push(codeItem.phone);
-          resultArray[3].push(codeItem.giftName);
-          resultArray[4].push(codeItem.playedDate);
+          resultArray.code.push(codeItem.code);
+          resultArray.name.push(codeItem.name);
+          resultArray.phone.push(codeItem.phone);
+          resultArray.giftName.push(codeItem.giftName);
+          resultArray.playedDate.push(codeItem.playedDate);
         }
 
         res.json({
