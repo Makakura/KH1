@@ -34,17 +34,21 @@ export class EventManagementComponent implements OnInit {
   }
 
   getEventsToView = () => {
+    $('#spinner').css('visibility', 'visible');
     this.eventService.getEvents().subscribe(
       res => {
         let resJson = res.json();
         if (resJson.result) {
           this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
+           $('#spinner').css('visibility', 'hidden');
         } else {
           console.log(resJson.message);
+          $('#spinner').css('visibility', 'hidden');
         }
       },
       err => {
-        console.log('Không kết nối được tới server, xin vui lòng thử lại')
+        console.log('Không kết nối được tới server, xin vui lòng thử lại');
+        $('#spinner').css('visibility', 'hidden');
       });
   }
 
