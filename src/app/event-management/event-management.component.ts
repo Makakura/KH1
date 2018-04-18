@@ -34,21 +34,21 @@ export class EventManagementComponent implements OnInit {
   }
 
   getEventsToView = () => {
-    $('#spinner').css('visibility', 'visible');
+    this.showSpinner();
     this.eventService.getEvents().subscribe(
       res => {
         let resJson = res.json();
         if (resJson.result) {
           this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
-           $('#spinner').css('visibility', 'hidden');
+          this.hideSpinner(2000);
         } else {
           console.log(resJson.message);
-          $('#spinner').css('visibility', 'hidden');
+          this.hideSpinner(2000);
         }
       },
       err => {
         console.log('Không kết nối được tới server, xin vui lòng thử lại');
-        $('#spinner').css('visibility', 'hidden');
+        this.hideSpinner(2000);
       });
   }
 
@@ -247,6 +247,16 @@ export class EventManagementComponent implements OnInit {
 
   selectEditStatus = (selector) => {
     this.editingEvent.status =  $('#select-status').val();
+  }
+  
+  showSpinner = () => {
+    $('#spinner').css('visibility', 'visible');
+  }
+  
+  hideSpinner = (delay) => {
+    setTimeout(function(){
+      $('#spinner').css('visibility', 'hidden');
+    }, delay);
   }
 }
 
