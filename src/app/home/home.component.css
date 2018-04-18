@@ -57,6 +57,13 @@ label {
     padding-right: 70px; 
 }
 
+.float {
+    position: absolute;
+    width: 12%;
+    top: 15%;
+    right: 2%;
+}
+
 .wheel-container .rotate{
     -webkit-animation:spin 1000ms linear infinite;
     -moz-animation:spin 1000ms linear infinite;

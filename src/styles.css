@@ -29,7 +29,7 @@ table {
 /*  Spinner*/
 .loading {
   position: fixed;
-  z-index: 999;
+  z-index: 99999;
   height: 1em;
   width: 1em;
   overflow: show;
@@ -67,8 +67,8 @@ table {
   content: '';
   display: block;
   font-size: 20px;
-  width: 0.3em;
-  height: 0.3em;
+  width: 0.4em;
+  height: 0.4em;
   margin-top: -0.5em;
   -webkit-animation: spinner 1500ms infinite linear;
   -moz-animation: spinner 1500ms infinite linear;

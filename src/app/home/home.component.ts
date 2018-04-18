@@ -43,11 +43,12 @@ export class HomeComponent implements OnInit {
   }
 
   initCssView = () => {
-    $('body').css('background-color', 'darkred');
     $('body').css('background-image', 'none');
+    $('body').css('background-color', '#6d0000');
   }
 
   getEvent = () => {
+    this.showSpinner();
     this.sub = this.route.params.subscribe(params => {
       let id = params['id'];
       if (id){ 
@@ -56,11 +57,14 @@ export class HomeComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.currentEvent = this.eventService.converJsonToEvent(resJson.data);
+              this.hideSpinner(1000);
             } else {
+              this.hideSpinner(1000);
               console.log(resJson.message);
             }
           },
           err => {
+            this.hideSpinner(1000);
             console.log('Không kết nối được tới server, xin vui lòng thử lại')
           });
       }
@@ -86,24 +90,26 @@ export class HomeComponent implements OnInit {
       }, 13500);
 
       setTimeout(function(){
+        $('#notify-model').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
         that.displayNotify(
           "CHÚC MỪNG !!!", 
         "Bạn đã nhận được: " + that.giftName, 
         "Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.",
-        that.currentEvent.linkPostFB);
+        that.currentEvent.linkPostFB,
+        true);
       }, 14500);
     } else {
       $('#inputModal').modal('show');
     }
   }
-
-  fireworkClick = () => {
-    this.isShowFireWork = false;
-  }
   
   completeInput = () => {
     // Validate input data
     if (this.validateInputData()) {
+      this.showSpinner();
       this.eventService.checkPhone(this.codeItem.phone, this.currentEvent._id).subscribe(
         res => {
           let resJson = res.json();
@@ -118,8 +124,10 @@ export class HomeComponent implements OnInit {
             console.log(resJson.message);
             return false;
           }
+          this.hideSpinner(0);
         },
         err => {
+          this.hideSpinner(0);
           console.log('Không kết nối được tới server, xin vui lòng thử lại')
         });  
     } else {
@@ -136,6 +144,7 @@ export class HomeComponent implements OnInit {
   }
 
   checkValidCode = (code) => {
+    this.showSpinner();
     this.eventService.checkCode(code, this.currentEvent._id).subscribe(
       res => {
         let resJson = res.json();
@@ -145,7 +154,7 @@ export class HomeComponent implements OnInit {
           this.isValidCode = true;
           this.isCheckingCode = true;
           // focus next textbox
-          $('#input-name').focus();
+          $('input[type="text"]').get(1).focus();
         } else if (!resJson.result || !resJson.data.isValid){
           this.displayNotify("THÔNG BÁO", resJson.message);
           this.isValidCode = false;
@@ -155,9 +164,10 @@ export class HomeComponent implements OnInit {
           this.isValidCode = false;
           this.isCheckingCode = false;
         }
-        
+        this.hideSpinner(0);
       },
       err => {
+        this.hideSpinner(0);
         this.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
         this.isValidCode = false;
         this.isCheckingCode = false;
@@ -224,7 +234,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  displayNotify (header, body, sub?, link?) {
+  displayNotify (header, body, sub?, link?, isShowCloseButton?) {
     $("#notify-header").text(header);
     $("#notify-body").text(body);
     if (sub) {
@@ -239,5 +249,20 @@ export class HomeComponent implements OnInit {
       $("#notify-body-link").text('');
     }
     $('#notify-model').modal('show');
+    if(isShowCloseButton) {
+      $(".notify-button").css('visibility', 'visible');
+    } else {
+      $(".notify-button").css('visibility', 'hidden');
+    }
+  }
+
+  showSpinner = () => {
+    $('#spinner').css('visibility', 'visible');
+  }
+  
+  hideSpinner = (delay) => {
+    setTimeout(function(){
+      $('#spinner').css('visibility', 'hidden');
+    }, delay);
   }
 }

@@ -37,7 +37,7 @@
 </div>
 <div class="row at-bottom">
     <div class="col-sm text-center">
-        <button [hidden]="isPlayed" type="button" (click)='start()' class="btn btn-outline-warning"><b>{{isCompleteInput? 'QUAY' : 'NHẬP MÃ DỰ THƯỞNG' }}</b></button>
+        <button [hidden]="isPlayed" type="button" (click)='start()' class="btn btn-outline-warning" style="background: #98000f;"><b>{{isCompleteInput? 'QUAY' : 'NHẬP MÃ DỰ THƯỞNG' }}</b></button>
     </div>
 </div>
 <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -51,15 +51,15 @@
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Mã dự thưởng:</label>
             <div class="row">
-                <div class="col-5" style="padding-right: 0px;">
+                <div class="col-5 float-container" style="padding-right: 0px;">
                     <input #codeInput type="text" [disabled] = 'isCheckingCode' (keyup)="codeInputKeyUp(codeInput.value)" (input)="codeItem.code = $event.target.value" maxlength="8" style="text-transform:uppercase" class="form-control">
+                    <img [hidden]="!isValidCode" class="float" src="../../assets/img/checked.png">
                 </div>
                 <div class="col-3">
                     <button type="button" [disabled] = 'isCheckingCode' (click) = 'buttonCheckCode(codeInput.value)' class="btn btn-primary">Kiểm tra</button>
                 </div>
             </div>
           </div>
-          <!-- <button #codeCheckButton type="button" [disabled] = 'isValidCode' (click)='checkValidCode(codeInput.value)' class="btn btn-danger">Kiểm tra</button> -->
           <div class="form-group">
               <label for="recipient-name" class="col-form-label">Họ và tên*:</label>
               <input id="input-name" type="text" [disabled] = '!isValidCode' (input)="codeItem.name = $event.target.value" maxlength="40" class="form-control">
@@ -69,7 +69,7 @@
               <input id="phoneInput" type="number" [disabled] = '!isValidCode' (keyup)="phoneKeyUp()" (input)="codeItem.phone = $event.target.value" class="form-control">
           </div>
           <div class="form-group">
-            <p for="recipient-name" class="col-form-label">Bằng việc tham gia chương trình đồng nghĩa với việc bạn sẽ chấp nhận các quy định và điều khoản của chúng tôi: <a href="{{currentEvent.linkToPrivacy}}" target="_blank">Term and privacy</a></p>
+            <p for="recipient-name" class="col-form-label">Bằng việc tham gia chương trình đồng nghĩa với việc bạn sẽ chấp nhận các <a href="{{currentEvent.linkToPrivacy}}" target="_blank">Quy định và Điều khoản</a> của chúng tôi.</p>
           </div>
         </form>
       </div>
