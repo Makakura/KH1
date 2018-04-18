@@ -133,6 +133,10 @@ export class ResultManagementComponent implements OnInit {
     return evClone;
   }
 
+  closeModal = () => {
+    $('#show-code').modal('hide');
+  }
+
   goTo = (page, param) => {
     this.router.navigate(['/' + page, param]);
   }
