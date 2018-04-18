@@ -36,31 +36,32 @@
       </div>
     </div>
     <div class="modal fade" id="confirm-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header" style="background: #073c9a">
-              <label for="recipient-name" id = "confirm-header" class="modal-title" style="color:white; font-weight: bold;"></label>
-            </div>
-            <div class="modal-body">
-              <form>
-                <div class="form-group">
-                    <label for="recipient-name" id = "confirm-body" class="col-form-label"></label>
-                </div>
-                <div class="form-group" style="margin-top:10px">
-                    <div class="row">
-                        <div class="col text-center">
-                            <button id="confirm-cancel" type="button" (click) = 'createCode(inputNumberOfCode.value)' class="btn btn-dark">  Hủy  </button>       
-                        </div>
-                        <div class="col text-center">
-                          <button id="confirm-ok" type="button" (click) = 'createCode(inputNumberOfCode.value)' class="btn btn-success">  OK  </button>        
-                        </div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background: #073c9a">
+            <label for="recipient-name" id = "confirm-header" class="modal-title" style="color:white; font-weight: bold;"></label>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                  <label for="recipient-name" id = "confirm-body" class="col-form-label"></label>
+              </div>
+              <div class="form-group" style="margin-top:10px">
+                  <div class="row">
+                      <div class="col text-center">
+                          <button id="confirm-cancel" type="button" (click) = 'createCode(inputNumberOfCode.value)' class="btn btn-dark">  Hủy  </button>       
                       </div>
-                </div>
-              </form>
-            </div>
+                      <div class="col text-center">
+                        <button id="confirm-ok" type="button" (click) = 'createCode(inputNumberOfCode.value)' class="btn btn-success">  OK  </button>        
+                      </div>
+                    </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
+    </div>
+  <div class="loading" id="spinner" >Loading&#8230;</div>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
