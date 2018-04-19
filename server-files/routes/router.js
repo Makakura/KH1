@@ -490,14 +490,13 @@ var getResultEvent = function (req, res) {
       giftName: [], // 3 giftName
       playedDate: []  // 4 playedDate
     };
-
     for(var i = 0; i < array.length; i++) {
       let codeItem = array[i];
       resultArray.code.push(codeItem.code);
       resultArray.name.push(codeItem.name);
       resultArray.phone.push(codeItem.phone);
       resultArray.giftName.push(codeItem.giftName);
-      resultArray.playedDate.push(codeItem.playedDate.replace(/T/, ' ').replace(/\..+/, ''));
+      resultArray.playedDate.push(codeItem.playedDate.toISOString().replace(/T/, ' ').replace(/\..+/, ''));
     }
 
     res.json(resultArray);
