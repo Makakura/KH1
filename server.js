@@ -10,7 +10,7 @@ setInterval(function() {
   if (currentHour >= 7 && currentHour <22)
     console.log("WakeUp server" + currentHour);
     http.get("http://quaythuong.herokuapp.com");
-}, 3000);
+}, 600000);
 
 // Import router
  var router = require('./server-files/routes/router');
