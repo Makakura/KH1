@@ -6,8 +6,10 @@ app.use(cors())
 
 var http = require("http");
 setInterval(function() {
-    console.log(new Date().getHours());
-    // http.get("http://<your app name>.herokuapp.com");
+  let currentHour = new Date().getHours() + 7;
+  if (currentHour >= 7 && currentHour <22)
+    console.log("WakeUp server" + currentHour);
+    http.get("http://quaythuong.herokuapp.com");
 }, 3000);
 
 // Import router
