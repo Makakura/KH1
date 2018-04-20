@@ -6,7 +6,7 @@ app.use(cors())
 
 var http = require("http");
 setInterval(function() {
-    console.log(new Date().toISOString());
+    console.log(new Date().getHours());
     // http.get("http://<your app name>.herokuapp.com");
 }, 3000);
 
