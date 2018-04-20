@@ -40,15 +40,15 @@ export class EventManagementComponent implements OnInit {
         let resJson = res.json();
         if (resJson.result) {
           this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
-          this.hideSpinner(2000);
+          this.hideSpinner(1000);
         } else {
           console.log(resJson.message);
-          this.hideSpinner(2000);
+          this.hideSpinner(1000);
         }
       },
       err => {
         console.log('Không kết nối được tới server, xin vui lòng thử lại');
-        this.hideSpinner(2000);
+        this.hideSpinner(1000);
       });
   }
 
