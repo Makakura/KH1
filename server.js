@@ -4,6 +4,12 @@ const express = require('express');
 const app = express();
 app.use(cors())
 
+var http = require("http");
+setInterval(function() {
+    console.log(new Date().toISOString());
+    // http.get("http://<your app name>.herokuapp.com");
+}, 3000);
+
 // Import router
  var router = require('./server-files/routes/router');
 
