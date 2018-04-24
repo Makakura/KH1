@@ -5,15 +5,15 @@ const app = express();
 app.use(cors())
 
 var http = require("http");
-setInterval(function() {
+/* setInterval(function() {
   let currentHour = new Date().getHours() + 7;
   if (currentHour >= 7 && currentHour <22)
     console.log("WakeUp server" + currentHour);
     http.get("http://quaythuong.herokuapp.com");
-}, 600000);
+}, 600000); */
 
 // Import router
- var router = require('./server-files/routes/router');
+var router = require('./server-files/routes/router');
 
 // Connect to mongodb
 var mongoose = require('mongoose');
