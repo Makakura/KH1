@@ -87,7 +87,9 @@ import { map } from 'rxjs/operators';
     }
 
     sendResult = (codeItemParam, eventIDParam): any => {
-        codeItemParam.playedDate = new Date()
+        let thisDate =  new Date();
+        codeItemParam.playedDate = thisDate
+        codeItemParam.clientPlayedDate = thisDate.toLocaleString('en-GB') + ' ' + thisDate.toLocaleTimeString();
         let bodyData = {
             eventID: eventIDParam,
             codeItem: codeItemParam

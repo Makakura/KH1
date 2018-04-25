@@ -28,6 +28,10 @@ var CodeModel = mongoose.Schema({
         type: Date,
         default: new Date()
     },
+    clientPlayedDate: {
+        type: String,
+        default: ''
+    },
     giftName: {
         type: String,
         default: ''

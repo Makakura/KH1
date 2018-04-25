@@ -340,6 +340,7 @@ var addCodeInfo = function (req, res) {
                 codeItem.phone = codeItemParam.phone;
                 codeItem.isPlayed = true;
                 codeItem.playedDate = codeItemParam.playedDate;
+                codeItem.clientPlayedDate = codeItemParam.clientPlayedDate;
                 isCatched = true;
                 gift.playedCounter++;
                 saveThisEvent(res, event, false);
@@ -496,7 +497,7 @@ var getResultEvent = function (req, res) {
       resultArray.name.push(codeItem.name);
       resultArray.phone.push(codeItem.phone);
       resultArray.giftName.push(codeItem.giftName);
-      resultArray.playedDate.push(codeItem.playedDate.toLocaleDateString('en-GB') + codeItem.playedDate.toTimeString());
+      resultArray.playedDate.push(codeItem.clientPlayedDate);
     }
 
     res.json(resultArray);
