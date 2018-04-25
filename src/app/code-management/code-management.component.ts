@@ -24,6 +24,8 @@ export class CodeManagementComponent implements OnInit {
   currentGift: GiftModel = new GiftModel(0, '', 0, false, false);
   currentCodeArrayShow = [];
   currentCodeOfGiftGroupByDate = [];
+  currentCodeExport = '';
+  
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
@@ -91,9 +93,11 @@ export class CodeManagementComponent implements OnInit {
       event.target.value = '';
     }
   }
+
   showConfirmCreateCode = () => {
     this.displayConfirmDialog('LƯU Ý:', 'Bạn có muốn xuất '+ Number.parseInt($('#inputNumberOfCode').val()) +' mã cho phần thưởng: ' + this.currentGift.name, 'closeConfirmDialog', 'createCode');
   }
+
   createCode = () => {
     let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
     let thisDate = new Date();
@@ -116,7 +120,7 @@ export class CodeManagementComponent implements OnInit {
           this.currentGift.codeArray.push(element);
           this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
           this.selectGift(this.currentGift);
-          this.displayNotify('THÔNG BÁO', 'ĐÃ TẠO MÃ THÀNH CÔNG');
+          FNC.displayNotify('THÔNG BÁO', 'ĐÃ TẠO MÃ THÀNH CÔNG');
           });
         } else {
           console.log(resJson.message);
@@ -131,8 +135,10 @@ export class CodeManagementComponent implements OnInit {
   selectDate = (value) => {
     if (value === '-1' ) {
       this.currentCodeArrayShow = this.currentGift.codeArray;
+      this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
     } else {
       let dateSelected = $('#select-date option:selected').val();
+      this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id + ';' + dateSelected;
       this.currentCodeArrayShow = this.getCodeArrayByDate(this.currentCodeOfGiftGroupByDate, dateSelected);
     }
     this.currentCodeArrayShow = this.sortByKey(this.currentCodeArrayShow, 'isPlayed').reverse();    
@@ -151,6 +157,7 @@ export class CodeManagementComponent implements OnInit {
 
   selectGift = (gift) => {
     this.currentGift = gift;
+    this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
     this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
     this.selectDate('-1');
     $('#gift-detail').modal('show');
@@ -204,6 +211,7 @@ export class CodeManagementComponent implements OnInit {
     }
     return undefined;
   }
+
   calValueReport = () => {
     this.currentTotalReward = 0;
     this.currentTotalCodeUsed = 0;
@@ -215,6 +223,20 @@ export class CodeManagementComponent implements OnInit {
     }
   }
 
+  exportAllCodes = () => {
+    this.currentCodeExport = this.eventModel._id;
+    $('#export-excel-modal').modal('show');
+  }
+
+  showExportExcel = () => {
+    $('#export-excel-modal').modal('show');
+  }
+
+  closeModalExport = () => {
+    $('#export-excel-modal').modal('hide');
+  }
+
+
   displayConfirmDialog (header, body, cancelFunction, okFunction) {
     $('#confirm-header').text(header);
     $('#confirm-body').text(body);
@@ -225,23 +247,6 @@ export class CodeManagementComponent implements OnInit {
       this[okFunction]();
     })
     $('#confirm-model').modal('show');
-  }
-
-  displayNotify (header, body, sub?, link?) {
-    $('#notify-header').text(header);
-    $('#notify-body').text(body);
-    if (sub) {
-      $('#notify-body-sub').text(sub);
-    } else {
-      $('#notify-body-sub').text('');
-    }
-    if (link) {
-      $('#notify-body-link').text(link);
-      $('#notify-body-link').attr('href', link)
-    } else {
-      $('#notify-body-link').text('');
-    }
-    $('#notify-model').modal('show');
   }
 
   closeConfirmDialog = () => {

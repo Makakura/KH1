@@ -141,8 +141,12 @@ export class ResultManagementComponent implements OnInit {
     return evClone;
   }
 
-  closeModal = () => {
+  closeModalShowCode = () => {
     $('#show-code').modal('hide');
+  }
+
+  closeModalExport = () => {
+    $('#export-excel-modal').modal('hide');
   }
 
   showExportExcel = () => {
