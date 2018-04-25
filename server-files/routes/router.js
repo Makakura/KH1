@@ -46,11 +46,6 @@ router.put('/addcodeinfo', function(req, res){
 	addCodeInfo(req, res);
 });
 
-// // Get result
-// router.post('/getresult', function(req, res){
-// 	getResult(req, res);
-// });
-
 // Get result
 router.get('/getresult/:_id', function(req, res){
 	getResultEvent(req, res);
