@@ -24,13 +24,14 @@ export class HomeComponent implements OnInit {
   audioYeah: any;
   audioRotate: any;
   codeItem = {
-    "code": "",
-    "name": "",
-    "phone": "",
-    "fb": ""
+    'code': '',
+    'name': '',
+    'phone': '',
+    'fb': '',
+    'playedDate': ''
   };
   currentNumber = -1;
-  giftName = "";
+  giftName = '';
 
   constructor(private route: ActivatedRoute, 
               private eventService: EventService,
@@ -66,7 +67,7 @@ export class HomeComponent implements OnInit {
           },
           err => {
             FNC.hideSpinner(1000);
-            FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
+            FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
           });
       }
    });
@@ -78,10 +79,10 @@ export class HomeComponent implements OnInit {
       this.isPlayed = true;
       this.audioRotate.play();
       let that = this;
-      this.curClass = "rotate";
+      this.curClass = 'rotate';
 
       setTimeout(function(){
-        that.curClass = "rotate" + that.currentNumber;
+        that.curClass = 'rotate' + that.currentNumber;
       }, 3000);
 
       setTimeout(function(){
@@ -92,9 +93,9 @@ export class HomeComponent implements OnInit {
 
       setTimeout(function(){
         FNC.displayNotify(
-          "CHÚC MỪNG !!!", 
-        "Bạn đã nhận được: " + that.giftName, 
-        "Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.",
+          'CHÚC MỪNG !!!', 
+        'Bạn đã nhận được: ' + that.giftName, 
+        'Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.',
         that.currentEvent.linkPostFB,
         true);
       }, 14500);
@@ -116,20 +117,20 @@ export class HomeComponent implements OnInit {
               $('#inputModal').modal('hide');
               this.isCompleteInput = true;
             } else {
-              FNC.displayNotify("THÔNG BÁO", "SĐT này đã được sử dụng, chỉ được tham gia 1 lần !");
+              FNC.displayNotify('THÔNG BÁO', 'SĐT này đã được sử dụng, chỉ được tham gia 1 lần !');
             }
           } else {
-            FNC.displayNotify("THÔNG BÁO",'Không kiểm tra được thông tin của bạn, xin vui lòng thử lại');
+            FNC.displayNotify('THÔNG BÁO','Không kiểm tra được thông tin của bạn, xin vui lòng thử lại');
             return false;
           }
           FNC.hideSpinner(0);
         },
         err => {
           FNC.hideSpinner(0);
-          FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
+          FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
         });  
     } else {
-      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin để tiếp tục !");
+      FNC.displayNotify('THÔNG BÁO', 'Vui lòng nhập đầy đủ thông tin để tiếp tục !');
     }
     
   }
@@ -154,11 +155,11 @@ export class HomeComponent implements OnInit {
           // focus next textbox
           $('input[type="text"]').get(1).focus();
         } else if (!resJson.result || !resJson.data.isValid){
-          FNC.displayNotify("THÔNG BÁO", resJson.message);
+          FNC.displayNotify('THÔNG BÁO', resJson.message);
           this.isValidCode = false;
           this.isCheckingCode = false;
         } else {
-          FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
           this.isValidCode = false;
           this.isCheckingCode = false;
         }
@@ -166,7 +167,7 @@ export class HomeComponent implements OnInit {
       },
       err => {
         FNC.hideSpinner(0);
-        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+        FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
         this.isValidCode = false;
         this.isCheckingCode = false;
       });
@@ -189,7 +190,7 @@ export class HomeComponent implements OnInit {
       this.checkValidCode(code);
     } else {
       this.isValidCode = false;
-      FNC.displayNotify("THÔNG BÁO", "Bạn nhập mã thiếu thì phải ^^!");
+      FNC.displayNotify('THÔNG BÁO', 'Bạn nhập mã thiếu thì phải ^^!');
       this.isValidCode = false;
       this.isCheckingCode = false;
     }
@@ -206,13 +207,13 @@ export class HomeComponent implements OnInit {
 
   initSoundRotate = () => {
     this.audioRotate = new Audio();
-    this.audioRotate.src = "../../../assets/audio/rotate.mp3";
+    this.audioRotate.src = '../../../assets/audio/rotate.mp3';
     this.audioRotate.load();
   }
 
   initSoundCheer = () => {
     this.audioYeah = new Audio();
-    this.audioYeah.src = "../../../assets/audio/cheer.mp3";
+    this.audioYeah.src = '../../../assets/audio/cheer.mp3';
     this.audioYeah.load();
   }
 
@@ -222,11 +223,11 @@ export class HomeComponent implements OnInit {
         res => {
           let resJson = res.json();
           if (!resJson.result) {
-          FNC.displayNotify("THÔNG BÁO",'Đã xảy gián đoạn trong quá trình lưu kết quả, xin vui lòng liên hệ với chúng tôi để được hỗ trợ');
+          FNC.displayNotify('THÔNG BÁO','Đã xảy gián đoạn trong quá trình lưu kết quả, xin vui lòng liên hệ với chúng tôi để được hỗ trợ');
           }
         },
         err => {
-          FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
+          FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
         });
     }
   }

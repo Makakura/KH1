@@ -1,9 +1,9 @@
 declare var $ :any;
 import { Component, OnInit } from '@angular/core';
-import { EventWheelModel } from "../../model/eventWheelModel";
-import { GiftModel } from "../../model/giftModel";
-import { EventService } from "../services/event-service";
-import { FNC } from "../services/functioncommon";
+import { EventWheelModel } from '../../model/eventWheelModel';
+import { GiftModel } from '../../model/giftModel';
+import { EventService } from '../services/event-service';
+import { FNC } from '../services/functioncommon';
 import { Router } from '@angular/router';
 
 @Component({
@@ -45,21 +45,21 @@ export class EventManagementComponent implements OnInit {
           FNC.hideSpinner(1000);
         } else {
           FNC.hideSpinner(1000);
-          FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+          FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
         }
       },
       err => {
         FNC.hideSpinner(1000);
-        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+        FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
       });
   }
 
   setCssForView = () => {
     $('body').css('background-color', 'black');
     // $('#create-event').modal('show');
-    $("#myInput").on("keyup", function() {
+    $('#myInput').on('keyup', function() {
       var value = $(this).val().toLowerCase();
-      $("#myTable tr").filter(function() {
+      $('#myTable tr').filter(function() {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
       });
     });
@@ -78,7 +78,7 @@ export class EventManagementComponent implements OnInit {
   
   addGift = () => {
     if(this.listGift.length < 8) {
-      this.listGift.push(new GiftModel(this.listGift.length, "", 0, 0, false));
+      this.listGift.push(new GiftModel(this.listGift.length, '', 0, 0, false));
     }
     if(this.listGift.length >= 8) {
       this.isHideAddGiftButton = true;
@@ -97,17 +97,17 @@ export class EventManagementComponent implements OnInit {
 
   addEvent = () => {
     if (!this.validateDataEvent()) {
-      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin cho sự kiện");
+      FNC.displayNotify('THÔNG BÁO', 'Vui lòng nhập đầy đủ thông tin cho sự kiện');
       return;
     }
 
     if (this.newEvent.linkImageWheel.indexOf('.png') === -1) {
-      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập link image vòng quay có đuôi là '.png'");
+      FNC.displayNotify('THÔNG BÁO', 'Vui lòng nhập link image vòng quay có đuôi là ".png"');
       return;
     }
 
     if (!this.validateDataGift()) {
-      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập phần thưởng cho sự kiện");
+      FNC.displayNotify('THÔNG BÁO', 'Vui lòng nhập phần thưởng cho sự kiện');
       return;
     }
 
@@ -124,11 +124,11 @@ export class EventManagementComponent implements OnInit {
           this.listEvent.splice(0, 0, createdEvent);
           this.resetDataPopup(PopupType.CREATE);
         } else {
-          FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+          FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
         }
       },
       err => {
-        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+        FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
     });
 
     // Reset value
@@ -177,8 +177,8 @@ export class EventManagementComponent implements OnInit {
   }
 
   resetValueInput = () => {
-    $("#create-event").each(function(){
-          $(this).find('input').val("");
+    $('#create-event').each(function(){
+          $(this).find('input').val('');
     })
   }
 
@@ -202,15 +202,15 @@ export class EventManagementComponent implements OnInit {
               let editedEvent = this.eventService.converJsonToEvent(resJson.data);
               this.eventService.updateNewValueToEvent(editedEvent, this.selectingEvent);
               this.resetDataPopup(PopupType.EDIT);
-              FNC.displayNotify("Thông báo", "Lưu thành công");
+              FNC.displayNotify('Thông báo', 'Lưu thành công');
               FNC.hideSpinner(500);
             } else {
-              FNC.displayNotify("Đã xảy ra lỗi", "Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+              FNC.displayNotify('Đã xảy ra lỗi', 'Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
               FNC.hideSpinner(500);
             }
           },
           err => {
-            FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+            FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
             FNC.hideSpinner(500);
           }
         );

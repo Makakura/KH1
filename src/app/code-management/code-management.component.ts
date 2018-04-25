@@ -1,13 +1,13 @@
 declare var $ :any;
 import { Component, OnInit, group } from '@angular/core';
-import { EventWheelModel } from "../../model/eventWheelModel";
-import { GiftModel } from "../../model/giftModel";
-import { EventService } from "../services/event-service";
+import { EventWheelModel } from '../../model/eventWheelModel';
+import { GiftModel } from '../../model/giftModel';
+import { EventService } from '../services/event-service';
 import { ActivatedRoute } from '@angular/router';
 import { delay } from 'rxjs/operator/delay';
 import { Router } from '@angular/router';
 import { count } from 'rxjs/operator/count';
-import { FNC } from "../services/functioncommon";
+import { FNC } from '../services/functioncommon';
 
 @Component({
   selector: 'app-code-management',
@@ -53,16 +53,16 @@ export class CodeManagementComponent implements OnInit {
               FNC.hideSpinner(1000);
             } else {
               FNC.hideSpinner(1000);
-              FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+              FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
             }
           },
           err => {
             FNC.hideSpinner(1000);
-            FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
+            FNC.displayNotify('THÔNG BÁO', 'Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng');
           });
       } else {
         FNC.hideSpinner(1000);
-        FNC.displayNotify("THÔNG BÁO", "Đường dẫn bị sai, xin vui lòng kiểm tra lại");
+        FNC.displayNotify('THÔNG BÁO', 'Đường dẫn bị sai, xin vui lòng kiểm tra lại');
       }
     });
     this.sub.unsubscribe();
@@ -92,7 +92,7 @@ export class CodeManagementComponent implements OnInit {
     }
   }
   showConfirmCreateCode = () => {
-    this.displayConfirmDialog("LƯU Ý:", "Bạn có muốn xuất "+ Number.parseInt($('#inputNumberOfCode').val()) +" mã cho phần thưởng: " + this.currentGift.name, 'closeConfirmDialog', 'createCode');
+    this.displayConfirmDialog('LƯU Ý:', 'Bạn có muốn xuất '+ Number.parseInt($('#inputNumberOfCode').val()) +' mã cho phần thưởng: ' + this.currentGift.name, 'closeConfirmDialog', 'createCode');
   }
   createCode = () => {
     let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
@@ -115,7 +115,7 @@ export class CodeManagementComponent implements OnInit {
           this.currentGift.codeArray.push(element);
           this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
           this.selectGift(this.currentGift);
-          this.displayNotify("THÔNG BÁO", "ĐÃ TẠO MÃ THÀNH CÔNG");
+          this.displayNotify('THÔNG BÁO', 'ĐÃ TẠO MÃ THÀNH CÔNG');
           });
         } else {
           console.log(resJson.message);
@@ -128,7 +128,7 @@ export class CodeManagementComponent implements OnInit {
   }
 
   selectDate = (value) => {
-    if (value === "-1" ) {
+    if (value === '-1' ) {
       this.currentCodeArrayShow = this.currentGift.codeArray;
     } else {
       let dateSelected = $('#select-date option:selected').val();
@@ -215,30 +215,30 @@ export class CodeManagementComponent implements OnInit {
   }
 
   displayConfirmDialog (header, body, cancelFunction, okFunction) {
-    $("#confirm-header").text(header);
-    $("#confirm-body").text(body);
-    $("#confirm-cancel").click(() => {
+    $('#confirm-header').text(header);
+    $('#confirm-body').text(body);
+    $('#confirm-cancel').click(() => {
       this[cancelFunction]();
     })
-    $("#confirm-ok").click(() => {
+    $('#confirm-ok').click(() => {
       this[okFunction]();
     })
     $('#confirm-model').modal('show');
   }
 
   displayNotify (header, body, sub?, link?) {
-    $("#notify-header").text(header);
-    $("#notify-body").text(body);
+    $('#notify-header').text(header);
+    $('#notify-body').text(body);
     if (sub) {
-      $("#notify-body-sub").text(sub);
+      $('#notify-body-sub').text(sub);
     } else {
-      $("#notify-body-sub").text('');
+      $('#notify-body-sub').text('');
     }
     if (link) {
-      $("#notify-body-link").text(link);
-      $("#notify-body-link").attr("href", link)
+      $('#notify-body-link').text(link);
+      $('#notify-body-link').attr('href', link)
     } else {
-      $("#notify-body-link").text('');
+      $('#notify-body-link').text('');
     }
     $('#notify-model').modal('show');
   }

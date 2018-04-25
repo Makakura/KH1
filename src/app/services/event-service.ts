@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';  
-import { EventWheelModel } from "../../model/eventWheelModel";
-import { GiftModel } from "../../model/giftModel";
+import { EventWheelModel } from '../../model/eventWheelModel';
+import { GiftModel } from '../../model/giftModel';
 import { Http ,HttpModule} from '@angular/http'
 import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -87,11 +87,12 @@ import { map } from 'rxjs/operators';
     }
 
     sendResult = (codeItemParam, eventIDParam): any => {
+        codeItemParam.playedDate = new Date()
         let bodyData = {
             eventID: eventIDParam,
-            codeItem: codeItemParam,
-            playedDate: new Date()
+            codeItem: codeItemParam
         }
+
         return this.http.put(this.url + '/addcodeinfo/', bodyData)
     }
  } 

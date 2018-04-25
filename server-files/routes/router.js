@@ -325,7 +325,6 @@ var addCodeInfo = function (req, res) {
     var eventID = jsonData.eventID;
     var codeItemParam = jsonData.codeItem;
     var codeParam = codeItemParam.code;
-    var playedDateParam = jsonData.playedDate;
     var isCatched = false;
     EventModel.findById(eventID, function(err, event){
       if(err){
@@ -340,7 +339,7 @@ var addCodeInfo = function (req, res) {
                 codeItem.name = codeItemParam.name;
                 codeItem.phone = codeItemParam.phone;
                 codeItem.isPlayed = true;
-                codeItem.playedDate;
+                codeItem.playedDate = codeItemParam.playedDate;
                 isCatched = true;
                 gift.playedCounter++;
                 saveThisEvent(res, event, false);
