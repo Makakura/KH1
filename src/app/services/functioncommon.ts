@@ -17,7 +17,6 @@ import { Injectable } from '@angular/core';
         } else {
           $("#notify-body-link").text('');
         }
-        $('#notify-model').modal('show');
         if(isShowCloseButton) {
           $('#notify-model').modal({
             backdrop: 'static',
@@ -31,6 +30,7 @@ import { Injectable } from '@angular/core';
           });
           $(".notify-button").css('display', 'none');
         }
+        $('#notify-model').modal('show');
     }
 
     public static showSpinner = () => {
