@@ -5,12 +5,10 @@ const app = express();
 app.use(cors())
 
 var http = require("http");
-/* setInterval(function() {
-  let currentHour = new Date().getHours() + 7;
-  if (currentHour >= 7 && currentHour <22)
-    console.log("WakeUp server" + currentHour);
-    http.get("http://quaythuong.herokuapp.com");
-}, 600000); */
+setInterval(function() {
+  console.log("WakeUp server" + currentHour);
+  http.get("http://quaythuong.herokuapp.com");
+}, 600000);
 
 // Import router
 var router = require('./server-files/routes/router');

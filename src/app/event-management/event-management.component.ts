@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { EventWheelModel } from "../../model/eventWheelModel";
 import { GiftModel } from "../../model/giftModel";
 import { EventService } from "../services/event-service";
+import { FNC } from "../services/functioncommon";
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-event-management',
   templateUrl: './event-management.component.html',
@@ -34,21 +36,21 @@ export class EventManagementComponent implements OnInit {
   }
 
   getEventsToView = () => {
-    this.showSpinner();
+    FNC.showSpinner();
     this.eventService.getEvents().subscribe(
       res => {
         let resJson = res.json();
         if (resJson.result) {
           this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
-          this.hideSpinner(1000);
+          FNC.hideSpinner(1000);
         } else {
-          console.log(resJson.message);
-          this.hideSpinner(1000);
+          FNC.hideSpinner(1000);
+          FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
         }
       },
       err => {
-        console.log('Không kết nối được tới server, xin vui lòng thử lại');
-        this.hideSpinner(1000);
+        FNC.hideSpinner(1000);
+        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
       });
   }
 
@@ -85,17 +87,27 @@ export class EventManagementComponent implements OnInit {
     }
   }
   
-  linkImageKeyUp = () => {
-    this.isShowImage = true;
+  linkImageKeyUp = (value) => {
+    if (value.indexOf('.png') !== -1) {
+      this.isShowImage = true;
+    } else {
+      this.isShowImage = false;
+    }
   }
 
   addEvent = () => {
     if (!this.validateDataEvent()) {
-      console.log('Vui long nhap day du thong tin cho su kien');
+      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin cho sự kiện");
       return;
     }
+
+    if (this.newEvent.linkImageWheel.indexOf('.png') === -1) {
+      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập link image vòng quay có đuôi là '.png'");
+      return;
+    }
+
     if (!this.validateDataGift()) {
-      console.log('Vui long nhap phan thuong cho su kien');
+      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập phần thưởng cho sự kiện");
       return;
     }
 
@@ -111,13 +123,12 @@ export class EventManagementComponent implements OnInit {
           let createdEvent = this.eventService.converJsonToEvent(resJson.data);
           this.listEvent.splice(0, 0, createdEvent);
           this.resetDataPopup(PopupType.CREATE);
-          console.log('Success');
         } else {
-          console.log(resJson.message);
+          FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
         }
       },
       err => {
-        console.log('Không kết nối được tới server, xin vui lòng thử lại')
+        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
     });
 
     // Reset value
@@ -145,11 +156,21 @@ export class EventManagementComponent implements OnInit {
     }
     return true;
   }
-  numberOfRewardChange = (event) => {
+
+  limitValue = (value) => {
+    if (value < 0 ) {
+      value = 0;
+    }
+    if (value > 99999) {
+      value = 99999;
+    }
+    return value;
+  }
+
+  valueKeyup = (event) => {
     if (event.target.value < 0 ) {
       event.target.value = 0;
     }
-
     if (event.target.value > 99999) {
       event.target.value = 99999;
     }
@@ -173,6 +194,7 @@ export class EventManagementComponent implements OnInit {
   editEvent = () => {
     if(this.selectingEvent && this.editingEvent) {
       if (this.checkIsNeedToUpdateEvent(this.selectingEvent, this.editingEvent)) {     
+        FNC.showSpinner();
         this.eventService.updateEvent(this.editingEvent).subscribe(
           res => {
             let resJson = res.json();
@@ -180,13 +202,16 @@ export class EventManagementComponent implements OnInit {
               let editedEvent = this.eventService.converJsonToEvent(resJson.data);
               this.eventService.updateNewValueToEvent(editedEvent, this.selectingEvent);
               this.resetDataPopup(PopupType.EDIT);
-             
+              FNC.displayNotify("Thông báo", "Lưu thành công");
+              FNC.hideSpinner(500);
             } else {
-              console.log(resJson.message);
+              FNC.displayNotify("Đã xảy ra lỗi", "Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+              FNC.hideSpinner(500);
             }
           },
           err => {
-            console.log('Không kết nối được tới server, xin vui lòng thử lại')
+            FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+            FNC.hideSpinner(500);
           }
         );
       } else {
@@ -240,23 +265,8 @@ export class EventManagementComponent implements OnInit {
     this.resetDataPopup(PopupType.EDIT);
   }
 
-  handleChange = (e,i) => {
-    console.log(e);
-    console.log(i);
-  }
-
   selectEditStatus = (selector) => {
     this.editingEvent.status =  $('#select-status').val();
-  }
-  
-  showSpinner = () => {
-    $('#spinner').css('visibility', 'visible');
-  }
-  
-  hideSpinner = (delay) => {
-    setTimeout(function(){
-      $('#spinner').css('visibility', 'hidden');
-    }, delay);
   }
 }
 

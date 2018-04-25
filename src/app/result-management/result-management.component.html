@@ -9,7 +9,7 @@
               <button class="btn btn-warning my-2 my-sm-0" style=" padding-right: 20px; margin-left: 10px;" (click)="goTo('code', eventModel._id)">Quản lý mã</button>
           </li>
           <li class="nav-item active">
-            <button class="btn btn-success my-2 my-sm-0" style=" padding-right: 20px; margin-left: 10px;">Export Excel</button>
+            <button class="btn btn-success my-2 my-sm-0" style=" padding-right: 20px; margin-left: 10px;" (click)="showExportExcel()">Export Excel</button>
           </li>
       </ul>
       <form class="form-inline my-2 my-lg-0 search-box">
@@ -43,6 +43,7 @@
           <th scope="col">Giải thưởng</th>
           <th scope="col">Người nhận</th>
           <th scope="col">SĐT</th>
+          <th scope="col">Ngày quay</th>
         </tr>
       </thead>
       <tbody id="myTable" *ngFor="let gift of eventModel.giftArray">
@@ -51,6 +52,7 @@
             <td>{{gift.name}}</td>
             <td>{{codeItem.name}}</td>
             <td>{{codeItem.phone}}</td>
+            <td>{{codeItem.playedDate | date: 'dd/MM/yyyy hh:mm:ss a'}}</td>
         </tr>
       </tbody>
     </table>
@@ -58,45 +60,69 @@
   
   
   
-  <div class="modal fade" id="show-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header bg-dark">
-            <h5 class="modal-title" id="exampleModalLabel" style="color:white" >CHI TIẾT KẾT QUẢ</h5>
+<div class="modal fade" id="export-excel-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >CHI TIẾT KẾT QUẢ</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label"><b>Bước 1:</b> Copy mã sự kiện: <b>{{eventModel._id}}</b></label>
           </div>
-          <div class="modal-body">
-            <form>
-              <table class="table code-detail borderless" style="background-color: transparent;">
-                <tbody>
-                  <tr>
-                      <td>Mã thưởng:</td>
-                      <td class="value">{{currentCode.code}}</td>
-                  </tr>
-                  <tr>
-                      <td>Phần thưởng:</td>
-                      <td class="value">{{currentGift.name}}</td>
-                  </tr>
-                  <tr>
-                      <td>Tên:</td>
-                      <td class="value">{{currentCode.name}}</td>
-                  </tr>
-                  <tr>
-                      <td>Số điện thoại:</td>
-                      <td class="value">{{currentCode.phone}}</td>
-                  </tr>
-                  <tr>
-                      <td>Ngày quay:</td>
-                      <td class="value">{{currentCode.createdDate | date: 'dd/MM/yyyy hh:mma'}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label"><b>Bước 2:</b> Mở liên kết và làm theo hướng dẫn ở sheet đầu tiên:</label>
+            <a href="https://goo.gl/9YwgwU" target="_blank"><b>https://goo.gl/9YwgwU</b></a>
           </div>
-          <div class="modal-footer">
-            <button type="button" (click) = "closeModal()" class="btn btn-dark">Đóng</button>
-          </div>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click) = "closeModal()" class="btn btn-dark">Đóng</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="show-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >XUẤT EXCEL KẾT QUẢ SỰ KIỆN</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+          <table class="table code-detail borderless" style="background-color: transparent;">
+            <tbody>
+              <tr>
+                  <td>Mã thưởng:</td>
+                  <td class="value">{{currentCode.code}}</td>
+              </tr>
+              <tr>
+                  <td>Phần thưởng:</td>
+                  <td class="value">{{currentGift.name}}</td>
+              </tr>
+              <tr>
+                  <td>Tên:</td>
+                  <td class="value">{{currentCode.name}}</td>
+              </tr>
+              <tr>
+                  <td>Số điện thoại:</td>
+                  <td class="value">{{currentCode.phone}}</td>
+              </tr>
+              <tr>
+                  <td>Ngày quay:</td>
+                  <td class="value">{{currentCode.createdDate | date: 'dd/MM/yyyy hh:mma'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click) = "closeModal()" class="btn btn-dark">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
     
   

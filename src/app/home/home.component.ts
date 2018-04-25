@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EventWheelModel } from '../../model/eventWheelModel';
 import { EventService } from '../services/event-service';
+import { FNC } from '../services/functioncommon';
 
 @Component({
   selector: 'app-home',
@@ -48,7 +49,7 @@ export class HomeComponent implements OnInit {
   }
 
   getEvent = () => {
-    this.showSpinner();
+    FNC.showSpinner();
     this.sub = this.route.params.subscribe(params => {
       let id = params['id'];
       if (id){ 
@@ -57,15 +58,15 @@ export class HomeComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.currentEvent = this.eventService.converJsonToEvent(resJson.data);
-              this.hideSpinner(1000);
+              FNC.hideSpinner(1000);
             } else {
-              this.hideSpinner(1000);
-              console.log(resJson.message);
+              FNC.hideSpinner(1000);
+              FNC.displayNotify('Thông báo','Không tìm thấy sự kiện, liên hệ với chúng tôi để được hỗ trợ');
             }
           },
           err => {
-            this.hideSpinner(1000);
-            console.log('Không kết nối được tới server, xin vui lòng thử lại')
+            FNC.hideSpinner(1000);
+            FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
           });
       }
    });
@@ -90,11 +91,7 @@ export class HomeComponent implements OnInit {
       }, 13500);
 
       setTimeout(function(){
-        $('#notify-model').modal({
-          backdrop: 'static',
-          keyboard: false
-        });
-        that.displayNotify(
+        FNC.displayNotify(
           "CHÚC MỪNG !!!", 
         "Bạn đã nhận được: " + that.giftName, 
         "Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.",
@@ -108,8 +105,9 @@ export class HomeComponent implements OnInit {
   
   completeInput = () => {
     // Validate input data
+    this.codeItem.phone = $('#phoneInput').val()
     if (this.validateInputData()) {
-      this.showSpinner();
+      FNC.showSpinner();
       this.eventService.checkPhone(this.codeItem.phone, this.currentEvent._id).subscribe(
         res => {
           let resJson = res.json();
@@ -118,20 +116,20 @@ export class HomeComponent implements OnInit {
               $('#inputModal').modal('hide');
               this.isCompleteInput = true;
             } else {
-              this.displayNotify("THÔNG BÁO", "SĐT này đã được sử dụng, chỉ được tham gia 1 lần !");
+              FNC.displayNotify("THÔNG BÁO", "SĐT này đã được sử dụng, chỉ được tham gia 1 lần !");
             }
           } else {
-            console.log(resJson.message);
+            FNC.displayNotify("THÔNG BÁO",'Không kiểm tra được thông tin của bạn, xin vui lòng thử lại');
             return false;
           }
-          this.hideSpinner(0);
+          FNC.hideSpinner(0);
         },
         err => {
-          this.hideSpinner(0);
-          console.log('Không kết nối được tới server, xin vui lòng thử lại')
+          FNC.hideSpinner(0);
+          FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
         });  
     } else {
-      this.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin để tiếp tục !");
+      FNC.displayNotify("THÔNG BÁO", "Vui lòng nhập đầy đủ thông tin để tiếp tục !");
     }
     
   }
@@ -144,7 +142,7 @@ export class HomeComponent implements OnInit {
   }
 
   checkValidCode = (code) => {
-    this.showSpinner();
+    FNC.showSpinner();
     this.eventService.checkCode(code, this.currentEvent._id).subscribe(
       res => {
         let resJson = res.json();
@@ -156,19 +154,19 @@ export class HomeComponent implements OnInit {
           // focus next textbox
           $('input[type="text"]').get(1).focus();
         } else if (!resJson.result || !resJson.data.isValid){
-          this.displayNotify("THÔNG BÁO", resJson.message);
+          FNC.displayNotify("THÔNG BÁO", resJson.message);
           this.isValidCode = false;
           this.isCheckingCode = false;
         } else {
-          this.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+          FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
           this.isValidCode = false;
           this.isCheckingCode = false;
         }
-        this.hideSpinner(0);
+        FNC.hideSpinner(0);
       },
       err => {
-        this.hideSpinner(0);
-        this.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
+        FNC.hideSpinner(0);
+        FNC.displayNotify("THÔNG BÁO", "Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng");
         this.isValidCode = false;
         this.isCheckingCode = false;
       });
@@ -191,7 +189,7 @@ export class HomeComponent implements OnInit {
       this.checkValidCode(code);
     } else {
       this.isValidCode = false;
-      this.displayNotify("THÔNG BÁO", "Bạn nhập mã thiếu thì phải ^^!");
+      FNC.displayNotify("THÔNG BÁO", "Bạn nhập mã thiếu thì phải ^^!");
       this.isValidCode = false;
       this.isCheckingCode = false;
     }
@@ -199,7 +197,7 @@ export class HomeComponent implements OnInit {
 
   // Limit length phone
   phoneKeyUp = () => {
-    let temp = $('#phoneInput').val()
+    let temp = $('#phoneInput').val();
     if (temp.length > 11) {
       let limited = temp.slice(0,11);
       $('#phoneInput').val(limited);
@@ -219,50 +217,17 @@ export class HomeComponent implements OnInit {
   }
 
   sendResult = () => {
-    console.log(this.codeItem);
     if (this.codeItem.code && this.codeItem.name && this.codeItem.phone) {
       this.eventService.sendResult(this.codeItem, this.currentEvent._id).subscribe(
         res => {
           let resJson = res.json();
           if (!resJson.result) {
-            console.log('Đã xảy ra lỗi xin vui lòng thử lại hoặc liên hệ với chúng tôi');
+          FNC.displayNotify("THÔNG BÁO",'Đã xảy gián đoạn trong quá trình lưu kết quả, xin vui lòng liên hệ với chúng tôi để được hỗ trợ');
           }
         },
         err => {
-          console.log('Không kết nối được tới server, xin vui lòng thử lại');
+          FNC.displayNotify("THÔNG BÁO",'Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
         });
     }
-  }
-
-  displayNotify (header, body, sub?, link?, isShowCloseButton?) {
-    $("#notify-header").text(header);
-    $("#notify-body").text(body);
-    if (sub) {
-      $("#notify-body-sub").text(sub);
-    } else {
-      $("#notify-body-sub").text('');
-    }
-    if (link) {
-      $("#notify-body-link").text(link);
-      $("#notify-body-link").attr("href", link)
-    } else {
-      $("#notify-body-link").text('');
-    }
-    $('#notify-model').modal('show');
-    if(isShowCloseButton) {
-      $(".notify-button").css('visibility', 'visible');
-    } else {
-      $(".notify-button").css('visibility', 'hidden');
-    }
-  }
-
-  showSpinner = () => {
-    $('#spinner').css('visibility', 'visible');
-  }
-  
-  hideSpinner = (delay) => {
-    setTimeout(function(){
-      $('#spinner').css('visibility', 'hidden');
-    }, delay);
   }
 }

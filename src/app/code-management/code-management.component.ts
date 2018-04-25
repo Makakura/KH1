@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { delay } from 'rxjs/operator/delay';
 import { Router } from '@angular/router';
 import { count } from 'rxjs/operator/count';
+import { FNC } from "../services/functioncommon";
 
 @Component({
   selector: 'app-code-management',
@@ -39,6 +40,7 @@ export class CodeManagementComponent implements OnInit {
   }
 
   getCodeToView = () => {
+    FNC.showSpinner();
     this.sub = this.route.params.subscribe(params => {
       let id = params['id'];
       if (id){ 
@@ -48,13 +50,19 @@ export class CodeManagementComponent implements OnInit {
             if (resJson.result) {
               this.eventModel = this.eventService.converJsonToEvent(resJson.data);
               this.calValueReport();
+              FNC.hideSpinner(1000);
             } else {
-              console.log(resJson.message);
+              FNC.hideSpinner(1000);
+              FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
             }
           },
           err => {
-            console.log('Không kết nối được tới server, xin vui lòng thử lại')
+            FNC.hideSpinner(1000);
+            FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
           });
+      } else {
+        FNC.hideSpinner(1000);
+        FNC.displayNotify("THÔNG BÁO", "Đường dẫn bị sai, xin vui lòng kiểm tra lại");
       }
     });
     this.sub.unsubscribe();

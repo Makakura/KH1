@@ -38,8 +38,8 @@
     <tbody id="myTable">
       <tr *ngFor="let gift of eventModel.giftArray" (click) = 'selectGift(gift)' [attr.data-index]="i">
           <td>{{gift.name}}</td>
-          <td style="white-space: nowrap;">{{gift.codeArray.length}}</td>
-          <td style="white-space: nowrap;">{{getUnUsedCodeCount(gift.codeArray)}}</td>
+          <td style="white-space: nowrap;">{{gift.numberOfReward}}</td>
+          <td style="white-space: nowrap;">{{gift.numberOfReward - gift.playedCounter}}</td>
       </tr>
     </tbody>
   </table>
@@ -54,7 +54,7 @@
       <div class="modal-body">
         <form>
           <div class="form-group">
-              <label for="recipient-name" class="col-form-label">Nhập số lượng mã:</label>
+              <label for="recipient-name" class="col-form-label">Số lượng mã cần xuất:</label>
               <div class="row">
                 <div class="col">
                     <input #inputNumberOfCode id="inputNumberOfCode" type="text" type="number" 
@@ -103,36 +103,4 @@
     </div>
   </div>
 </div>
-
-<!-- <div class="modal fade" id="create-code" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-dark">
-        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >TẠO MÃ CHO PHẦN THƯỞNG</h5>
-      </div>
-      <div class="modal-body">
-        <form>
-            <div class="row" 
-            *ngFor="let item of eventModel.giftArray; let i = index" 
-            style="margin-top: 5px;">
-              <div class="col float-container">
-                  <p><b>{{i + ". " +item.name+ ':'}}</b></p>
-                  <img [hidden]="!item.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
-              </div>
-              <div class="col-3">
-                  <input [disabled]="item.isLimited" type="number" 
-                  value="{{item.numberOfReward}}"
-                  (input)="item.numberOfCode = $event.target.value" 
-                  (keyup)="numberOfCodeChange($event)" 
-                  class="form-control" placeholder="SL mã">
-              </div>
-            </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" (click) = 'createCode()' class="btn btn-success">Tạo mã</button>
-      </div>
-    </div>
-  </div>
-</div> -->
   

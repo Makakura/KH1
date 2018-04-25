@@ -5,6 +5,7 @@ import { GiftModel } from "../../model/giftModel";
 import { EventService } from "../services/event-service";
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { FNC } from "../services/functioncommon";
 
 @Component({
   selector: 'app-result-management',
@@ -49,6 +50,7 @@ export class ResultManagementComponent implements OnInit {
   }
 
   getCodeToView = () => {
+    FNC.showSpinner();
     this.sub = this.route.params.subscribe(params => {
       let id = params['id'];
       if (id){ 
@@ -59,13 +61,19 @@ export class ResultManagementComponent implements OnInit {
               let ev = this.eventService.converJsonToEvent(resJson.data);
               this.eventModel = this.filterTheCode(ev);
               this.calValueReport("-1");
+              FNC.hideSpinner(1000);
             } else {
-              console.log(resJson.message);
+              FNC.hideSpinner(1000);
+              FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
             }
           },
           err => {
-            console.log('Không kết nối được tới server, xin vui lòng thử lại')
+            FNC.hideSpinner(1000);
+            FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
           });
+      } else {
+        FNC.hideSpinner(1000);
+        FNC.displayNotify("THÔNG BÁO", "Đường dẫn bị sai, xin vui lòng kiểm tra lại");
       }
     });
     this.sub.unsubscribe();
@@ -135,6 +143,10 @@ export class ResultManagementComponent implements OnInit {
 
   closeModal = () => {
     $('#show-code').modal('hide');
+  }
+
+  showExportExcel = () => {
+    $('#export-excel-modal').modal('show');
   }
 
   goTo = (page, param) => {
