@@ -92,6 +92,10 @@ export class HomeComponent implements OnInit {
       }, 13500);
 
       setTimeout(function(){
+        $('#notify-model').modal({
+          backdrop: 'static',
+          keyboard: true
+        });
         FNC.displayNotify(
           'CHÚC MỪNG !!!', 
         'Bạn đã nhận được: ' + that.giftName, 

@@ -18,16 +18,8 @@ import { Injectable } from '@angular/core';
           $("#notify-body-link").text('');
         }
         if(isShowCloseButton) {
-          $('#notify-model').modal({
-            backdrop: 'static',
-            keyboard: false
-          });
           $(".notify-button").css('display', 'initial');
         } else {
-          $('#notify-model').modal({
-            backdrop: 'static',
-            keyboard: true
-          });
           $(".notify-button").css('display', 'none');
         }
         $('#notify-model').modal('show');

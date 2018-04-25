@@ -32,6 +32,10 @@ var CodeModel = mongoose.Schema({
         type: String,
         default: ''
     },
+    clientCreatedDate: {
+        type: String,
+        default: ''
+    },
     giftName: {
         type: String,
         default: ''
