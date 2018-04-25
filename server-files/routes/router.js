@@ -56,6 +56,11 @@ router.get('/getresult/:_id', function(req, res){
 	getResultEvent(req, res);
 });
 
+// Get code
+router.get('/getcodes/:_params', function(req, res){
+	getCodeByGiftAndDate(req, res);
+});
+
 // Get IP
 router.get('/ip', function(req, res){
 	var ip;
@@ -386,7 +391,8 @@ var createCode = function (req, res) {
     var jsonData = JSON.parse(jsonString);
     var eventID = jsonData.eventID;
     var giftArrayParam = jsonData.giftArray;
-    var dateParam = jsonData.createDate;
+    var dateParam = jsonData.createDate;// 
+    var clientCreatedDateParam = jsonData.clientCreatedDate;
     var arrayCodeCreated = [];
     EventModel.findById(eventID, function(err, event){
       if(err){
@@ -397,7 +403,7 @@ var createCode = function (req, res) {
           for(var j = 0; j < giftArrayParam.length; j++) {
             var giftParam = giftArrayParam[j];
             if (gift.id === giftParam.id) {
-              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam, arrayCodeCreated);
+              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam, clientCreatedDateParam, arrayCodeCreated);
             }
           }
         }
@@ -512,7 +518,73 @@ var getResultEvent = function (req, res) {
   });
 }
 
-var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, arrayCodeCreated) {
+var getCodeByGiftAndDate = function (req, res) {
+  let params = req.params._params.split(';'); 
+  if (params.length > 0) {
+    let eventID;
+    let giftID;
+    let date;
+    if (params[0]) {
+      eventID = params[0];
+    }
+    if (params[1]) {
+      giftID = params[1];
+    }
+    if (params[2]) {
+      date = params[2];
+    }
+
+    EventModel.findById(eventID, function(err,event){
+    if(err){
+      res.status(500).send(err);
+    } else if(event){
+      let array = [];
+      for(var i = 0; i < event.giftArray.length; i++) {
+        var gift = event.giftArray[i];
+        if ((giftID && gift.id === Number(giftID))
+            || !giftID) {
+            for(var j = 0; j < gift.codeArray.length; j++) {
+              let code = gift.codeArray[j];
+              if ((JSON.stringify(code.createdDate) === JSON.stringify(date))
+                  || !date) {
+                code.giftName = gift.name;
+                array.push(code);
+              }
+            }
+        }
+      }
+
+      resultArray = {
+        code: [], // 0 code
+        giftName: [], // 1 giftName
+        clientCreatedDate: [], // 2 giftName
+        isPlayed: [], // 3 giftName
+      };
+      
+      for(var i = 0; i < array.length; i++) {
+        let codeItem = array[i];
+        resultArray.code.push(codeItem.code);
+        resultArray.giftName.push(codeItem.giftName);
+        resultArray.clientCreatedDate.push(codeItem.clientCreatedDate);
+        resultArray.isPlayed.push(codeItem.isPlayed?'Rồi':'Chưa');
+      }
+      res.json(resultArray);
+    }
+    else{
+      res.json({
+        result: false,
+        message: 'Không tìm thấy sự kiện',
+        data: {}
+      });
+    }
+    });
+  } else {
+    res.status(500);
+  }
+  
+}
+
+var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, clientCreatedDateParam, arrayCodeCreated) {
   for(var i = 0; i < event.giftArray.length; i++) {
     var gift = event.giftArray[i];
     if (gift.id === giftID) {
@@ -523,10 +595,10 @@ var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, arr
           phone: "",
           fb: "",
           isPlayed: false,
-          createdDate: dateParam
+          createdDate: dateParam,
+          clientCreatedDate: clientCreatedDateParam
         };
         arrayCodeCreated.push(code);
-        console.log(arrayCodeCreated);
         gift.codeArray.push(code);
       }
     }

@@ -96,16 +96,17 @@ export class CodeManagementComponent implements OnInit {
   }
   createCode = () => {
     let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
+    let thisDate = new Date();
     let bodydata = {
       eventID: this.eventModel._id,
       giftArray: [],
-      createDate: new Date()
+      createDate: thisDate,
+      clientCreatedDate: thisDate.toLocaleString('en-GB')
     };
-    bodydata.giftArray.push(
-      {
-        id: this.currentGift.id, 
-        numberOfCode: numberOfCode,
-      });
+    bodydata.giftArray.push({
+      id: this.currentGift.id, 
+      numberOfCode: numberOfCode,
+    });
     this.eventService.createCode(bodydata).subscribe(
       res => {
         let resJson = res.json();

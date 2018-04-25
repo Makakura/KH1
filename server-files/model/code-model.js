@@ -21,12 +21,10 @@ var CodeModel = mongoose.Schema({
         default: false
     },
     createdDate: {
-        type: Date,
-        default: new Date()
+        type: Date
     },
     playedDate: {
-        type: Date,
-        default: new Date()
+        type: Date
     },
     clientPlayedDate: {
         type: String,
