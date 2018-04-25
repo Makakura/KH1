@@ -6,7 +6,6 @@ app.use(cors())
 
 var http = require("http");
 setInterval(function() {
-  console.log("WakeUp server" + currentHour);
   http.get("http://quaythuong.herokuapp.com");
 }, 600000);
 
