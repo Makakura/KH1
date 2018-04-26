@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit {
         'Quý khách vui lòng liên hệ với chúng tôi để được hỗ trợ nhận thưởng.',
         that.currentEvent.linkPostFB,
         true);
+        that.sendResult();
       }, 14500);
     } else {
       $('#inputModal').modal('show');
