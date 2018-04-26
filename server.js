@@ -2,7 +2,7 @@
 const cors = require('cors')
 const express = require('express');
 const app = express();
-// const basicAuth = require('express-basic-auth');
+const basicAuth = require('express-basic-auth');
 // app.use(basicAuth({
 //   users: { 'admin': 'developer' }
 // }))
