@@ -291,7 +291,7 @@ var checkCode = function (req, res) {
             var gift = event.giftArray[i];
             for(var j = 0; j < gift.codeArray.length; j++) {
               var codeItem = gift.codeArray[j];
-              if (codeItem.code === codeParam && !codeItem.isPlayed && !codeItem.name && !codeItem.phone) {
+              if (codeItem.code.toLowerCase() === codeParam.toLowerCase() && !codeItem.isPlayed && !codeItem.name && !codeItem.phone) {
                 if (gift.numberOfReward > gift.playedCounter) {
                   isValidParam = true;
                   number = gift.id;
