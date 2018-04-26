@@ -77,14 +77,14 @@
               <div class="row" *ngFor="let i of listGift" style="margin-top: 5px;">
                 <div class="col-8 float-container">
                     <input  type="text" (input)="i.name = $event.target.value" class="form-control" placeholder="Tên giải">
-                    <img [hidden]="!i.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png">
+                    <!-- <img [hidden]="!i.isLimited" class="float" style="width:15%;" src="../../assets/img/limited.png"> -->
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <input  type="number" (input)="i.numberOfReward = limitValue($event.target.value)" (keyup)="valueKeyup($event)" class="form-control" placeholder="Số giải">
                 </div>
-                <div class="checkbox col-1">
+                <!-- <div class="checkbox col-1">
                   <input class='checkbox' (change)="i.isLimited = !i.isLimited" type="checkbox" style="margin-top: 12px;">
-                </div>
+                </div> -->
               </div>
               <button type="button" [hidden] = "isHideAddGiftButton" (click)="addGift()" class="btn btn-info btn-sm" style="margin-top: 5px;">Thêm giải</button>
             </div>
