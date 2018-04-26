@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="card card-container">
+      <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+      <p id="profile-name" class="profile-name-card"></p>
+      <div class="form-signin">
+          <span id="reauth-email" class="reauth-email"></span>
+          <input type="text" id="inputEmail" (input)="username = $event.target.value" class="form-control" maxlength="40" placeholder="Tài khoản" required autofocus>
+          <input type="password" id="inputPassword" (input)="pass = $event.target.value" class="form-control" maxlength="40" placeholder="Mật khẩu" required>
+          <button class="btn btn-lg btn-primary btn-block btn-signin" (click)='login()'>Đăng nhập</button>
+      </div><!-- /form -->
+  </div><!-- /card-container -->
+</div><!-- /container -->

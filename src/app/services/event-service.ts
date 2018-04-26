@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';  
 import { EventWheelModel } from '../../model/eventWheelModel';
 import { GiftModel } from '../../model/giftModel';
+import { FNC } from './functioncommon';
 import { Http, HttpModule, Headers, RequestOptions} from '@angular/http'
 import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    // private url = 'http://localhost:8080/api';
-    private url = 'https://quaythuong.herokuapp.com/api';
+    private url = 'http://localhost:8080/api';
+    // private url = 'https://quaythuong.herokuapp.com/api';
     constructor (private http: Http) {
     }
 
     requestOptions = (): RequestOptions => {
-        let header: any = new Headers({'authorization': 'Basic YWRtaW46ZGV2ZWxvcGVy'});
+        let header: any = new Headers({'token': FNC.token});
         let options = new RequestOptions({ headers: header });
         return options; 
     }
@@ -23,7 +24,7 @@ import { map } from 'rxjs/operators';
     }
 
     getEventByIDForClient = (id): any => {
-        return this.http.get(this.url + '/getevent/'+ id, this.requestOptions());
+        return this.http.get(this.url + '/getevent/'+ id);
     }
 
     getEvents = (): any => {
@@ -47,7 +48,7 @@ import { map } from 'rxjs/operators';
             eventID: eventIDParam,
             code: codeParam
         }
-        return this.http.post(this.url + '/checkcode', bodyData, this.requestOptions())
+        return this.http.post(this.url + '/checkcode', bodyData)
     }
 
     checkPhone = (phoneParam, eventIDParam) => {
@@ -55,7 +56,7 @@ import { map } from 'rxjs/operators';
             eventID: eventIDParam,
             phone: phoneParam
         }
-        return this.http.post(this.url + '/checkphone', bodyData, this.requestOptions())
+        return this.http.post(this.url + '/checkphone', bodyData)
     }
 
     sendResult = (codeItemParam, eventIDParam): any => {
@@ -67,7 +68,7 @@ import { map } from 'rxjs/operators';
             codeItem: codeItemParam
         }
 
-        return this.http.put(this.url + '/addcodeinfo/', bodyData, this.requestOptions())
+        return this.http.put(this.url + '/addcodeinfo/', bodyData)
     }
 
     converJsonToEvent = (event): EventWheelModel => {
@@ -102,5 +103,9 @@ import { map } from 'rxjs/operators';
                 eventTo[p] = eventFromClone[p];
             }
         }
+    }
+
+    validateToken = (token) => {
+        return this.http.get(this.url + '/author/'+ token);
     }
  } 

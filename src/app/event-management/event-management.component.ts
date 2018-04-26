@@ -28,6 +28,9 @@ export class EventManagementComponent implements OnInit {
   constructor(private eventService: EventService, private router: Router) { }
 
   ngOnInit() {
+    if (!FNC.token) {
+      this.goTo('');
+    }
     this.newEvent = new EventWheelModel();
     this.selectingEvent = new EventWheelModel();
     this.editingEvent = new EventWheelModel();
@@ -259,8 +262,12 @@ export class EventManagementComponent implements OnInit {
     }
   }
 
-  goTo = (page, param) => {
-    this.router.navigate(['/' + page, param]);
+  goTo = (page, param?) => {
+    if (param) {
+      this.router.navigate(['/' + page, param]);
+    } else {
+      this.router.navigate(['/' + page]);
+    }
     this.resetDataPopup(PopupType.CREATE);
     this.resetDataPopup(PopupType.EDIT);
   }

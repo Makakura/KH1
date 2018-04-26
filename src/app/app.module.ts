@@ -8,6 +8,7 @@ import { EventManagementComponent } from './event-management/event-management.co
 import { HttpModule } from '@angular/http';
 import { ResultManagementComponent } from './result-management/result-management.component';
 import { CodeManagementComponent } from './code-management/code-management.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -16,16 +17,18 @@ import { CodeManagementComponent } from './code-management/code-management.compo
     InputInfoComponent,
     EventManagementComponent,
     ResultManagementComponent,
-    CodeManagementComponent
+    CodeManagementComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
     RouterModule.forRoot([
-      {path: '', component: EventManagementComponent},
+      {path: '', component: LoginPageComponent},
       {path: 'wheel/:id', component: HomeComponent },
       {path: 'result/:id', component: ResultManagementComponent },
-      {path: 'code/:id', component: CodeManagementComponent }
+      {path: 'code/:id', component: CodeManagementComponent },
+      {path: 'manage', component: EventManagementComponent }
     ], {useHash: true})
   ],
   providers: [],

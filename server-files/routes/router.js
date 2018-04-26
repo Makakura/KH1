@@ -1,10 +1,11 @@
 var express = require('express')
 var router = express.Router()
-
+var crypto = require('crypto');
 // Import model
 var EventModel = require('../model/event-model');
 var GiftModel = require('../model/gift-model');
 var CodeModel = require('../model/code-model');
+var UserModel = require('../model/user-model');
 
 // middleware that is specific to this router
 router.use(function (req, res, next) {
@@ -56,79 +57,92 @@ router.get('/getcodes/:_params', function(req, res){
 	getCodeByGiftAndDate(req, res);
 });
 
-// Get IP
-router.get('/ip', function(req, res){
-	var ip;
-  if (req.headers['x-forwarded-for']) {
-    ip = req.headers['x-forwarded-for'].split(',').pop();
-  } else if (req.headers['x-forwarded-for']) {
-    ip = req.connection.remoteAddress;
-  } else if (req.headers['x-forwarded-for']) {
-    ip = req.connection.socket.remoteAddress
-  }
-  res.json({
-    result: true,
-    message: 'success',
-    data: {
-      IPAdress: ip
-    }
-  });
+// Authorize
+router.get('/author/:_token', function(req, res){
+	authorize(req, res);
 });
+
+
+// // Get IP
+// router.get('/ip', function(req, res){
+// 	var ip;
+//   if (req.headers['x-forwarded-for']) {
+//     ip = req.headers['x-forwarded-for'].split(',').pop();
+//   } else if (req.headers['x-forwarded-for']) {
+//     ip = req.connection.remoteAddress;
+//   } else if (req.headers['x-forwarded-for']) {
+//     ip = req.connection.socket.remoteAddress
+//   }
+//   res.json({
+//     result: true,
+//     message: 'success',
+//     data: {
+//       IPAdress: ip
+//     }
+//   });
+// });
 
 // Get IP
 router.put('/createcode', function(req, res){
 	createCode(req, res);
 });
 
-// Get code
-router.get('/getcode', function(req, res){
-	res.json({
-    code: [
-      '0BNVBLQL',
-      '0BNVBLQL',
-      '0BNVBLQL',
-      '0BNVBLQL',
-      '0BNVBLQL',
-      '0BNVBLQX'
-    ]
-  });
-});
-
-// Get code
-router.get('/getphone', function(req, res){
-	res.json({
-    code: [
-      '123456789',
-      '123456789',
-      '123456789',
-      '123456789',
-      '123456789',
-      '123456780'
-    ]
-  });
-});
-
-// Get code
-router.get('/name', function(req, res){
-	res.json({
-    code: [
-      'Nguyen Van A',
-      'Nguyen Van A',
-      'Nguyen Van A',
-      'Nguyen Van A',
-      'Nguyen Van A',
-      'Nguyen Van B'
-    ]
-  });
-});
-
-// Get code
+// Check phone
 router.post('/checkphone', function(req, res){
 	checkPhone(req, res);
 });
 
-
 // Function Area
+var authorize = function (req, res) {
+  let paramToken = req.params._token;
+  UserModel.find({},function(err, users){
+    let isValid = false;
+    for(let i = 0; i < users.length; i++ ) {
+      let user = users[i];
+      let token = MD5(user.username + user.pass);
+      if (token === paramToken) {
+        isValid = true;
+        break;
+      }
+    }
+    if (isValid) {
+      res.json({
+        result: true,
+        message: 'success',
+        data: {token: paramToken}
+      });
+    } else {
+      res.json({
+        result: false,
+        message: 'Tài khoản không hợp lệ'
+      });
+    }
+  });
+}
+
+checkValidToken = function (paramToken) {
+  UserModel.find({},function(err, users){
+    for(let i = 0; i < users.length; i++ ) {
+      let user = users[i];
+      let token = MD5(user.username + user.pass);
+      if (token === paramToken) {
+        isValid = true;
+        break;
+      }
+    }
+    if (!isValid){
+      res.json({
+        result: false,
+        message: 'Invalid token'
+      });
+    }
+	});
+}
+
+var MD5 = function (str) {
+  return  crypto.createHash('md5').update(str).digest('hex');
+}
+
 var getAllEvents = function (req, res) {
   EventModel.find({isDeleted: false},function(err, events){
 		if(err){

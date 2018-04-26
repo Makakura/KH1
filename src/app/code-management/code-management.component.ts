@@ -31,6 +31,10 @@ export class CodeManagementComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    if (!FNC.token) {
+      this.goTo('');
+    }
+    
     let that = this;
     this.getCodeToView();
     // on exit edit popup
@@ -163,8 +167,12 @@ export class CodeManagementComponent implements OnInit {
     $('#gift-detail').modal('show');
   }
   
-  goTo = (page, param) => {
-    this.router.navigate(['/' + page, param]);
+  goTo = (page, param?) => {
+    if (param) {
+      this.router.navigate(['/' + page, param]);
+    } else {
+      this.router.navigate(['/' + page]);
+    }
   }
 
   sortByKey(array, key) {

@@ -34,6 +34,10 @@ export class ResultManagementComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    if (!FNC.token) {
+      this.goTo('');
+    }
+
     let that = this;
     $('body').css('background-color', 'black');
     $("#myInput").on("keyup", function() {
@@ -153,7 +157,11 @@ export class ResultManagementComponent implements OnInit {
     $('#export-excel-modal').modal('show');
   }
 
-  goTo = (page, param) => {
-    this.router.navigate(['/' + page, param]);
+  goTo = (page, param?) => {
+    if (param) {
+      this.router.navigate(['/' + page, param]);
+    } else {
+      this.router.navigate(['/' + page]);
+    }
   }
 }
