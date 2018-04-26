@@ -2,10 +2,10 @@
 const cors = require('cors')
 const express = require('express');
 const app = express();
-const basicAuth = require('express-basic-auth');
-app.use(basicAuth({
-  users: { 'admin': 'developer' }
-}))
+// const basicAuth = require('express-basic-auth');
+// app.use(basicAuth({
+//   users: { 'admin': 'developer' }
+// }))
 app.use(cors())
 var http = require("http");
 setInterval(function() {
