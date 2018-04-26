@@ -3,8 +3,16 @@ const cors = require('cors')
 const express = require('express');
 const app = express();
 const basicAuth = require('express-basic-auth');
-app.use(basicAuth( { authorizer: myAuthorizer } ));
+// app.use(basicAuth( { authorizer: myAuthorizer } ));
 app.use(cors())
+
+var http = require("http");
+setInterval(function() {
+  http.get("http://quaythuong.herokuapp.com");
+}, 600000);
+
+// Import router
+var router = require('./server-files/routes/router');
 
 // Connect to mongodb
 var mongoose = require('mongoose');
@@ -14,14 +22,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('connected');
 });
-
-var http = require("http");
-setInterval(function() {
-  http.get("http://quaythuong.herokuapp.com");
-}, 600000);
-
-// Import router
-var router = require('./server-files/routes/router');
 
 // Make web client angular router on host
 app.use(express.static(__dirname + '/dist'));
@@ -33,10 +33,10 @@ app.use('/api', router)
 app.listen(process.env.PORT || 8080);
 console.log('listening...');
 
-function myAuthorizer(username, password) {
-  console.log(username);
-  console.log(password);
-    if(username==="admin" && password==="developer"){
-		return true;
-	}
-}
+// function myAuthorizer(username, password) {
+//   console.log(username);
+//   console.log(password);
+//     if(username==="admin" && password==="developer"){
+// 		return true;
+// 	}
+// }
