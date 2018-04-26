@@ -2,7 +2,6 @@
 const cors = require('cors')
 const express = require('express');
 const app = express();
-const basicAuth = require('express-basic-auth');
 app.use(cors())
 var http = require("http");
 setInterval(function() {
@@ -23,10 +22,6 @@ db.once('open', function() {
 
 // Make web client angular router on host
 app.use(express.static(__dirname + '/dist'));
-
-app.use(basicAuth({
-  users: { 'admin': 'developer' }
-}))
 
 // Use router
 app.use('/api', router)
