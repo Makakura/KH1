@@ -34,8 +34,9 @@ app.listen(process.env.PORT || 8080);
 console.log('listening...');
 
 function myAuthorizer(username, password) {
+  console.log(username);
+  console.log(password);
     if(username==="admin" && password==="developer"){
-		console.log(username);
 		return true;
 	}
 }
