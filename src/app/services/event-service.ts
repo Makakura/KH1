@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';  
 import { EventWheelModel } from '../../model/eventWheelModel';
 import { GiftModel } from '../../model/giftModel';
-import { Http ,HttpModule} from '@angular/http'
+import { Http, HttpModule, Headers, RequestOptions} from '@angular/http'
 import {Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,15 +9,65 @@ import { map } from 'rxjs/operators';
  export class EventService {
     // private url = 'http://localhost:8080/api';
     private url = 'https://quaythuong.herokuapp.com/api';
-    
-    constructor (private http: Http) {}
+    constructor (private http: Http) {
+    }
+
+    requestOptions = (): RequestOptions => {
+        let header: any = new Headers({'authorization': 'Basic YWRtaW46ZGV2ZWxvcGVy'});
+        let options = new RequestOptions({ headers: header });
+        return options; 
+    }
 
     getEventByID = (id): any => {
-        return this.http.get(this.url + '/events/'+ id);
+        return this.http.get(this.url + '/events/'+ id, this.requestOptions());
     }
 
     getEventByIDForClient = (id): any => {
-        return this.http.get(this.url + '/getevent/'+ id);
+        return this.http.get(this.url + '/getevent/'+ id, this.requestOptions());
+    }
+
+    getEvents = (): any => {
+        return this.http.get(this.url + '/events', this.requestOptions());
+    }
+
+    addEvent = (event): any => {
+        return this.http.post(this.url + '/events', event, this.requestOptions())
+    }
+
+    updateEvent = (event): any => {
+        return this.http.put(this.url + '/events/' + event._id, event, this.requestOptions())
+    }
+
+    createCode = (bodyData) => {
+        return this.http.put(this.url + '/createcode', bodyData, this.requestOptions())
+    }
+
+    checkCode = (codeParam, eventIDParam) => {
+        let bodyData = {
+            eventID: eventIDParam,
+            code: codeParam
+        }
+        return this.http.post(this.url + '/checkcode', bodyData, this.requestOptions())
+    }
+
+    checkPhone = (phoneParam, eventIDParam) => {
+        let bodyData = {
+            eventID: eventIDParam,
+            phone: phoneParam
+        }
+        return this.http.post(this.url + '/checkphone', bodyData, this.requestOptions())
+    }
+
+    sendResult = (codeItemParam, eventIDParam): any => {
+        let thisDate =  new Date();
+        codeItemParam.playedDate = thisDate
+        codeItemParam.clientPlayedDate = thisDate.toLocaleString('en-GB');
+        let bodyData = {
+            eventID: eventIDParam,
+            codeItem: codeItemParam
+        }
+
+        return this.http.put(this.url + '/addcodeinfo/', bodyData, this.requestOptions())
     }
 
     converJsonToEvent = (event): EventWheelModel => {
@@ -45,18 +95,6 @@ import { map } from 'rxjs/operators';
         return arrayEvent;
     }
 
-    getEvents = (): any => {
-        return this.http.get(this.url + '/events');
-    }
-
-    addEvent = (event): any => {
-        return this.http.post(this.url + '/events', event)
-    }
-
-    updateEvent = (event): any => {
-        return this.http.put(this.url + '/events/' + event._id, event)
-    }
-
     updateNewValueToEvent = (eventFrom: EventWheelModel, eventTo: EventWheelModel) => {
         let eventFromClone = eventFrom.clone();
         for(var p in eventFromClone) {
@@ -64,37 +102,5 @@ import { map } from 'rxjs/operators';
                 eventTo[p] = eventFromClone[p];
             }
         }
-    }
-
-    createCode = (bodyData) => {
-        return this.http.put(this.url + '/createcode', bodyData)
-    }
-
-    checkCode = (codeParam, eventIDParam) => {
-        let bodyData = {
-            eventID: eventIDParam,
-            code: codeParam
-        }
-        return this.http.post(this.url + '/checkcode', bodyData)
-    }
-
-    checkPhone = (phoneParam, eventIDParam) => {
-        let bodyData = {
-            eventID: eventIDParam,
-            phone: phoneParam
-        }
-        return this.http.post(this.url + '/checkphone', bodyData)
-    }
-
-    sendResult = (codeItemParam, eventIDParam): any => {
-        let thisDate =  new Date();
-        codeItemParam.playedDate = thisDate
-        codeItemParam.clientPlayedDate = thisDate.toLocaleString('en-GB');
-        let bodyData = {
-            eventID: eventIDParam,
-            codeItem: codeItemParam
-        }
-
-        return this.http.put(this.url + '/addcodeinfo/', bodyData)
     }
  } 
