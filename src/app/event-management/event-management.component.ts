@@ -30,6 +30,7 @@ export class EventManagementComponent implements OnInit {
   ngOnInit() {
     if (!FNC.token) {
       this.goTo('');
+      return;
     }
     this.newEvent = new EventWheelModel();
     this.selectingEvent = new EventWheelModel();

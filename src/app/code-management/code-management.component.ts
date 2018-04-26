@@ -33,6 +33,7 @@ export class CodeManagementComponent implements OnInit {
   ngOnInit() {
     if (!FNC.token) {
       this.goTo('');
+      return;
     }
     
     let that = this;

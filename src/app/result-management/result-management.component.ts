@@ -36,6 +36,7 @@ export class ResultManagementComponent implements OnInit {
   ngOnInit() {
     if (!FNC.token) {
       this.goTo('');
+      return;
     }
 
     let that = this;

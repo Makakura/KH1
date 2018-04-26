@@ -26,7 +26,7 @@ export class LoginPageComponent implements OnInit {
     if (!this.username || !this.pass) {
       FNC.displayNotify('Thông báo','Vui lòng nhập đầy đủ thông tin để đăng nhập');
     } else {
-      let str = this.username + this.pass;
+      let str = this.username.toLocaleLowerCase() + this.pass.toLocaleLowerCase();
       let token = FNC.MD5(str);
       this.validate(token);
     }
