@@ -21,7 +21,6 @@ export class HomeComponent implements OnInit {
   sub: any;
   isCheckingCode = false;
   currentEvent:EventWheelModel = new EventWheelModel();
-  audioYeah: any;
   audioRotate: any;
   codeItem = {
     'code': '',
@@ -41,7 +40,6 @@ export class HomeComponent implements OnInit {
     this.initCssView();
     this.getEvent();
     this.initSoundRotate();
-    this.initSoundCheer();
   }
 
   initCssView = () => {
@@ -84,12 +82,6 @@ export class HomeComponent implements OnInit {
       setTimeout(function(){
         that.curClass = 'rotate' + that.currentNumber;
       }, 3000);
-
-      setTimeout(function(){
-        that.audioRotate.pause();
-        that.audioYeah.play();
-        that.sendResult();
-      }, 13500);
 
       setTimeout(function(){
         $('#notify-model').modal({
@@ -211,15 +203,15 @@ export class HomeComponent implements OnInit {
 
   initSoundRotate = () => {
     this.audioRotate = new Audio();
-    this.audioRotate.src = '../../../assets/audio/rotate.mp3';
+    this.audioRotate.src = '../../../assets/audio/wheel-song.mp3';
     this.audioRotate.load();
   }
 
-  initSoundCheer = () => {
-    this.audioYeah = new Audio();
-    this.audioYeah.src = '../../../assets/audio/cheer.mp3';
-    this.audioYeah.load();
-  }
+  // initSoundCheer = () => {
+  //   this.audioYeah = new Audio();
+  //   this.audioYeah.src = '../../../assets/audio/cheer.mp3';
+  //   this.audioYeah.load();
+  // }
 
   sendResult = () => {
     if (this.codeItem.code && this.codeItem.name && this.codeItem.phone) {
