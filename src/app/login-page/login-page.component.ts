@@ -39,8 +39,10 @@ export class LoginPageComponent implements OnInit {
         let resJson = res.json();
         if (resJson.result) {
           FNC.token = resJson.data.token;
-          this.goTo('manage');
           FNC.hideSpinner(0);
+          setTimeout(() => {
+            this.goTo('manage');
+          }, 500);
         } else {
           FNC.hideSpinner(0);
           FNC.displayNotify('Thông báo','Thông tin xác thực không hợp lệ');
