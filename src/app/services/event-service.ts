@@ -23,10 +23,6 @@ import { map } from 'rxjs/operators';
         return this.http.get(this.url + '/events/'+ id, this.requestOptions());
     }
 
-    getEventByIDForClient = (id): any => {
-        return this.http.get(this.url + '/getevent/'+ id);
-    }
-
     getEvents = (): any => {
         return this.http.get(this.url + '/events', this.requestOptions());
     }
@@ -43,12 +39,16 @@ import { map } from 'rxjs/operators';
         return this.http.put(this.url + '/createcode', bodyData, this.requestOptions())
     }
 
+    getEventByIDForClient = (id): any => {
+        return this.http.get(this.url + '/getevent/'+ id, this.requestOptions());
+    }
+
     checkCode = (codeParam, eventIDParam) => {
         let bodyData = {
             eventID: eventIDParam,
             code: codeParam
         }
-        return this.http.post(this.url + '/checkcode', bodyData)
+        return this.http.post(this.url + '/checkcode', bodyData, this.requestOptions())
     }
 
     checkPhone = (phoneParam, eventIDParam) => {
@@ -56,7 +56,7 @@ import { map } from 'rxjs/operators';
             eventID: eventIDParam,
             phone: phoneParam
         }
-        return this.http.post(this.url + '/checkphone', bodyData)
+        return this.http.post(this.url + '/checkphone', bodyData, this.requestOptions())
     }
 
     sendResult = (codeItemParam, eventIDParam): any => {
@@ -68,7 +68,7 @@ import { map } from 'rxjs/operators';
             codeItem: codeItemParam
         }
 
-        return this.http.put(this.url + '/addcodeinfo/', bodyData)
+        return this.http.put(this.url + '/addcodeinfo/', bodyData, this.requestOptions())
     }
 
     converJsonToEvent = (event): EventWheelModel => {
