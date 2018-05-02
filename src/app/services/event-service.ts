@@ -44,6 +44,10 @@ import { map } from 'rxjs/operators';
         return this.http.get(this.url + '/getevent/'+ id, this.requestOptions());
     }
 
+    validateToken = (token) => {
+        return this.http.get(this.url + '/author/'+ token, this.requestOptions());
+    }
+
     checkCode = (codeParam, eventIDParam) => {
         let bodyData = {
             eventID: eventIDParam,
@@ -106,7 +110,5 @@ import { map } from 'rxjs/operators';
         }
     }
 
-    validateToken = (token) => {
-        return this.http.get(this.url + '/author/'+ token);
-    }
+    
  } 
