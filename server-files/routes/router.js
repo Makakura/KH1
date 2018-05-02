@@ -7,6 +7,20 @@ var GiftModel = require('../model/gift-model');
 var CodeModel = require('../model/code-model');
 var UserModel = require('../model/user-model');
 
+router.use(function(req, res, next) {
+
+  // check header or url parameters or post parameters for token
+  var token = req.headers['token'];
+  if (token) {
+    checkValidToken(token, req, res, next);
+  } else {
+    res.json({
+      result: false,
+      message: 'Invalid token'
+    });
+  }
+});
+
 // middleware that is specific to this router
 router.use(function (req, res, next) {
   next()
@@ -120,23 +134,51 @@ var authorize = function (req, res) {
   });
 }
 
-checkValidToken = function (paramToken) {
-  UserModel.find({},function(err, users){
-    for(let i = 0; i < users.length; i++ ) {
-      let user = users[i];
-      let token = MD5(user.username + user.pass);
-      if (token === paramToken) {
-        isValid = true;
-        break;
+checkValidToken = function (paramToken, req, res, next) {
+  // Check for client
+  if(checkIsClientReq(req.url)) {
+      if (paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
+        next();
+      } else {
+        res.json({
+          result: false,
+          message: 'Invalid token'
+        });
       }
-    }
-    if (!isValid){
-      res.json({
-        result: false,
-        message: 'Invalid token'
-      });
-    }
-	});
+  } else {
+    // Check for manager
+    let isValid = false;
+    UserModel.find({},function(err, users){
+      for(let i = 0; i < users.length; i++ ) {
+        let user = users[i];
+        let token = MD5(user.username + user.pass);
+        if (token === paramToken) {
+          isValid = true;
+          break;
+        }
+      }
+      if (isValid) {
+        next();
+      } else {
+        res.json({
+          result: false,
+          message: 'Invalid token'
+        });
+      }
+    });
+  }
+  
+}
+
+var checkIsClientReq = function(reqURL) {
+  if (reqURL.indexOf('/getevent') != -1 
+  || reqURL.indexOf('/checkcode') != -1
+  || reqURL.indexOf('/checkphone') != -1
+  || reqURL.indexOf('/addcodeinfo') != -1) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 var MD5 = function (str) {
@@ -144,24 +186,53 @@ var MD5 = function (str) {
 }
 
 var getAllEvents = function (req, res) {
-  EventModel.find({isDeleted: false},function(err, events){
-		if(err){
-			res.status(500).send(err);
-		} else if(events){
-			res.json({
+  var query = EventModel.find({isDeleted: false}).select({"giftArray": 0});
+  query.exec(function(err, events){
+    if(err){
+      res.status(500).send(err);
+    } else if(events){
+      // events.forEach((event)=> {
+      //   event.giftArray.forEach((gift)=> {
+      //     gift.codeArray = [];
+      //   });
+      // });
+      res.json({
         result: true,
         message: 'success',
         data: events
       });
-		}
-		else{
-			res.json({
+    }
+    else{
+      res.json({
         result: false,
         message: 'Lấy danh sách sự kiện thất bại, vui lòng thử lại sau',
         data: {}
       });
-		}
-	});
+    }
+  });
+  // EventModel.find({isDeleted: false},function(err, events){
+	// 	if(err){
+	// 		res.status(500).send(err);
+	// 	} else if(events){
+  //     events.forEach((event)=> {
+  //       event.giftArray.forEach((gift)=> {
+  //         gift.codeArray = [];
+  //       });
+  //     });
+	// 		res.json({
+  //       result: true,
+  //       message: 'success',
+  //       data: events
+  //     });
+	// 	}
+	// 	else{
+	// 		res.json({
+  //       result: false,
+  //       message: 'Lấy danh sách sự kiện thất bại, vui lòng thử lại sau',
+  //       data: {}
+  //     });
+	// 	}
+	// });
 }
 
 var getEventByID = function (req, res) {
