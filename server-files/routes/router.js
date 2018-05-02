@@ -174,7 +174,8 @@ var checkIsClientReq = function(reqURL) {
   if (reqURL.indexOf('/getevent') != -1 
   || reqURL.indexOf('/checkcode') != -1
   || reqURL.indexOf('/checkphone') != -1
-  || reqURL.indexOf('/addcodeinfo') != -1) {
+  || reqURL.indexOf('/addcodeinfo') != -1
+  || reqURL.indexOf('/author') != -1) {
     return true;
   } else {
     return false;

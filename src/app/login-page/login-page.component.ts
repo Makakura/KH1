@@ -33,6 +33,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   validate = (token) => {
+    FNC.token = '6ad14ba9986e3615423dfca256d04e3f';
     FNC.showSpinner();
     this.eventService.validateToken(token).subscribe(
       res => {
