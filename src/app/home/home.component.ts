@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   isCompleteInput = false;
   sub: any;
   isCheckingCode = false;
+  isShowWheel = false;
   currentEvent:EventWheelModel = new EventWheelModel();
   audioRotate: any;
   codeItem = {
@@ -57,6 +58,7 @@ export class HomeComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.currentEvent = this.eventService.converJsonToEvent(resJson.data);
+              this.isShowWheel = true;
               FNC.hideSpinner(1000);
             } else {
               FNC.hideSpinner(1000);
