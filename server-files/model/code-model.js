@@ -1,42 +1,29 @@
 var mongoose = require('mongoose');
+var CodeItemModel = require('./code-item-model');
 var CodeModel = mongoose.Schema({
-    code: {
+    eventID: {
         type: String,
-        default: ''
+        required : true
     },
-    name: {
-        type: String,
-        default: ''
+    giftID: {
+        type: Number,
+        required : true
     },
-    phone:{
-        type: String,
-        default: ''
-    },
-    fb: {
-        type: String,
-        default: ''
-    },
-    isPlayed: {
-        type: Boolean,
-        default: false
-    },
-    createdDate: {
-        type: Date
-    },
-    playedDate: {
-        type: Date
-    },
-    clientPlayedDate: {
-        type: String,
-        default: ''
-    },
-    clientCreatedDate: {
-        type: String,
-        default: ''
+    playedCounter: {
+        type: Number,
+        default : 0
     },
     giftName: {
         type: String,
-        default: ''
+        default : ''
+    },
+    numberOfReward: {
+        type: Number,
+        default : 0
+    },
+    codeArray: {
+        type: [CodeItemModel]
     }
 });
-module.exports = CodeModel;
+
+module.exports  = mongoose.model('Code', CodeModel);

@@ -13,7 +13,8 @@ var router = require('./server-files/routes/router');
 
 // Connect to mongodb
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://makakura:0985554820@ds231589.mlab.com:31589/kh1');
+// mongoose.connect('mongodb://makakura:0985554820@ds231589.mlab.com:31589/kh1');
+mongoose.connect('mongodb://makakura:0985554820@ds113200.mlab.com:13200/kh2');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {

@@ -218,8 +218,8 @@ export class HomeComponent implements OnInit {
   // }
 
   sendResult = () => {
-    if (this.codeItem.code && this.codeItem.name && this.codeItem.phone) {
-      this.eventService.sendResult(this.codeItem, this.currentEvent._id).subscribe(
+    if (this.codeItem.code && this.codeItem.name && this.codeItem.phone && this.currentNumber !== -1) {
+      this.eventService.sendResult(this.codeItem, this.currentEvent._id, this.currentNumber).subscribe(
         res => {
           let resJson = res.json();
           if (!resJson.result) {
@@ -229,6 +229,8 @@ export class HomeComponent implements OnInit {
         err => {
           FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
         });
+    } else {
+      FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
     }
   }
 }

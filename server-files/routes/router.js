@@ -9,57 +9,72 @@ var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
 
-  // check header or url parameters or post parameters for token
-  var token = req.headers['token'];
-  if (token) {
-    checkValidToken(token, req, res, next);
-  } else {
-    res.json({
-      result: false,
-      message: 'Invalid token'
-    });
-  }
+  // // check header or url parameters or post parameters for token
+  // var token = req.headers['token'];
+  // if (token) {
+  //   checkValidToken(token, req, res, next);
+  // } else {
+  //   res.json({
+  //     result: false,
+  //     message: 'Invalid token'
+  //   });
+  // }
+  next();
 });
-
-// middleware that is specific to this router
-router.use(function (req, res, next) {
-  next()
-})
-
-// Get all events
-router.get('/events', function (req, res) {
-	getAllEvents(req, res);
-});
-
-// Add new event
-router.post('/events', function(req, res){
-	addNewEvent(req, res);
-});
-
-// Get event by id
-router.get('/events/:_id', function(req, res){
-	getEventByID(req, res);
-});
+// >>>>>>> CLIENT ROUTER
 
 // Get event by id for client
-router.get('/getevent/:_id', function(req, res){
+router.get('/getevent/:_id', (req, res) => {
 	getEventByIDForClient(req, res);
 });
 
-// Get event by id
-router.put('/events/:_id', function(req, res){
-	editEventByID(req, res);
-});
-
 // Check valid Code
-router.post('/checkcode', function(req, res){
+router.post('/checkcode', (req, res) =>{
 	checkCode(req, res);
 });
 
-// Check valid Code
-router.put('/addcodeinfo', function(req, res){
+// Check phone
+router.post('/checkphone', (req, res) => {
+	checkPhone(req, res);
+});
+
+// Add code info
+router.put('/addcodeinfo', (req, res) => {
 	addCodeInfo(req, res);
 });
+// >>>>>>> END OF CLIENT ROUTER
+
+
+// >>>>>>> MANAGEMENT ROUTER
+// Get all events
+router.get('/events', (req, res) => {
+	getAllEvents(req, res);
+});
+
+// Get event by id
+router.get('/events/:_id', (req, res) => {
+	getEventByID(req, res);
+});
+
+// Get gift by event id 
+router.get('/gifts/:_id', (req, res) => {
+	getGiftsByEventID(req, res);
+});
+// edit event
+router.put('/events/:_id', (req, res) => {
+	editEventByID(req, res);
+});
+
+// Add new event
+router.post('/events', (req, res) => {
+	addNewEvent(req, res);
+});
+
+// createCode
+router.put('/createcode', function(req, res){
+	createCode(req, res);
+});
+// >>>>>>> END OF MANAGEMENT ROUTER
 
 // Get result
 router.get('/getresult/:_id', function(req, res){
@@ -76,65 +91,401 @@ router.get('/author/:_token', function(req, res){
 	authorize(req, res);
 });
 
-
-// // Get IP
-// router.get('/ip', function(req, res){
-// 	var ip;
-//   if (req.headers['x-forwarded-for']) {
-//     ip = req.headers['x-forwarded-for'].split(',').pop();
-//   } else if (req.headers['x-forwarded-for']) {
-//     ip = req.connection.remoteAddress;
-//   } else if (req.headers['x-forwarded-for']) {
-//     ip = req.connection.socket.remoteAddress
-//   }
-//   res.json({
-//     result: true,
-//     message: 'success',
-//     data: {
-//       IPAdress: ip
-//     }
-//   });
-// });
-
-// Get IP
-router.put('/createcode', function(req, res){
-	createCode(req, res);
-});
-
-// Check phone
-router.post('/checkphone', function(req, res){
-	checkPhone(req, res);
-});
-
-// Function Area
-var authorize = function (req, res) {
-  let paramToken = req.params._token;
-  UserModel.find({},function(err, users){
-    let isValid = false;
-    for(let i = 0; i < users.length; i++ ) {
-      let user = users[i];
-      let token = MD5(user.username + user.pass);
-      if (token === paramToken) {
-        isValid = true;
-        break;
+// CLIENT HANDLE API
+var getEventByIDForClient = function (req, res) {
+  if (req.params._id) {
+    EventModel.findById(req.params._id,function(err,event){
+      if(err|| !event){
+        queryErrorHandle(res);
+      } else{
+        queryReturnData(res, 'success', event);
       }
-    }
-    if (isValid) {
-      res.json({
-        result: true,
-        message: 'success',
-        data: {token: paramToken}
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var checkCode = (req, res) => {
+  let jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    let jsonData = JSON.parse(jsonString)
+    if (jsonData.eventID && jsonData.code) {
+      let eventIDParam = jsonData.eventID;
+      let codeParam = jsonData.code.toUpperCase();
+      EventModel.findById(eventIDParam, (err, event) => {
+        if (err || !event) {
+          queryErrorHandle(res);
+        } else {
+          if (event.status === "Running") {
+            findCodeAndCheckValid(req, res, eventIDParam, codeParam);
+          } else {
+            let messageParam = 'Sự kiện chưa bắt đầu, liên hệ với ban tổ chức để biết thêm chi tiết';
+            queryErrorSpecialHandle(res, messageParam);
+          }
+        }
       });
     } else {
-      res.json({
-        result: false,
-        message: 'Tài khoản không hợp lệ'
-      });
+      queryErrorHandle(res);
     }
   });
 }
 
-checkValidToken = function (paramToken, req, res, next) {
+var findCodeAndCheckValid = (req, res, eventIDParam, codeParam) => {
+  let dataParam = { isValid: false, number: -1, giftName: 'giftName'};
+  let messageParam = 'Mã không hợp lệ, xin vui lòng kiểm tra lại';
+  let query = [
+    { $match: { eventID: eventIDParam}},
+    { $unwind: "$codeArray"}, 
+    { $match : {"codeArray.code": codeParam}},
+    { $project : {_id: 0, status: 1, playedCounter: 1, numberOfReward: 1, giftID: 1, giftName: 1, codeItem : "$codeArray"}}
+  ];
+  
+  CodeModel.aggregate(query, (err, arr) => {
+    if(err) {
+      queryErrorHandle(res);
+    } else if(arr[0]){
+      let curCodeItem = arr[0].codeItem;
+      if (!curCodeItem.isPlayed && !curCodeItem.name && !curCodeItem.phone) {
+        if (arr[0].numberOfReward > arr[0].playedCounter) {
+          dataParam.isValid = true;
+          dataParam.number = arr[0].giftID;
+          dataParam.giftName = arr[0].giftName;
+          messageParam = 'success'
+        } else {
+          dataParam.isValid = false;
+          messageParam = 'Quà của sự kiện đã được phát hết, hẹn quý khách đợt sau <3'
+        }
+      } else {
+        dataParam.isValid = false;
+        messageParam = 'Mã không hợp lệ';
+      }
+    }
+    else {
+      messageParam = 'Mã không hợp lệ';
+      dataParam = {isValid: false}
+    }
+    queryReturnData(res, messageParam, dataParam);
+  }); 
+} 
+
+var checkPhone = (req, res) => {
+  var jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    var jsonData = JSON.parse(jsonString)
+    if (jsonData.eventID && jsonData.phone){
+      var eventIDParam = jsonData.eventID;
+      var phoneParam = jsonData.phone;
+      let query = [
+        { $match: { eventID: eventIDParam}},
+        { $unwind: "$codeArray"}, 
+        { $match : {"codeArray.phone": phoneParam}},
+        { $project : {_id: 0, codeItem : "$codeArray"}}
+      ];
+      
+      CodeModel.aggregate(query, (err, arr) => {
+        if(err) {
+          queryErrorHandle(res);
+        } else if(arr[0]){
+          messageParam = 'success';
+          dataParam = {isValid: false}
+          queryReturnData(res, messageParam, dataParam);
+        }
+        else {
+          EventModel.findById(eventIDParam, (err, event) => {
+            if (err || !event) {
+              messageParam = 'success';
+              dataParam = {isValid: false}
+            } else {
+              messageParam = 'success';
+              dataParam = {isValid: true}
+            }
+            queryReturnData(res, messageParam, dataParam);
+          })
+        }
+      }); 
+    } else {
+      queryErrorHandle(res);
+    }
+  });
+}
+
+
+var addCodeInfo = (req, res) => {
+  var jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    var jsonData = JSON.parse(jsonString);
+    if (jsonData.eventID && jsonData.giftID && jsonData.codeItem) {
+      var eventIDParam = jsonData.eventID;
+      var giftIDParam = jsonData.giftID;
+      var codeItemParam = jsonData.codeItem;
+      var codeParam = codeItemParam.code;
+      CodeModel.findOneAndUpdate({
+        eventID: eventIDParam,
+        giftID: giftIDParam,
+        codeArray: {
+          $elemMatch: {
+            code: codeParam
+          }
+        }
+      }, {
+        $set: {
+          'codeArray.$.isPlayed': true,
+          'codeArray.$.name': codeItemParam.name,
+          'codeArray.$.phone': codeItemParam.phone,
+          'codeArray.$.playedDate': codeItemParam.playedDate,
+          'codeArray.$.clientPlayedDate': codeItemParam.clientPlayedDate,
+        },
+        $inc: { playedCounter: 1 } 
+      },
+      (err, item) => {
+        if (err || !item) {
+          queryErrorHandle(res);
+        } else {
+          queryReturnData(res,'success');
+        }
+      });
+    } else {
+      queryErrorHandle(res);
+    }
+  });
+}
+// END OF CLIENT HANDLE API
+
+// MANAGEMENT API HANDLE
+var getAllEvents = (req, res) => {
+  EventModel.find({isDeleted: false}, (err, events) =>{
+    if(err || !events){
+      queryErrorHandle(res);
+    } else {
+      queryReturnData(res, 'success', events);
+    }
+  });
+}
+
+var getEventByID = (req, res) => {
+  if (req.params._id) {
+    EventModel.findById(req.params._id, (err,event) => {
+      if(err|| !event){
+        queryErrorHandle(res);
+      } else{
+        queryReturnData(res, 'success', event);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var getGiftsByEventID = (req, res) => {
+  if (req.params._id) {
+    CodeModel.find({eventID: req.params._id}, (err,event) => {
+      if(err|| !event){
+        queryErrorHandle(res);
+      } else{
+        queryReturnData(res, 'success', event);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var editEventByID = (req, res) => {
+  var jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    if (jsonString) {
+      var eventNew = JSON.parse(jsonString)
+      EventModel.findById(req.params._id, (err, event) => {
+        if(err || !event){
+          queryErrorHandle(res);
+        } else {
+          if(eventNew._id){
+            delete eventNew._id;
+          }
+          for(var p in eventNew){
+            event[p] = eventNew[p];
+          }
+          event.save((err) => {
+            if(err) {
+              queryErrorHandle(res);
+            }
+            else {
+              queryReturnData(res, 'success', event);
+            }
+          });
+        }
+      });
+    } else {
+      queryErrorHandle(res);
+    }
+    
+  });
+}
+
+var addNewEvent = (req, res) => {
+  var jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    if (jsonString) {
+      var event = JSON.parse(jsonString)
+      var eventmodel = new EventModel(event);
+      eventmodel.save((err, savedEvent) => {
+        if(err){
+          queryErrorHandle(res);
+        } else {
+          queryReturnData(res, 'success', savedEvent);
+        }
+      });
+    } 
+  });
+}
+
+var createCode =  (req, res) => {
+  var jsonString = '';
+  req.on('data', (data) => {
+      jsonString += data;
+  });
+  req.on('end', () => {
+    var jsonData = JSON.parse(jsonString);
+    if (!jsonData.eventID 
+      || jsonData.giftArray) {
+
+        var eventIDParam = jsonData.eventID;
+        var giftParam = jsonData.gift;
+        var dateParam = jsonData.createDate;
+        var clientCreatedDateParam = jsonData.clientCreatedDate;
+        var arrayCodeCreated = [];
+
+        CodeModel.find({eventID: eventIDParam, giftID: giftParam.id}, (err, gift) =>{
+          if(err || !gift){
+            queryErrorHandle(res);
+          } else {
+            for(var i = 0; i < event.giftArray.length; i++) {
+              var gift = event.giftArray[i];
+              for(var j = 0; j < giftArrayParam.length; j++) {
+                var giftParam = giftArrayParam[j];
+                if (gift.id === giftParam.id) {
+                  generateCodeForGift(giftParam.numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated);
+                }
+              }
+            }
+
+            gift.save((err) => {
+              if(err) {
+                queryErrorHandle(res);
+              } else {
+                queryReturnData(res, 'success', arrayCodeCreated);
+              }
+            });
+          }
+        });
+    }
+  });
+}
+// END OF MANAGEMENT API HANDLE
+
+// PROCESSOR FUNCTION
+var checkIsClientReq = (reqURL) => {
+  if (reqURL.indexOf('/getevent') != -1 
+  || reqURL.indexOf('/checkcode') != -1
+  || reqURL.indexOf('/checkphone') != -1
+  || reqURL.indexOf('/addcodeinfo') != -1
+  || reqURL.indexOf('/author') != -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+var MD5 = (str) => {
+  return  crypto.createHash('md5').update(str).digest('hex');
+}
+
+var generateCodeForGift =  (numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated) => {
+  for(var z = 0; z < numberOfCode; z++) {
+    var code = {
+      code: generateACode(8, event),
+      name: "",
+      phone: "",
+      fb: "",
+      isPlayed: false,
+      createdDate: dateParam,
+      clientCreatedDate: clientCreatedDateParam
+    };
+    arrayCodeCreated.push(code);
+    gift.codeArray.push(code);
+  }
+}
+
+var generateACode = (length, event) => {
+  possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  var text = "";
+
+  for ( var i = 0; i < length; i++ ) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  if (!checkCodeIsExistInEvent(text, event)) {
+    return text;
+  } else {
+    generateACode(length, event);
+  }
+}
+
+var checkCodeIsExistInEvent = (code, event) => {
+  for(var i = 0; i < event.giftArray.length; i++) {
+    var gift = event.giftArray[i];
+    for(var j = 0; j < gift.codeArray.length; j++) {
+      var codeItem = gift.codeArray[j];
+      if (codeItem.code === code) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+var queryErrorHandle = (res) => {
+  res.json({
+    result: false,
+    message: 'Đã có lỗi xảy ra xin vui lòng kiểm tra lại',
+  });
+}
+
+var queryErrorSpecialHandle = (res, messageParam) => {
+  res.json({
+    result: false,
+    message: messageParam
+  });
+}
+
+var queryReturnData = (res, messageParam, dataParam) => {
+  res.json({
+    result: true,
+    message: messageParam,
+    data: dataParam
+  });
+}
+
+// END OF PROCESSOR FUNCTION
+
+// AUTHOR HANDLE 
+var checkValidToken = (paramToken, req, res, next) => {
   // Check for client
   if(checkIsClientReq(req.url)) {
       if (paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
@@ -148,7 +499,7 @@ checkValidToken = function (paramToken, req, res, next) {
   } else {
     // Check for manager
     let isValid = false;
-    UserModel.find({},function(err, users){
+    UserModel.find({}, (err, users) => {
       for(let i = 0; i < users.length; i++ ) {
         let user = users[i];
         let token = MD5(user.username + user.pass);
@@ -160,400 +511,39 @@ checkValidToken = function (paramToken, req, res, next) {
       if (isValid) {
         next();
       } else {
-        res.json({
-          result: false,
-          message: 'Invalid token'
-        });
+        queryErrorHandle(res);
       }
     });
   }
-  
 }
 
-var checkIsClientReq = function(reqURL) {
-  if (reqURL.indexOf('/getevent') != -1 
-  || reqURL.indexOf('/checkcode') != -1
-  || reqURL.indexOf('/checkphone') != -1
-  || reqURL.indexOf('/addcodeinfo') != -1
-  || reqURL.indexOf('/author') != -1) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-var MD5 = function (str) {
-  return  crypto.createHash('md5').update(str).digest('hex');
-}
-
-var getAllEvents = function (req, res) {
-  var query = EventModel.find({isDeleted: false}).select({"giftArray": 0});
-  query.exec(function(err, events){
-    if(err){
-      res.status(500).send(err);
-    } else if(events){
-      // events.forEach((event)=> {
-      //   event.giftArray.forEach((gift)=> {
-      //     gift.codeArray = [];
-      //   });
-      // });
-      res.json({
-        result: true,
-        message: 'success',
-        data: events
-      });
-    }
-    else{
-      res.json({
-        result: false,
-        message: 'Lấy danh sách sự kiện thất bại, vui lòng thử lại sau',
-        data: {}
-      });
-    }
-  });
-  // EventModel.find({isDeleted: false},function(err, events){
-	// 	if(err){
-	// 		res.status(500).send(err);
-	// 	} else if(events){
-  //     events.forEach((event)=> {
-  //       event.giftArray.forEach((gift)=> {
-  //         gift.codeArray = [];
-  //       });
-  //     });
-	// 		res.json({
-  //       result: true,
-  //       message: 'success',
-  //       data: events
-  //     });
-	// 	}
-	// 	else{
-	// 		res.json({
-  //       result: false,
-  //       message: 'Lấy danh sách sự kiện thất bại, vui lòng thử lại sau',
-  //       data: {}
-  //     });
-	// 	}
-	// });
-}
-
-var getEventByID = function (req, res) {
-  EventModel.findById(req.params._id,function(err,event){
-		if(err){
-			res.status(500).send(err);
-		} else if(event){
-      res.json({
-        result: true,
-        message: 'success',
-        data: event
-      });
-		}
-		else{
-			res.json({
-        result: false,
-        message: 'Lấy sự kiện thất bại, vui lòng thử lại sau',
-        data: {}
-      });
-		}
-	});
-}
-
-var getEventByIDForClient = function (req, res) {
-  EventModel.findById(req.params._id,function(err,event){
-		if(err){
-			res.status(500).send(err);
-		} else if(event){
-      event.giftArray.forEach(gift => {
-        gift.codeArray = [];
-      });
-      res.json({
-        result: true,
-        message: 'success',
-        data: event
-      });
-		}
-		else{
-			res.json({
-        result: false,
-        message: 'Lấy sự kiện thất bại, vui lòng thử lại sau',
-        data: {}
-      });
-		}
-	});
-}
-
-var addNewEvent = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var event = JSON.parse(jsonString)
-    var eventmodel = new EventModel(event);
-    eventmodel.save(function(err, savedEvent){
-      if(err){
-        res.json({
-          result: false,
-          message: 'Thêm sự kiện thất bại, vui lòng thử lại sau',
-          data: {}
-        });
+var authorize = (req, res) => {
+  let paramToken = req.params._token;
+  UserModel.find({}, (err, users) => {
+    if (err || !users) {
+      queryErrorHandle(res);
+    } else {
+      let isValid = false;
+      for(let i = 0; i < users.length; i++ ) {
+        let user = users[i];
+        let token = MD5(user.username + user.pass);
+        if (token === paramToken) {
+          isValid = true;
+          break;
+        }
+      }
+      if (isValid) {
+        queryReturnData(res, 'success', {token: paramToken});
       } else {
-        res.json({
-          result: true,
-          message: 'success',
-          data: savedEvent
-        });
+        queryErrorHandle(res);
       }
-    });
-  });
-}
-
-var editEventByID = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var eventNew = JSON.parse(jsonString)
-    editEvent(req, res, eventNew);
-  });
-}
-
-var editEvent = function(req, res, eventNew){
-  EventModel.findById(req.params._id,function(err, event){
-    if(err){
-      res.status(500).send(err);
-    } else if(event){
-      if(eventNew._id){
-        delete eventNew._id;
-      }
-      for(var p in eventNew){
-        event[p] = eventNew[p];
-      }
-      saveThisEvent(res, event, true);
     }
-    else{
-      res.json({
-        result: false,
-        message: 'Sửa sự kiện thất bại, vui lòng thử lại sau',
-        data: {}
-      });
-    }
+    
   });
 }
+// END OF AUTHOR HANDLE 
 
-var checkCode = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var jsonData = JSON.parse(jsonString)
-    var eventID = jsonData.eventID;
-    var codeParam = jsonData.code;
-    var isValidParam = false;
-    var number = -1;
-    var giftName = '';
-    var messageParam = 'Mã không hợp lệ, xin vui lòng kiểm tra lại'
-    EventModel.findById(eventID, function(err,event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event){
-        if (event.status === 'Running') {
-          for(var i = 0; i < event.giftArray.length; i++) {
-            var gift = event.giftArray[i];
-            for(var j = 0; j < gift.codeArray.length; j++) {
-              var codeItem = gift.codeArray[j];
-              if (codeItem.code.toLowerCase() === codeParam.toLowerCase() && !codeItem.isPlayed && !codeItem.name && !codeItem.phone) {
-                if (gift.numberOfReward > gift.playedCounter) {
-                  isValidParam = true;
-                  number = gift.id;
-                  giftName = gift.name;
-                  messageParam = 'success'
-                  break;
-                } else {
-                  isValidParam = false;
-                  messageParam = 'Quà của sự kiện đã được phát hết, hẹn quý khách đợt sau <3'
-                }
-              }
-            }
-          }
-          res.json({
-            result: true,
-            message: messageParam,
-            data: { isValid: isValidParam, number: number, giftName: giftName}
-          });
-        } else {
-          res.json({
-            result: false,
-            message: 'Sự kiện chưa bắt đầu, liên hệ với ban tổ chức để biết thêm chi tiết'
-          });
-        }
-        
-      }
-      else{
-        res.json({
-          result: false,
-          message: 'Kiểm tra mã, vui lòng thử lại sau',
-          data: {}
-        });
-      }
-    });
-  });
-}
-
-var addCodeInfo = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var jsonData = JSON.parse(jsonString);
-    var eventID = jsonData.eventID;
-    var codeItemParam = jsonData.codeItem;
-    var codeParam = codeItemParam.code;
-    var isCatched = false;
-    EventModel.findById(eventID, function(err, event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event) {
-        for(var i = 0; i < event.giftArray.length; i++) {
-          var gift = event.giftArray[i];
-          for(var j = 0; j < gift.codeArray.length; j++) {
-            var codeItem = gift.codeArray[j];
-            if (codeItem.code === codeParam) {
-              if (!codeItem.isPlayed) { // Code chưa được sử dụng
-                codeItem.name = codeItemParam.name;
-                codeItem.phone = codeItemParam.phone;
-                codeItem.isPlayed = true;
-                codeItem.playedDate = codeItemParam.playedDate;
-                codeItem.clientPlayedDate = codeItemParam.clientPlayedDate;
-                isCatched = true;
-                gift.playedCounter++;
-                saveThisEvent(res, event, false);
-                break;
-              } else {
-                isCatched = true;
-                res.json(
-                  {
-                    result: false, 
-                    message: 'Mã quay thưởng đã được sử dụng, vui lòng kiểm tra lại hoặc liên hệ với ban tổ chức'
-                  });
-                break;
-              }
-            }
-          }
-        }
-
-        if (!isCatched) {
-          res.json(
-            {
-              result: false, 
-              message: 'Mã quay thưởng không hợp lệ, xin vui kiểm tra lại hoặc lòng liên hệ với ban tổ chức'
-            });
-        }
-      }
-      else{
-        res.json(
-          {
-            result: false, 
-            message: 'Không tìm thấy sự kiện, xin vui lòng liên hệ với ban tổ chức'
-          });
-      }
-    });
-  });
-}
-
-var createCode = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var jsonData = JSON.parse(jsonString);
-    var eventID = jsonData.eventID;
-    var giftArrayParam = jsonData.giftArray;
-    var dateParam = jsonData.createDate;// 
-    var clientCreatedDateParam = jsonData.clientCreatedDate;
-    var arrayCodeCreated = [];
-    EventModel.findById(eventID, function(err, event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event) {
-        for(var i = 0; i < event.giftArray.length; i++) {
-          var gift = event.giftArray[i];
-          for(var j = 0; j < giftArrayParam.length; j++) {
-            var giftParam = giftArrayParam[j];
-            if (gift.id === giftParam.id) {
-              generateCodeForEvent(giftParam.numberOfCode, giftParam.id, event, dateParam, clientCreatedDateParam, arrayCodeCreated);
-            }
-          }
-        }
-        event.save(function(err){
-          if(err) {
-            res.json(
-              {
-                result: false, 
-                message: 'Lưu kết quả thất bại, xin vui lòng thử lại',  errMsg: err
-              });
-          }
-          else {
-            res.json( 
-              {
-                result: true,
-                message:'success',
-                data: arrayCodeCreated
-              });
-          }
-        });
-      } else {
-        res.json(
-          {
-            result: false, 
-            message: 'Không tìm thấy sự kiện, xin vui lòng liên hệ với ban tổ chức'
-          });
-      }
-    });
-  });
-}
-
-var checkPhone = function (req, res) {
-  var jsonString = '';
-  req.on('data', function (data) {
-      jsonString += data;
-  });
-  req.on('end', function () {
-    var jsonData = JSON.parse(jsonString)
-    var eventID = jsonData.eventID;
-    var phoneParam = jsonData.phone;
-    EventModel.findById(eventID, function(err,event){
-      if(err){
-        res.status(500).send(err);
-      } else if(event){
-        if (checkPhoneIsValidInEvent(phoneParam, event)) {
-          res.json({
-            result: true,
-            message: 'success',
-            data: { isValid: true}
-          });
-        } else {
-          res.json({
-            result: true,
-            message: 'success',
-            data: { isValid: false}
-          });
-        }
-      }
-      else{
-        res.json({
-          result: false,
-          message: 'Đã xảy ra lỗi, vui lòng liên hệ với chúng tôi',
-          data: {}
-        });
-      }
-    });
-  });
-}
-
+// REPORT HANDLE 
 var getResultEvent = function (req, res) {
   EventModel.findById(req.params._id, function(err,event){
   if(err){
@@ -662,98 +652,26 @@ var getCodeByGiftAndDate = function (req, res) {
   } else {
     res.status(500);
   }
-  
 }
-
-var generateCodeForEvent = function (numberOfCode, giftID, event, dateParam, clientCreatedDateParam, arrayCodeCreated) {
-  for(var i = 0; i < event.giftArray.length; i++) {
-    var gift = event.giftArray[i];
-    if (gift.id === giftID) {
-      for(var z = 0; z < numberOfCode; z++) {
-        var code = {
-          code: generateACode(8, event),
-          name: "",
-          phone: "",
-          fb: "",
-          isPlayed: false,
-          createdDate: dateParam,
-          clientCreatedDate: clientCreatedDateParam
-        };
-        arrayCodeCreated.push(code);
-        gift.codeArray.push(code);
-      }
-    }
-  }
-}
-
-var generateACode = function(length, event) {
-  possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  var text = "";
-
-  for ( var i = 0; i < length; i++ ) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-
-  if (!checkCodeIsExistInEvent(text, event)) {
-    return text;
-  } else {
-    generateACode(length, event);
-  }
-}
-
-var saveThisEvent = function(res, event, isReturnData) {
-  event.save(function(err){
-    if(err) {
-      res.json(
-        {
-          result: false, 
-          message: 'Lưu kết quả thất bại, xin vui lòng thử lại',  errMsg: err
-        });
-    }
-    else {
-      if (isReturnData) {
-        res.json( 
-          {
-            result: true,
-            message:'success',
-            data: event
-          });
-      } else {
-        res.json( 
-          {
-            result: true,
-            message:'success'
-          });
-      }
-      
-    }
-  });
-}
-
-var checkCodeIsExistInEvent = function(code, event) {
-  for(var i = 0; i < event.giftArray.length; i++) {
-    var gift = event.giftArray[i];
-    for(var j = 0; j < gift.codeArray.length; j++) {
-      var codeItem = gift.codeArray[j];
-      if (codeItem.code === code) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-var checkPhoneIsValidInEvent = function(phone, event) {
-  for(var i = 0; i < event.giftArray.length; i++) {
-    var gift = event.giftArray[i];
-    for(var j = 0; j < gift.codeArray.length; j++) {
-      var codeItem = gift.codeArray[j];
-      if (codeItem.phone === phone) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
+// END OF REPORT HANDLE 
 module.exports = router;
+
+
+// // Get IP
+// router.get('/ip', function(req, res){
+// 	var ip;
+//   if (req.headers['x-forwarded-for']) {
+//     ip = req.headers['x-forwarded-for'].split(',').pop();
+//   } else if (req.headers['x-forwarded-for']) {
+//     ip = req.connection.remoteAddress;
+//   } else if (req.headers['x-forwarded-for']) {
+//     ip = req.connection.socket.remoteAddress
+//   }
+//   res.json({
+//     result: true,
+//     message: 'success',
+//     data: {
+//       IPAdress: ip
+//     }
+//   });
+// });

@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var CodeModel = require('./code-model');
 var GiftModel = mongoose.Schema({
     id: {
         type: Number,
@@ -19,9 +18,6 @@ var GiftModel = mongoose.Schema({
     isLimited:{
         type: Boolean,
         default: false  
-    },
-    codeArray: {
-        type: [CodeModel]
     }
 });
 
