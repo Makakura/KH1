@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var GiftModel = require('./gift-model');
 const EventModel = mongoose.Schema({
     name: {
         type: String,
@@ -32,10 +31,6 @@ const EventModel = mongoose.Schema({
     },
     dateCreate: {
         type: Date,
-        required : true
-    },
-    giftArray: {
-        type: [GiftModel],
         required : true
     }
 });

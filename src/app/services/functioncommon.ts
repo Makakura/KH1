@@ -8,6 +8,18 @@ import { Md5 } from 'ts-md5/dist/md5';
         var md5Factory = new Md5();
         return md5Factory.appendStr(str).end();
     }
+
+    public static saveToken (token) {
+      localStorage.setItem('token', token);
+    }
+
+    public static getToken () {
+      return localStorage.getItem('token');
+    }
+
+    public static clearToken () {
+      localStorage.removeItem('token');
+    }
     public static displayNotify (header, body, sub?, link?, isShowCloseButton?) {
         $("#notify-header").text(header);
         $("#notify-body").text(body);

@@ -39,7 +39,8 @@ export class LoginPageComponent implements OnInit {
       res => {
         let resJson = res.json();
         if (resJson.result) {
-          FNC.token = resJson.data.token;
+          // FNC.token = resJson.data.token;
+          FNC.saveToken(resJson.data.token);
           FNC.hideSpinner(0);
           setTimeout(() => {
             this.goTo('manage');

@@ -4,7 +4,6 @@ var crypto = require('crypto');
 // Import model
 var EventModel = require('../model/event-model');
 var GiftModel = require('../model/gift-model');
-var CodeModel = require('../model/code-model');
 var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
@@ -141,10 +140,10 @@ var findCodeAndCheckValid = (req, res, eventIDParam, codeParam) => {
     { $match: { eventID: eventIDParam}},
     { $unwind: "$codeArray"}, 
     { $match : {"codeArray.code": codeParam}},
-    { $project : {_id: 0, status: 1, playedCounter: 1, numberOfReward: 1, giftID: 1, giftName: 1, codeItem : "$codeArray"}}
+    { $project : {_id: 0, status: 1, playedCounter: 1, numberOfReward: 1, id: 1, name: 1, codeItem : "$codeArray"}}
   ];
   
-  CodeModel.aggregate(query, (err, arr) => {
+  GiftModel.aggregate(query, (err, arr) => {
     if(err) {
       queryErrorHandle(res);
     } else if(arr[0]){
@@ -152,8 +151,8 @@ var findCodeAndCheckValid = (req, res, eventIDParam, codeParam) => {
       if (!curCodeItem.isPlayed && !curCodeItem.name && !curCodeItem.phone) {
         if (arr[0].numberOfReward > arr[0].playedCounter) {
           dataParam.isValid = true;
-          dataParam.number = arr[0].giftID;
-          dataParam.giftName = arr[0].giftName;
+          dataParam.number = arr[0].id;
+          dataParam.giftName = arr[0].name;
           messageParam = 'success'
         } else {
           dataParam.isValid = false;
@@ -189,7 +188,7 @@ var checkPhone = (req, res) => {
         { $project : {_id: 0, codeItem : "$codeArray"}}
       ];
       
-      CodeModel.aggregate(query, (err, arr) => {
+      GiftModel.aggregate(query, (err, arr) => {
         if(err) {
           queryErrorHandle(res);
         } else if(arr[0]){
@@ -207,7 +206,7 @@ var checkPhone = (req, res) => {
               dataParam = {isValid: true}
             }
             queryReturnData(res, messageParam, dataParam);
-          })
+          });
         }
       }); 
     } else {
@@ -229,9 +228,10 @@ var addCodeInfo = (req, res) => {
       var giftIDParam = jsonData.giftID;
       var codeItemParam = jsonData.codeItem;
       var codeParam = codeItemParam.code;
-      CodeModel.findOneAndUpdate({
+
+      GiftModel.findOneAndUpdate({
         eventID: eventIDParam,
-        giftID: giftIDParam,
+        id: giftIDParam,
         codeArray: {
           $elemMatch: {
             code: codeParam
@@ -288,7 +288,7 @@ var getEventByID = (req, res) => {
 
 var getGiftsByEventID = (req, res) => {
   if (req.params._id) {
-    CodeModel.find({eventID: req.params._id}, (err,event) => {
+    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 0}, (err,event) => {
       if(err|| !event){
         queryErrorHandle(res);
       } else{
@@ -371,7 +371,7 @@ var createCode =  (req, res) => {
         var clientCreatedDateParam = jsonData.clientCreatedDate;
         var arrayCodeCreated = [];
 
-        CodeModel.find({eventID: eventIDParam, giftID: giftParam.id}, (err, gift) =>{
+        GiftModel.find({eventID: eventIDParam, id: giftParam.id}, (err, gift) =>{
           if(err || !gift){
             queryErrorHandle(res);
           } else {

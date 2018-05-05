@@ -1,5 +1,10 @@
 var mongoose = require('mongoose');
+var CodeItemModel = require('./code-item-model');
 var GiftModel = mongoose.Schema({
+    eventID: {
+        type: String,
+        required : true
+    },
     id: {
         type: Number,
         required : true
@@ -9,16 +14,16 @@ var GiftModel = mongoose.Schema({
         required : true
     },
     numberOfReward:{
-        type: Number  
+        type: Number,
+        default: 0
     },
     playedCounter:{
         type: Number,
         default: 0
     },
-    isLimited:{
-        type: Boolean,
-        default: false  
+    codeArray: {
+        type: [CodeItemModel]
     }
 });
 
-module.exports = GiftModel;
+module.exports  = mongoose.model('Gift', GiftModel);

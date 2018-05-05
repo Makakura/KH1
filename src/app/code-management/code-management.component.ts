@@ -31,7 +31,7 @@ export class CodeManagementComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    if (!FNC.token) {
+    if (!FNC.getToken()) {
       this.goTo('');
       return;
     }

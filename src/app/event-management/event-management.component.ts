@@ -28,7 +28,8 @@ export class EventManagementComponent implements OnInit {
   constructor(private eventService: EventService, private router: Router) { }
 
   ngOnInit() {
-    if (!FNC.token) {
+    let token = FNC.getToken();
+    if (!token || token === undefined) {
       this.goTo('');
       return;
     }
@@ -187,12 +188,39 @@ export class EventManagementComponent implements OnInit {
   }
 
   selectEvent = (event) => {
-    this.selectingEvent = event;
-    this.editingEvent = event.clone();
-    if ( this.selectingEvent) {
-      $('#show-event').modal('show');
-      $('#select-status').val(this.selectingEvent.status);
+    if (!event.giftArray || event.giftArray.length === 0) {
+      FNC.showSpinner();
+      this.eventService.getGifts(event._id).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result) {
+            event.giftArray = resJson.data;
+            this.selectingEvent = event;
+            this.editingEvent = event.clone();
+            if ( this.selectingEvent) {
+              $('#show-event').modal('show');
+              $('#select-status').val(this.selectingEvent.status);
+            }
+            FNC.hideSpinner(1000);
+          } else {
+            FNC.hideSpinner(1000);
+            FNC.displayNotify('Thông báo','Không lấy được danh sách phần thưởng');
+          }
+        },
+        err => {
+          FNC.hideSpinner(1000);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+        }
+      );
+    } else {
+      this.selectingEvent = event;
+      this.editingEvent = event.clone();
+      if ( this.selectingEvent) {
+        $('#show-event').modal('show');
+        $('#select-status').val(this.selectingEvent.status);
+      }
     }
+    
   }
 
   editEvent = () => {
@@ -275,6 +303,11 @@ export class EventManagementComponent implements OnInit {
 
   selectEditStatus = (selector) => {
     this.editingEvent.status =  $('#select-status').val();
+  }
+  
+  logOut = () => {
+    FNC.clearToken();
+    this.goTo('');
   }
 }
 

@@ -8,9 +8,9 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    //private url = 'http://localhost:8080/api';
+    private url = 'http://localhost:8080/api';
     //private url = 'https://quaythuong.herokuapp.com/api';
-    private url = 'https://quaythuongdev.herokuapp.com/api';
+    //private url = 'https://quaythuongdev.herokuapp.com/api';
     constructor (private http: Http) {
     }
 
@@ -22,6 +22,10 @@ import { map } from 'rxjs/operators';
 
     getEventByID = (id): any => {
         return this.http.get(this.url + '/events/'+ id, this.requestOptions());
+    }
+
+    getGifts = (eventID): any => {
+        return this.http.get(this.url + '/gifts/'+ eventID, this.requestOptions());
     }
 
     getEvents = (): any => {
