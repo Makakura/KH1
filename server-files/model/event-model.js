@@ -10,11 +10,10 @@ const EventModel = mongoose.Schema({
     status: {
         type: String, // Prepare, Running, Pause, Done 
         required : true,
-        default: 1
+        default: 'Preparing'
     },
     isDeleted:{
         type: Boolean,
-        required : true,
         default: false
     },
     linkImageWheel: {
@@ -27,11 +26,9 @@ const EventModel = mongoose.Schema({
     },
     linkToPrivacy: {
         type: String,
-        required : true
     },
     dateCreate: {
         type: Date,
-        required : true
     }
 });
 module.exports = mongoose.model('Event', EventModel);

@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 
 export class EventManagementComponent implements OnInit {
   listEvent = [];
-  listGift = [new GiftModel(0,'', 0, 0, false), new GiftModel(1,'', 0, 0, false), new GiftModel(2,'', 0, 0, false), new GiftModel(3,'', 0, 0, false)];
+  listGift = [new GiftModel(0,'', 0, 0), new GiftModel(1,'', 0, 0), new GiftModel(2,'', 0, 0), new GiftModel(3,'', 0, 0)];
   // For create popup
   isHideAddGiftButton = false;
   isShowImage = false; 
@@ -83,7 +83,7 @@ export class EventManagementComponent implements OnInit {
   
   addGift = () => {
     if(this.listGift.length < 8) {
-      this.listGift.push(new GiftModel(this.listGift.length, '', 0, 0, false));
+      this.listGift.push(new GiftModel(this.listGift.length, '', 0, 0));
     }
     if(this.listGift.length >= 8) {
       this.isHideAddGiftButton = true;
@@ -166,8 +166,8 @@ export class EventManagementComponent implements OnInit {
     if (value < 0 ) {
       value = 0;
     }
-    if (value > 99999) {
-      value = 99999;
+    if (value > 9999) {
+      value = 9999;
     }
     return value;
   }
@@ -176,8 +176,8 @@ export class EventManagementComponent implements OnInit {
     if (event.target.value < 0 ) {
       event.target.value = 0;
     }
-    if (event.target.value > 99999) {
-      event.target.value = 99999;
+    if (event.target.value > 9999) {
+      event.target.value = 9999;
     }
   }
 
@@ -233,6 +233,7 @@ export class EventManagementComponent implements OnInit {
             if (resJson.result) {
               let editedEvent = this.eventService.converJsonToEvent(resJson.data);
               this.eventService.updateNewValueToEvent(editedEvent, this.selectingEvent);
+              delete this.selectingEvent['giftArray'];
               this.resetDataPopup(PopupType.EDIT);
               FNC.displayNotify('Thông báo', 'Lưu thành công');
               FNC.hideSpinner(500);
@@ -256,13 +257,38 @@ export class EventManagementComponent implements OnInit {
 
   checkIsNeedToUpdateEvent = (selectingEvent: EventWheelModel, editedEvent: EventWheelModel): boolean => {
     let isNeedToUpdate = false;
+
     for(var p in editedEvent) {
-      if(JSON.stringify(editedEvent[p]) !== JSON.stringify(selectingEvent[p])){
+      if(!FNC.compareJSON(editedEvent[p], selectingEvent[p])) {
         isNeedToUpdate = true;
-      } else if(p != '_id' && JSON.stringify(editedEvent[p]) === JSON.stringify(selectingEvent[p])){
+
+        if (p === 'giftArray') {
+          let giftArrayEdited = editedEvent.giftArray;
+          let giftArrayOringal = selectingEvent.giftArray;
+
+          for (let i = 0; i < giftArrayOringal.length; i++) {
+
+            if (FNC.compareJSON(giftArrayEdited[i], giftArrayOringal[i])) {
+              giftArrayEdited.splice(i, 1);
+            } else {
+              let giftEdited = giftArrayEdited[i];
+              let giftOringal = giftArrayOringal[i];
+
+              for(var o in giftEdited) {
+                if(o !='id' && FNC.compareJSON(giftEdited[o], giftOringal[o])) {
+                  delete giftEdited[o];
+                }
+              }
+              delete giftEdited['codeArray'];
+            }
+          }
+
+        }
+      } else if(p != '_id' && FNC.compareJSON(editedEvent[p], selectingEvent[p])){
         delete editedEvent[p];
       }
     }
+
     return isNeedToUpdate;
   }
 
@@ -272,7 +298,6 @@ export class EventManagementComponent implements OnInit {
     } else {
       this.isShowEditGift = true;
     }
-    
   }
 
   resetDataPopup(popup: PopupType){

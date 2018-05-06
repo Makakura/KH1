@@ -52,4 +52,11 @@ import { Md5 } from 'ts-md5/dist/md5';
       }, delay);
     }
 
+    public static compareJSON = (json1, json2): boolean => {
+      return JSON.stringify(json1) === JSON.stringify(json2);
+    }
+
+    public static cloneJSON = (json1): any => {
+      return JSON.parse(JSON.stringify(json1));
+    }
  }

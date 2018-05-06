@@ -33,14 +33,20 @@ label {
 
 .wheel{
     width: 80%;
+    height: 80%;
     min-width: 350px;
-    max-width: 30%;
+    min-height: 350px;
+    max-width: 25%;
+    max-height: 25%;
 }
 
 .archor{
     width: 80%;
-    min-width: 350px; 
-    max-width: 30%;
+    height: 80%;
+    min-width: 350px;
+    min-height: 350px;
+    max-width: 25%;
+    max-height: 25%;
 }
 
 .at-bottom {

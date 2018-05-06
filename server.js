@@ -21,6 +21,11 @@ db.once('open', function() {
   console.log('connected');
 });
 
+process.on('uncaughtException', function(err) { 
+  console.log( " UNCAUGHT EXCEPTION " );
+  console.log( "[Inside 'uncaughtException' event] " + err.stack || err.message );
+});
+
 // Make web client angular router on host
 app.use(express.static(__dirname + '/dist'));
 

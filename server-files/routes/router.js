@@ -55,10 +55,6 @@ router.get('/events/:_id', (req, res) => {
 	getEventByID(req, res);
 });
 
-// Get gift by event id 
-router.get('/gifts/:_id', (req, res) => {
-	getGiftsByEventID(req, res);
-});
 // edit event
 router.put('/events/:_id', (req, res) => {
 	editEventByID(req, res);
@@ -68,6 +64,17 @@ router.put('/events/:_id', (req, res) => {
 router.post('/events', (req, res) => {
 	addNewEvent(req, res);
 });
+
+// Get gift by event id 
+router.get('/gifts/:_id', (req, res) => {
+	getGiftsByEventID(req, res);
+});
+
+// Add gifts for event
+router.post('/gifts', (req, res) => {
+	addGiftsForEvent(req, res);
+});
+
 
 // createCode
 router.put('/createcode', function(req, res){
@@ -301,58 +308,133 @@ var getGiftsByEventID = (req, res) => {
 }
 
 var editEventByID = (req, res) => {
-  var jsonString = '';
+  let jsonString = '';
   req.on('data', (data) => {
       jsonString += data;
   });
   req.on('end', () => {
     if (jsonString) {
-      var eventNew = JSON.parse(jsonString)
+      let eventNew = JSON.parse(jsonString);
+      let giftArrayParam = [];
+      let isNeedToUpdateGift = false;
+      let isNeedToSaveEvent = false;
+
+      // Get gift array
+      if (eventNew.giftArray && eventNew.giftArray.length > 0) {
+        giftArrayParam = JSON.parse(JSON.stringify(eventNew.giftArray));
+        delete eventNew.giftArray;
+        isNeedToUpdateGift = true;
+      }
+
+      // Find and update event
       EventModel.findById(req.params._id, (err, event) => {
         if(err || !event){
           queryErrorHandle(res);
         } else {
-          if(eventNew._id){
-            delete eventNew._id;
-          }
+          delete eventNew._id;
+          // update value for event
           for(var p in eventNew){
             event[p] = eventNew[p];
+            isNeedToSaveEvent = true;
           }
-          event.save((err) => {
+          if (isNeedToSaveEvent) {
+            event.save((err) => {
+              if(err) {
+                queryErrorHandle(res);
+              } else {
+                if (isNeedToUpdateGift) {
+                  updateGiftForEvent(res, event, giftArrayParam);
+                } else {
+                  queryReturnData(res, 'success', event);
+                }
+              }
+            });
+          } else {
+            updateGiftForEvent(res, event, giftArrayParam);
+          }
+          
+          }
+        });
+    } else {
+      queryErrorHandle(res);
+    }
+  });
+}
+
+var updateGiftForEvent = (res, event, giftArrayParam) => {
+  giftArrayParam.forEach((giftItem, index) => {
+    GiftModel.findOne({eventID: event._id, id: giftItem.id}, (err, gift) => {
+      if(err || !gift){
+        queryErrorHandle(res);
+      } else {
+          delete giftItem.id;
+          // update value for gift
+          for(var p in giftItem){
+            gift[p] = giftItem[p];
+          }
+
+          gift.save((err) => {
             if(err) {
               queryErrorHandle(res);
-            }
-            else {
-              queryReturnData(res, 'success', event);
+            } else {
+              if (index === giftArrayParam.length - 1) {
+                queryReturnData(res, 'success', event);
+              }
             }
           });
         }
       });
-    } else {
-      queryErrorHandle(res);
-    }
-    
   });
 }
 
 var addNewEvent = (req, res) => {
-  var jsonString = '';
+  let jsonString = '';
   req.on('data', (data) => {
       jsonString += data;
   });
   req.on('end', () => {
     if (jsonString) {
-      var event = JSON.parse(jsonString)
-      var eventmodel = new EventModel(event);
-      eventmodel.save((err, savedEvent) => {
-        if(err){
-          queryErrorHandle(res);
-        } else {
-          queryReturnData(res, 'success', savedEvent);
-        }
-      });
-    } 
+      let event = JSON.parse(jsonString)
+      if (event && event.giftArray) {
+        let giftArray = JSON.parse(JSON.stringify(event.giftArray));
+        delete event.giftArray;
+        let eventmodel = new EventModel(event);
+        eventmodel.save((err, savedEvent) => {
+          if(err || !savedEvent){
+            console.log(err);
+            queryErrorHandle(res);
+          } else {
+            console.log(savedEvent);
+            addGiftsForEvent(savedEvent._id, giftArray, savedEvent, res);
+          }
+        });
+      }
+    } else {
+      queryErrorHandle(res);
+    }
   });
+}
+
+var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
+  let lengthGifts = gifts.length;
+  if (eventID && gifts && lengthGifts > 0) {
+    for(let i = 0; i < lengthGifts; i++) {
+      gifts[i].eventID = eventID;
+      let gift = new GiftModel(gifts[i]);
+      if (gift.id >=0 && gift.id <= 8) {
+        gift.save((err) => {
+          if (i === lengthGifts - 1 ) {
+            let data = {};
+            data = JSON.parse(JSON.stringify(savedEvent));
+            data['giftArray'] = gifts;
+            queryReturnData(res, 'success', data);
+          }
+        });
+      }
+    }
+  } else {
+    queryErrorHandle(res);
+  }
 }
 
 var createCode =  (req, res) => {
@@ -538,7 +620,6 @@ var authorize = (req, res) => {
         queryErrorHandle(res);
       }
     }
-    
   });
 }
 // END OF AUTHOR HANDLE 

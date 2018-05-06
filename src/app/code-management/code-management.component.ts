@@ -21,7 +21,7 @@ export class CodeManagementComponent implements OnInit {
   currentTotalReward = 0;
   currentTotalCodeUsed = 0;
   sub: any;
-  currentGift: GiftModel = new GiftModel(0, '', 0, false, false);
+  currentGift: GiftModel = new GiftModel(0, '', 0, 0);
   currentCodeArrayShow = [];
   currentCodeOfGiftGroupByDate = [];
   currentCodeExport = '';
@@ -40,7 +40,7 @@ export class CodeManagementComponent implements OnInit {
     this.getCodeToView();
     // on exit edit popup
     $('#gift-detail').on('hidden.bs.modal', function (e) {
-      that.currentGift = new GiftModel(0, '', 0, false, false);
+      that.currentGift = new GiftModel(0, '', 0, 0);
       that.currentCodeArrayShow = [];
       that.currentCodeOfGiftGroupByDate = [];
     });
@@ -264,7 +264,7 @@ export class CodeManagementComponent implements OnInit {
 
   closePopupGift = () => {
     $('#gift-detail').modal('hide');
-    this.currentGift = new GiftModel(0, '', 0, false, false);
+    this.currentGift = new GiftModel(0, '', 0, 0);
     this.currentCodeArrayShow = [];
     this.currentCodeOfGiftGroupByDate = [];
   }
