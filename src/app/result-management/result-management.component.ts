@@ -19,16 +19,25 @@ export class ResultManagementComponent implements OnInit {
   sub: any;
   searchFilter = '';
   giftFilter = '';
-
+  results = [];
   currentCode = {
     name: '',
-    code: '',
-    phone: '',
-    createdDate: ''
+    codeArray: [
+      {
+        name: '',
+        code: '',
+        phone: '',
+        createdDate: ''
+      }
+    ]
   };
   currentGift = {
-    name: ''
   };
+  currentCodeExport = '';
+  isShowButtonExportGiftResult = true;
+  currentTotalReward = 0;
+  currentTotalCodeUsed = 0;
+
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
@@ -38,20 +47,15 @@ export class ResultManagementComponent implements OnInit {
       this.goTo('');
       return;
     }
-
     let that = this;
     $('body').css('background-color', 'black');
-    $("#myInput").on("keyup", function() {
-      that.searchFilter = $(this).val().toLowerCase();
-      $("#myTable tr").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(that.giftFilter) > -1)
-        if ($(this).text().toLowerCase().indexOf(that.searchFilter) < 0) {
-          $(this).toggle(false);
-        }
+    $("#searchGiftResults").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#giftResults tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
       });
     });
     this.getCodeToView();
-    
   }
 
   getCodeToView = () => {
@@ -63,87 +67,125 @@ export class ResultManagementComponent implements OnInit {
           res => {
             let resJson = res.json();
             if (resJson.result) {
-              let ev = this.eventService.converJsonToEvent(resJson.data);
-              this.eventModel = this.filterTheCode(ev);
-              this.calValueReport("-1");
+              this.eventModel = this.eventService.converJsonToEvent(resJson.data);
+              this.calValueReport();
               FNC.hideSpinner(1000);
             } else {
               FNC.hideSpinner(1000);
-              FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+              FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
             }
           },
           err => {
             FNC.hideSpinner(1000);
-            FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
+            FNC.displayNotify('THÔNG BÁO', 'Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng');
           });
       } else {
         FNC.hideSpinner(1000);
-        FNC.displayNotify("THÔNG BÁO", "Đường dẫn bị sai, xin vui lòng kiểm tra lại");
+        FNC.displayNotify('THÔNG BÁO', 'Đường dẫn bị sai, xin vui lòng kiểm tra lại');
       }
     });
     this.sub.unsubscribe();
   }
 
-
-  selectGift = (selector) => {
-    if (selector.value === "-1" ) {
-      this.giftFilter = '';
-    } else {
-      this.giftFilter = $('#select-gift option:selected').text().toLowerCase();
-    }
-    let that = this;
-    that.searchFilter = $("#myInput").val().toLowerCase();
-    $("#myTable tr").filter(function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(that.searchFilter) > -1)
-      if ($(this).text().toLowerCase().indexOf(that.giftFilter) < 0) {
-        $(this).toggle(false);
-      }
-    });
-    this.calValueReport(selector.value);
-  }
-  
-  calValueReport = (value) => {
-    this.currentTotalCode = 0;
+  calValueReport = () => {
+    this.currentTotalReward = 0;
+    this.currentTotalCodeUsed = 0;
     let gift: any;
-
-    if (value === "-1") {
-      for (let i = 0; i < this.eventModel.giftArray.length; i++) {
-        gift = this.eventModel.giftArray[i];
-        for (let j = 0; j < gift.codeArray.length; j++) {
-          let code = gift.codeArray[j];
-          this.currentTotalCode++;
-        }
-      }
-    } else {
-      gift = this.eventModel.giftArray[value];
-      for (let j = 0; j < gift.codeArray.length; j++) {
-        let code = gift.codeArray[j];
-        this.currentTotalCode++;
-      }
+    for (let i = 0; i < this.eventModel.giftArray.length; i++) {
+      gift = this.eventModel.giftArray[i];
+      this.currentTotalReward += gift.numberOfReward;
+      this.currentTotalCodeUsed += gift.playedCounter;
     }
   }
 
-  selectCode = (code, gift) => {
-    this.currentCode = code;
-    this.currentGift = gift;
-    $('#show-code').modal('show');
+  // getResult = (id) => {
+  //   this.eventService.getResult(id).subscribe(
+  //     res => {
+  //       let resJson = res.json();
+  //       if (resJson.result) {
+  //         this.results = resJson.data;
+  //         this.calValueReport("-1");
+  //         FNC.hideSpinner(1000);
+  //       } else {
+  //         FNC.hideSpinner(1000);
+  //         FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
+  //       }
+  //     },
+  //     err => {
+  //       FNC.hideSpinner(1000);
+  //       FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
+  //     });
+  // }
+
+  selectGift = (gift) => {
+    if (!gift.codeArray || gift.codeArray.length === 0) {
+      this.isShowButtonExportGiftResult = true;
+      FNC.showSpinner();
+      this.eventService.getGiftResult(gift._id).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result) {
+            gift.codeArray = resJson.data;
+            this.currentGift = gift;
+            // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+            $('#gift-detail').modal('show');
+            FNC.hideSpinner(500);
+          } else {
+            FNC.hideSpinner(500);
+            FNC.displayNotify('Thông báo','Không lấy được danh sách kết quả, vui lòng thử lại');
+          }
+        },
+        err => {
+          FNC.hideSpinner(500);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+        }
+      );
+    } else {
+      this.currentGift = gift;
+      // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+      $('#gift-detail').modal('show');
+    }
   }
 
-  filterTheCode = (ev) => {
-    let evClone = JSON.parse(JSON.stringify(ev));
-    evClone.giftArray.forEach(gift => {
-      gift.codeArray = [];
-    });
-
-    ev.giftArray.forEach((gift, giftIndex) => {
-      gift.codeArray.forEach((code, codeIndex) => {
-        if (code.isPlayed) {
-          evClone.giftArray[giftIndex].codeArray.push(code);
+  searchPhone = (input) => {
+    if (input.value) {
+      this.isShowButtonExportGiftResult = false;
+      FNC.showSpinner();
+      this.eventService.searchResultByPhone(input.value).subscribe(
+        res => {
+          input.value = '';
+          let resJson = res.json();
+          if (resJson.result) {
+            let results = {};
+            results['codeArray'] = resJson.data;
+            results['name'] ='Kết quả tìm kiếm';
+            results['playedCounter'] = resJson.data.length;
+            results['numberOfReward'] = resJson.data.length;
+            this.currentGift = results;
+            // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+            $('#gift-detail').modal('show');
+            FNC.hideSpinner(500);
+          } else {
+            FNC.hideSpinner(500);
+            FNC.displayNotify('Thông báo','Không lấy được danh sách kết quả, vui lòng thử lại');
+          }
+        },
+        err => {
+          FNC.hideSpinner(500);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
         }
-      });
-    });
-    
-    return evClone;
+      );
+    }
+  }
+
+  closePopupGift = () => {
+    $('#gift-detail').modal('hide');
+    this.isShowButtonExportGiftResult = true;
+  }
+
+  selectCode = (codeIem) => {
+    this.currentCode = codeIem;
+    $('#show-code').modal('show');
   }
 
   closeModalShowCode = () => {
@@ -154,7 +196,8 @@ export class ResultManagementComponent implements OnInit {
     $('#export-excel-modal').modal('hide');
   }
 
-  showExportExcel = () => {
+  showExportExcel = (query) => {
+    this.currentCodeExport = query;
     $('#export-excel-modal').modal('show');
   }
 

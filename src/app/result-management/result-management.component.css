@@ -1,6 +1,7 @@
 .header-text {
     padding: 5px;
     color: gold;
+    font-size: 2vmin;
     white-space: nowrap;
 }
 

@@ -108,14 +108,14 @@ export class CodeManagementComponent implements OnInit {
     let thisDate = new Date();
     let bodydata = {
       eventID: this.eventModel._id,
-      giftArray: [],
+      gift: {
+        _id: this.currentGift._id, 
+        numberOfCode: numberOfCode,
+      },
       createDate: thisDate,
       clientCreatedDate: thisDate.toLocaleString('en-GB')
     };
-    bodydata.giftArray.push({
-      id: this.currentGift.id, 
-      numberOfCode: numberOfCode,
-    });
+    FNC.showSpinner();
     this.eventService.createCode(bodydata).subscribe(
       res => {
         let resJson = res.json();
@@ -125,14 +125,17 @@ export class CodeManagementComponent implements OnInit {
           this.currentGift.codeArray.push(element);
           this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
           this.selectGift(this.currentGift);
+          FNC.hideSpinner(500);
           FNC.displayNotify('THÔNG BÁO', 'ĐÃ TẠO MÃ THÀNH CÔNG');
           });
         } else {
-          console.log(resJson.message);
+          FNC.hideSpinner(500);
+          FNC.displayNotify('Thông báo','Không lấy được danh sách phần thưởng');
         }
       },
       err => {
-        console.log('Không kết nối được tới server, xin vui lòng thử lại')
+        FNC.hideSpinner(500);
+        FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
     });
     this.closeConfirmDialog();
   }
@@ -161,11 +164,36 @@ export class CodeManagementComponent implements OnInit {
 
 
   selectGift = (gift) => {
-    this.currentGift = gift;
-    this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
-    this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
-    this.selectDate('-1');
-    $('#gift-detail').modal('show');
+    if (!gift.codeArray || gift.codeArray.length === 0) {
+      FNC.showSpinner();
+      this.eventService.getCodes(gift._id).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result) {
+            gift.codeArray = resJson.data;
+            this.currentGift = gift;
+            this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+            this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
+            this.selectDate('-1');
+            $('#gift-detail').modal('show');
+            FNC.hideSpinner(500);
+          } else {
+            FNC.hideSpinner(500);
+            FNC.displayNotify('Thông báo','Không lấy được danh sách phần thưởng');
+          }
+        },
+        err => {
+          FNC.hideSpinner(500);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+        }
+      );
+    } else {
+      this.currentGift = gift;
+      this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+      this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
+      this.selectDate('-1');
+      $('#gift-detail').modal('show');
+    }
   }
   
   goTo = (page, param?) => {

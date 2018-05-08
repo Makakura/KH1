@@ -201,14 +201,14 @@ export class EventManagementComponent implements OnInit {
               $('#show-event').modal('show');
               $('#select-status').val(this.selectingEvent.status);
             }
-            FNC.hideSpinner(1000);
+            FNC.hideSpinner(500);
           } else {
-            FNC.hideSpinner(1000);
+            FNC.hideSpinner(500);
             FNC.displayNotify('Thông báo','Không lấy được danh sách phần thưởng');
           }
         },
         err => {
-          FNC.hideSpinner(1000);
+          FNC.hideSpinner(500);
           FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
         }
       );

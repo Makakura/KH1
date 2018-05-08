@@ -1,4 +1,5 @@
 export class GiftModel {
+    _id: String = '';
     id: number = 0;
     name: string = '';
     numberOfReward: number = 0;

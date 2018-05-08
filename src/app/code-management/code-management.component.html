@@ -3,7 +3,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-    <a class="navbar-brand" href="#/manage">VỀ TRANG CHỦ</a>
+    <a class="navbar-brand" href="#/manage" style="color:gold"><b>VỀ TRANG CHỦ</b></a>
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
             <button class="btn btn-outline-warning my-2 my-sm-0" style="padding-left: 20px; padding-right: 20px; margin-left: 10px;" (click)="goTo('result', eventModel._id)">Trang kết quả</button>
@@ -61,8 +61,7 @@
               <div class="row">
                 <div class="col">
                     <input #inputNumberOfCode id="inputNumberOfCode" type="text" type="number" 
-                    value="{{currentGift.numberOfReward}}"
-                    class="form-control" placeholder="SL mã">
+                    class="form-control" placeholder="SL mã cần xuất">
                 </div>
                 <div class="col-4">
                   <button type="button" (click) = 'showConfirmCreateCode()' class="btn btn-danger">Xuất mã</button>        

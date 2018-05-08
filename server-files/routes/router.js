@@ -1,6 +1,8 @@
 var express = require('express')
 var router = express.Router()
 var crypto = require('crypto');
+var mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 // Import model
 var EventModel = require('../model/event-model');
 var GiftModel = require('../model/gift-model');
@@ -70,15 +72,34 @@ router.get('/gifts/:_id', (req, res) => {
 	getGiftsByEventID(req, res);
 });
 
+// Get code by gift id
+router.get('/codes/:_id', (req, res) => {
+	getCodesByGiftID(req, res);
+});
+
+// Get result by gift id
+router.get('/results/:_id', (req, res) => {
+	getResultsByGiftID(req, res);
+});
+
 // Add gifts for event
 router.post('/gifts', (req, res) => {
 	addGiftsForEvent(req, res);
 });
 
-
 // createCode
 router.put('/createcode', function(req, res){
 	createCode(req, res);
+});
+
+// Get result
+router.get('/eventresult/:_id', function(req, res){
+	eventResult(req, res);
+});
+
+// search result by phone
+router.get('/searchbyphone/:_phone', function(req, res){
+	searchByPhone(req, res);
 });
 // >>>>>>> END OF MANAGEMENT ROUTER
 
@@ -281,11 +302,54 @@ var getAllEvents = (req, res) => {
 
 var getEventByID = (req, res) => {
   if (req.params._id) {
-    EventModel.findById(req.params._id, (err,event) => {
-      if(err|| !event){
+    EventModel.findById(req.params._id, (err, event) => {
+    if(err || !event){
+        queryErrorHandle(res);
+      } else {
+        GiftModel.find({eventID: event._id}, {codeArray: 0}, (err, giftArr) => {
+          if(err || !giftArr){
+            queryErrorHandle(res);
+          } else {
+            let dataJSON = JSON.parse(JSON.stringify(event));
+            dataJSON.giftArray = giftArr;
+            queryReturnData(res, 'success', dataJSON);
+          }
+        });
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var getCodesByGiftID = (req, res) => {
+  if (req.params._id) {
+    GiftModel.findById(req.params._id, {codeArray: 1, _id: 0}, (err, gift) => {
+      if(err|| !gift){
         queryErrorHandle(res);
       } else{
-        queryReturnData(res, 'success', event);
+        queryReturnData(res, 'success', gift.codeArray);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var getResultsByGiftID = (req, res) => {
+  if (req.params._id) {
+    let query = [
+      { $match: {_id: ObjectId(req.params._id)}},
+      { $unwind: "$codeArray"}, 
+      { $match : {"codeArray.isPlayed": true}},
+      { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
+    ];
+    
+    GiftModel.aggregate(query, (err, arr) => {
+      if (err || !arr) {
+        queryErrorHandle(res);
+      } else {
+        queryReturnData(res, 'success', arr);
       }
     });
   } else {
@@ -295,11 +359,11 @@ var getEventByID = (req, res) => {
 
 var getGiftsByEventID = (req, res) => {
   if (req.params._id) {
-    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 0}, (err,event) => {
-      if(err|| !event){
+    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 0}, (err, giftArr) => {
+      if(err|| !giftArr){
         queryErrorHandle(res);
       } else{
-        queryReturnData(res, 'success', event);
+        queryReturnData(res, 'success', giftArr);
       }
     });
   } else {
@@ -401,10 +465,8 @@ var addNewEvent = (req, res) => {
         let eventmodel = new EventModel(event);
         eventmodel.save((err, savedEvent) => {
           if(err || !savedEvent){
-            console.log(err);
             queryErrorHandle(res);
           } else {
-            console.log(savedEvent);
             addGiftsForEvent(savedEvent._id, giftArray, savedEvent, res);
           }
         });
@@ -445,28 +507,16 @@ var createCode =  (req, res) => {
   req.on('end', () => {
     var jsonData = JSON.parse(jsonString);
     if (!jsonData.eventID 
-      || jsonData.giftArray) {
-
-        var eventIDParam = jsonData.eventID;
+      || jsonData.gift) {
         var giftParam = jsonData.gift;
         var dateParam = jsonData.createDate;
         var clientCreatedDateParam = jsonData.clientCreatedDate;
         var arrayCodeCreated = [];
-
-        GiftModel.find({eventID: eventIDParam, id: giftParam.id}, (err, gift) =>{
+        GiftModel.findById(giftParam._id, (err, gift) =>{
           if(err || !gift){
             queryErrorHandle(res);
           } else {
-            for(var i = 0; i < event.giftArray.length; i++) {
-              var gift = event.giftArray[i];
-              for(var j = 0; j < giftArrayParam.length; j++) {
-                var giftParam = giftArrayParam[j];
-                if (gift.id === giftParam.id) {
-                  generateCodeForGift(giftParam.numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated);
-                }
-              }
-            }
-
+            generateCodeForGift(giftParam.numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated);
             gift.save((err) => {
               if(err) {
                 queryErrorHandle(res);
@@ -476,8 +526,51 @@ var createCode =  (req, res) => {
             });
           }
         });
+    } else {
+      queryErrorHandle(res);
     }
   });
+}
+
+var eventResult = (req, res) => {
+  if (req.params._id) {
+    let query = [
+      { $match: { eventID: req.params._id}},
+      { $unwind: "$codeArray"}, 
+      { $match : {"codeArray.isPlayed": true}},
+      { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
+    ];
+    
+    GiftModel.aggregate(query, (err, arr) => {
+      if (err || !arr) {
+        queryErrorHandle(res);
+      } else {
+        queryReturnData(res, 'success', arr);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var searchByPhone = (req, res) => {
+  if (req.params._phone) {
+    let query = [
+      { $unwind: "$codeArray"}, 
+      { $match : {"codeArray.phone": {$regex : ".*" + req.params._phone + ".*"}}},
+      { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
+    ];
+    
+    GiftModel.aggregate(query, (err, arr) => {
+      if (err || !arr) {
+        queryErrorHandle(res);
+      } else {
+        queryReturnData(res, 'success', arr);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
 }
 // END OF MANAGEMENT API HANDLE
 
@@ -501,7 +594,7 @@ var MD5 = (str) => {
 var generateCodeForGift =  (numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated) => {
   for(var z = 0; z < numberOfCode; z++) {
     var code = {
-      code: generateACode(8, event),
+      code: generateACode(8, gift.eventID),
       name: "",
       phone: "",
       fb: "",
@@ -509,12 +602,12 @@ var generateCodeForGift =  (numberOfCode, gift, dateParam, clientCreatedDatePara
       createdDate: dateParam,
       clientCreatedDate: clientCreatedDateParam
     };
-    arrayCodeCreated.push(code);
     gift.codeArray.push(code);
+    arrayCodeCreated.push(code);
   }
 }
 
-var generateACode = (length, event) => {
+var generateACode = (length, eventID) => {
   possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   var text = "";
 
@@ -522,24 +615,28 @@ var generateACode = (length, event) => {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
 
-  if (!checkCodeIsExistInEvent(text, event)) {
+  if (!checkCodeIsExistInEvent(text, eventID)) {
     return text;
   } else {
-    generateACode(length, event);
+    generateACode(length, gift);
   }
 }
 
-var checkCodeIsExistInEvent = (code, event) => {
-  for(var i = 0; i < event.giftArray.length; i++) {
-    var gift = event.giftArray[i];
-    for(var j = 0; j < gift.codeArray.length; j++) {
-      var codeItem = gift.codeArray[j];
-      if (codeItem.code === code) {
-        return true;
+var checkCodeIsExistInEvent = (codeParam, eventID) => {
+  GiftModel.findOne({
+    eventID: eventID,
+    codeArray: {
+      $elemMatch: {
+        code: codeParam
       }
     }
-  }
-  return false;
+  }, (err, gift) => {
+    if (err || !gift) {
+      return false;
+    } else {
+      return true;
+    }
+  });
 }
 
 var queryErrorHandle = (res) => {

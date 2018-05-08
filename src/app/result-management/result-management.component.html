@@ -3,82 +3,95 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#/manage">VỀ TRANG CHỦ</a>
+      <a class="navbar-brand" href="#/manage" style="color: gold"><b>VỀ TRANG CHỦ</b></a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
           <li class="nav-item active">
-              <button class="btn btn-warning my-2 my-sm-0" style=" padding-right: 20px; margin-left: 10px;" (click)="goTo('code', eventModel._id)">Quản lý mã</button>
+              <button class="btn btn-warning my-2 my-sm-0" style=" padding-right: 20px; margin: 10px;" (click)="goTo('code', eventModel._id)">Quản lý mã</button>
           </li>
           <li class="nav-item active">
-            <button class="btn btn-success my-2 my-sm-0" style=" padding-right: 20px; margin-left: 10px;" (click)="showExportExcel()">Export Excel</button>
+            <button class="btn btn-success my-2 my-sm-0" style=" padding-right: 20px; margin: 10px;" (click)="showExportExcel(eventModel._id)">Export Excel</button>
           </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0 search-box">
-        <input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm" aria-label="Search">
-      </form>
     </div>
   </nav>
   <div class="text-center">
     <p class="title-sub">TRANG QUẢN KẾT QUẢ</p>
     <p class="title">{{eventModel.name}}</p>
   </div>
-  <div class="row select-container" style="padding: 10px;">
-    <div class="col">
-      <div class="input-group">
-        <select #select class="custom-select" id="select-gift" (change)="selectGift(select)" >
-          <option value="-1">All</option>
-          <option  *ngFor="let gift of eventModel.giftArray; let i = index" value="{{i}}">{{gift.name}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col text-center">
-      <p class="header-text"><b>SUM: {{currentTotalCode}}</b></p>
+
+  <div class="row" style="margin: 10px;">
+    <div class="input-group">
+      <input #searchInput type="number" class="form-control" placeholder="SĐT" style="max-width: 30%;" aria-describedby="basic-addon2">
+      <span class="input-group-addon" id="basic-addon2"><button type="button" (click) = "searchPhone(searchInput)" class="btn btn-dark">Tìm kiếm</button></span>
     </div>
   </div>
+
+  <div class="row" style="padding: 10px;">
+    <div class="col text-center">
+      <p class="header-text"><b>Tổng giải thưởng: {{currentTotalReward}}</b></p>
+    </div>
+    <div class="col text-center">
+      <p class="header-text"><b>Đã quay: {{currentTotalCodeUsed}}</b></p>
+    </div>
+  </div>
+  
+  
   
   <div style="width: 100%; height: 60%; overflow-y: scroll;">
     <table class="event-table table-fixed" class="table table-dark">
       <thead>
         <tr>
-          <th scope="col">Mã</th>
           <th scope="col">Giải thưởng</th>
-          <th scope="col">Người nhận</th>
-          <th scope="col">SĐT</th>
-          <th scope="col">Ngày quay</th>
+          <th scope="col" style="white-space: nowrap;">Tổng giải</th>
+          <th scope="col" style="white-space: nowrap;">Đã quay</th>
         </tr>
       </thead>
-      <tbody id="myTable" *ngFor="let gift of eventModel.giftArray">
-        <tr *ngFor="let codeItem of gift.codeArray; let i = index" (click) = 'selectCode(codeItem, gift)' [attr.data-index]="i">
-            <td>{{codeItem.code}}</td>
+      <tbody id="myTable">
+        <tr *ngFor="let gift of eventModel.giftArray" (click) = 'selectGift(gift)' [attr.data-index]="i">
             <td>{{gift.name}}</td>
-            <td>{{codeItem.name}}</td>
-            <td>{{codeItem.phone}}</td>
-            <td>{{codeItem.playedDate | date: 'dd/MM/yyyy hh:mm:ss a'}}</td>
+            <td style="white-space: nowrap;">{{gift.numberOfReward}}</td>
+            <td style="white-space: nowrap;">{{gift.playedCounter}}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  
-  
-  
-<div class="modal fade" id="export-excel-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="gift-detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header bg-dark">
-        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >XUẤT EXCEL KẾT QUẢ SỰ KIỆN</h5>
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >{{currentGift.name}} {{'('+ currentGift.playedCounter + '/' + currentGift.numberOfReward + ')'}}</h5>
       </div>
       <div class="modal-body">
         <form>
+            <div class="row form-group">
+              <div class="input-group">
+                <input id='searchGiftResults' type="text" class="form-control" placeholder="Tìm kiếm" style="margin: 20px" aria-describedby="basic-addon2">
+              </div>
+            </div>
           <div class="form-group">
-              <label for="recipient-name" class="col-form-label"><b>Bước 1:</b> Copy mã sự kiện: <b>{{eventModel._id}}</b></label>
-          </div>
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label"><b>Bước 2:</b> Mở liên kết và làm theo hướng dẫn ở sheet đầu tiên:</label>
-            <a href="https://goo.gl/9YwgwU" target="_blank"><b>https://goo.gl/9YwgwU</b></a>
+            <div style="width: 100%; max-height: 350px; margin-top: 10px; overflow-y: scroll;">
+                <table class="event-table table-fixed" class="table table-dark">
+                  <thead>
+                    <tr>
+                      <th scope="col">SĐT</th>
+                      <th scope="col">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="giftResults">
+                    <tr *ngFor="let codeItem of currentGift.codeArray; let i = index" [attr.data-index]="i" (click) = "selectCode(codeItem)">
+                        <td>{{codeItem.codeArray.phone}}</td>
+                        <td>{{codeItem.codeArray.playedDate | date: 'dd/MM/yyyy hh:mma'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" (click) = "closeModalExport()" class="btn btn-dark">Đóng</button>
+        <button type="button" [hidden] = "!isShowButtonExportGiftResult"  class="btn btn-success" (click) = 'showExportExcel()'>Xuất Excel</button>
+        <button type="button" (click) = 'closePopupGift()' class="btn btn-dark">Đóng</button>
       </div>
     </div>
   </div>
@@ -96,23 +109,23 @@
             <tbody>
               <tr>
                   <td>Mã thưởng:</td>
-                  <td class="value">{{currentCode.code}}</td>
+                  <td class="value">{{currentCode.codeArray.code}}</td>
               </tr>
               <tr>
                   <td>Phần thưởng:</td>
-                  <td class="value">{{currentGift.name}}</td>
-              </tr>
-              <tr>
-                  <td>Tên:</td>
                   <td class="value">{{currentCode.name}}</td>
               </tr>
               <tr>
+                  <td>Tên:</td>
+                  <td class="value">{{currentCode.codeArray.name}}</td>
+              </tr>
+              <tr>
                   <td>Số điện thoại:</td>
-                  <td class="value">{{currentCode.phone}}</td>
+                  <td class="value">{{currentCode.codeArray.phone}}</td>
               </tr>
               <tr>
                   <td>Ngày quay:</td>
-                  <td class="value">{{currentCode.createdDate | date: 'dd/MM/yyyy hh:mma'}}</td>
+                  <td class="value">{{currentCode.codeArray.playedDate | date: 'dd/MM/yyyy hh:mma'}}</td>
               </tr>
             </tbody>
           </table>
@@ -125,4 +138,26 @@
   </div>
 </div>
     
-  
+<div class="modal fade" id="export-excel-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white" >XUẤT EXCEL KẾT QUẢ SỰ KIỆN</h5>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <label for="recipient-name" class="col-form-label"><b>Bước 1:</b> Copy mã sự kiện: <b>{{eventModel._id}}</b></label>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label"><b>Bước 2:</b> Mở liên kết và làm theo hướng dẫn:</label>
+            <a href="https://goo.gl/9YwgwU" target="_blank"><b>https://goo.gl/9YwgwU</b></a>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click) = "closeModalExport()" class="btn btn-dark">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
