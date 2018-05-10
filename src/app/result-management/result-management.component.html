@@ -90,7 +90,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" [hidden] = "!isShowButtonExportGiftResult"  class="btn btn-success" (click) = 'showExportExcel()'>Xuất Excel</button>
+        <button type="button" [hidden] = "!isShowButtonExportGiftResult"  class="btn btn-success" (click) = 'showExportExcel(eventModel._id, currentGift.id)'>Xuất Excel</button>
         <button type="button" (click) = 'closePopupGift()' class="btn btn-dark">Đóng</button>
       </div>
     </div>

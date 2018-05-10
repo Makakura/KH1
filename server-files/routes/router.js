@@ -105,20 +105,17 @@ router.get('/searchbyphone/:_phone', function(req, res){
 });
 // >>>>>>> END OF MANAGEMENT ROUTER
 
+// >>>>>>> EXPORT CODE TO EXCEL 
 // Get result
-router.get('/getallresult/:_id', function(req, res){
+router.get('/getresult/:_params', function(req, res){
 	getAllResultEvent(req, res);
-});
-
-// Get result
-router.get('/getresultbygift/:_id', function(req, res){
-	getResultEventByGift(req, res);
 });
 
 // Get code
 router.get('/getcodes/:_params', function(req, res){
 	getCodeByGiftAndDate(req, res);
 });
+// >>>>>>>>> END OF EXPORT CODE TO EXCEL 
 
 // Authorize
 router.get('/author/:_token', function(req, res){
@@ -668,6 +665,11 @@ var queryReturnData = (res, messageParam, dataParam) => {
   });
 }
 
+var sortByDate = (c, d) => {
+  var c = new Date(c.codeArray.playedDate);
+  var d = new Date(d.codeArray.playedDate);
+  return d.getTime() - c.getTime();
+}
 // END OF PROCESSOR FUNCTION
 
 // AUTHOR HANDLE 
@@ -730,74 +732,61 @@ var authorize = (req, res) => {
 
 // REPORT HANDLE 
 var getAllResultEvent = (req, res) => {
-  if (req.params._id) {
-    let query = [
-      { $match: { eventID: req.params._id}},
-      { $unwind: "$codeArray"}, 
-      { $match : {"codeArray.isPlayed": true}},
-      { $project : {_id: 0, name: 1, codeArray: 1}}
-    ];
+  let params = req.params._params.split(';'); 
+  let resultArray = {
+    code: [], // 0 code
+    name: [], // 1 name
+    phone: [], // 2 phone
+    giftName: [], // 3 giftName
+    playedDate: []  // 4 playedDate
+  };
+  let query;
+  if (params.length > 0 
+    && ((!params[1]) || (params[1] >= 0 && params[1] <= 8)) ) {
+    let eventIDParam;
+    let giftIDParam;
+    if (params[0]) {
+      eventIDParam = params[0];
+    }
+    if (params[1]) {
+      giftIDParam = params[1];
+    }
+    if (eventIDParam && giftIDParam) {
+      query = [
+        { $match: { eventID: eventIDParam, id: Number(giftIDParam)}},
+        { $unwind: "$codeArray"}, 
+        { $match : {"codeArray.isPlayed": true}},
+        { $project : {_id: 0, name: 1, codeArray: 1}}
+      ];
+    } else if (eventIDParam) {
+      query = [
+        { $match: { eventID: eventIDParam}},
+        { $unwind: "$codeArray"}, 
+        { $match : {"codeArray.isPlayed": true}},
+        { $project : {_id: 0, name: 1, codeArray: 1}}
+      ];
+    }
 
-    resultArray = {
-      code: [], // 0 code
-      name: [], // 1 name
-      phone: [], // 2 phone
-      giftName: [], // 3 giftName
-      playedDate: []  // 4 playedDate
-    };
-    
-    GiftModel.aggregate(query, (err, arr) => {
-      if (err || !arr) {
-        queryReturnData(res, 'success', resultArray);
-      } else {
-        for(var i = 0; i < arr.length; i++) {
-          let codeItem = arr[i];
-          resultArray.code.push(codeItem.codeArray.code);
-          resultArray.name.push(codeItem.codeArray.name);
-          resultArray.phone.push(codeItem.codeArray.phone);
-          resultArray.giftName.push(codeItem.name);
-          resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
+    if (query) {
+      GiftModel.aggregate(query, (err, arr) => {
+        if (err || !arr) {
+          queryReturnData(res, 'success', resultArray);
+        } else {
+          arr.sort(sortByDate);
+          for(var i = 0; i < arr.length; i++) {
+            let codeItem = arr[i];
+            resultArray.code.push(codeItem.codeArray.code);
+            resultArray.name.push(codeItem.codeArray.name);
+            resultArray.phone.push(codeItem.codeArray.phone);
+            resultArray.giftName.push(codeItem.name);
+            resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
+          }
+          queryReturnData(res, 'success', resultArray);
         }
-        queryReturnData(res, 'success', resultArray);
-      }
-    });
-  } else {
-    queryReturnData(res, 'success', resultArray);
-  }
-}
-
-var getResultEventByGift = (req, res) => {
-  if (req.params._id) {
-    let query = [
-      { $match: {_id: ObjectId(req.params._id)}},
-      { $unwind: "$codeArray"}, 
-      { $match : {"codeArray.isPlayed": true}},
-      { $project : {_id: 0, name: 1, codeArray: 1}}
-    ];
-    
-    resultArray = {
-      code: [], // 0 code
-      name: [], // 1 name
-      phone: [], // 2 phone
-      giftName: [], // 3 giftName
-      playedDate: []  // 4 playedDate
-    };
-
-    GiftModel.aggregate(query, (err, arr) => {
-      if (err || !arr) {
-        queryReturnData(res, 'success', resultArray);
-      } else {
-        for(var i = 0; i < arr.length; i++) {
-          let codeItem = arr[i];
-          resultArray.code.push(codeItem.codeArray.code);
-          resultArray.name.push(codeItem.codeArray.name);
-          resultArray.phone.push(codeItem.codeArray.phone);
-          resultArray.giftName.push(codeItem.name);
-          resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
-        }
-        queryReturnData(res, 'success', resultArray);
-      }
-    });
+      });
+    } else {
+      queryReturnData(res, 'success', resultArray);
+    }
   } else {
     queryReturnData(res, 'success', resultArray);
   }

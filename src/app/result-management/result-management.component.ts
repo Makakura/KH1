@@ -196,8 +196,11 @@ export class ResultManagementComponent implements OnInit {
     $('#export-excel-modal').modal('hide');
   }
 
-  showExportExcel = (query) => {
-    this.currentCodeExport = query;
+  showExportExcel = (eventID, giftID?) => {
+    this.currentCodeExport = eventID;
+    if (giftID) {
+      this.currentCodeExport+= ';' + giftID;
+    }
     $('#export-excel-modal').modal('show');
   }
 
