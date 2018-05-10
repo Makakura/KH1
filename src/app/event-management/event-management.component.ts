@@ -194,7 +194,9 @@ export class EventManagementComponent implements OnInit {
         res => {
           let resJson = res.json();
           if (resJson.result) {
-            event.giftArray = resJson.data;
+            let giftArr = resJson.data;
+            giftArr = FNC.sortByKey(giftArr, 'id');
+            event.giftArray = giftArr;
             this.selectingEvent = event;
             this.editingEvent = event.clone();
             if ( this.selectingEvent) {
