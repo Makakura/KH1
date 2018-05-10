@@ -10,18 +10,16 @@ var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
   var token = req.headers['token'];
-  console.log('HEADERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR');
-  console.log(token);
-  // // check header or url parameters or post parameters for token
-  // var token = req.headers['token'];
-  // if (token) {
-  //   checkValidToken(token, req, res, next);
-  // } else {
-  //   res.json({
-  //     result: false,
-  //     message: 'Invalid token'
-  //   });
-  // }
+  // check header or url parameters or post parameters for token
+  var token = req.headers['token'];
+  if (token) {
+    checkValidToken(token, req, res, next);
+  } else {
+    res.json({
+      result: false,
+      message: 'Invalid token'
+    });
+  }
   next();
 });
 // >>>>>>> CLIENT ROUTER
@@ -606,6 +604,8 @@ var checkIsClientReq = (reqURL) => {
   || reqURL.indexOf('/checkcode') != -1
   || reqURL.indexOf('/checkphone') != -1
   || reqURL.indexOf('/addcodeinfo') != -1
+  || reqURL.indexOf('/getresult') != -1
+  || reqURL.indexOf('/getcodes') != -1
   || reqURL.indexOf('/author') != -1) {
     return true;
   } else {
