@@ -227,9 +227,10 @@ export class EventManagementComponent implements OnInit {
 
   editEvent = () => {
     if(this.selectingEvent && this.editingEvent) {
-      if (this.checkIsNeedToUpdateEvent(this.selectingEvent, this.editingEvent)) {     
+      let cloneEditingEvent = FNC.cloneJSON(this.editingEvent);
+      if (this.checkIsNeedToUpdateEvent(this.selectingEvent, cloneEditingEvent)) {     
         FNC.showSpinner();
-        this.eventService.updateEvent(this.editingEvent).subscribe(
+        this.eventService.updateEvent(cloneEditingEvent).subscribe(
           res => {
             let resJson = res.json();
             if (resJson.result) {
