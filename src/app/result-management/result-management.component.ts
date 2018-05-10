@@ -22,14 +22,14 @@ export class ResultManagementComponent implements OnInit {
   results = [];
   currentCode = {
     name: '',
-    codeArray: [
+    codeArray: 
       {
         name: '',
         code: '',
         phone: '',
         createdDate: ''
       }
-    ]
+    
   };
   currentGift = {
     name: '',
