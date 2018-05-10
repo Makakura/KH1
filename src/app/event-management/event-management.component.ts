@@ -262,7 +262,7 @@ export class EventManagementComponent implements OnInit {
     let isNeedToUpdate = false;
 
     for(var p in editedEvent) {
-      if(!FNC.compareJSON(editedEvent[p], selectingEvent[p])) {
+      if(p != '_id' && !FNC.compareJSON(editedEvent[p], selectingEvent[p])) {
         isNeedToUpdate = true;
 
         if (p === 'giftArray') {
@@ -282,7 +282,6 @@ export class EventManagementComponent implements OnInit {
                   delete giftEdited[o];
                 }
               }
-              delete giftEdited['codeArray'];
             }
           }
 
