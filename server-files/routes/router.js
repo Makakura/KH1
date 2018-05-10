@@ -11,7 +11,7 @@ var UserModel = require('../model/user-model');
 router.use(function(req, res, next) {
   var token = req.headers['token'];
   console.log('HEADERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR');
-  console.log('token');
+  console.log(token);
   // // check header or url parameters or post parameters for token
   // var token = req.headers['token'];
   // if (token) {
