@@ -32,6 +32,19 @@ export class ResultManagementComponent implements OnInit {
     ]
   };
   currentGift = {
+    name: '',
+    id: '',
+    playedCounter: 0,
+    numberOfReward: 0,
+    codeArray: [
+      {
+        name: '',
+        code: '',
+        phone: '',
+        createdDate: '',
+        playedDate: ''
+      }
+    ]
   };
   currentCodeExport = '';
   isShowButtonExportGiftResult = true;
