@@ -33,17 +33,22 @@ export class ResultManagementComponent implements OnInit {
     
   };
   currentGift = {
-    name: '',
-    id: '',
+    name: '123',
+    id: '123',
     playedCounter: 0,
     numberOfReward: 0,
     codeArray: [
       {
         name: '',
-        code: '',
-        phone: '',
-        createdDate: '',
-        playedDate: ''
+        id: '',
+        codeArray: 
+          {
+            name: '123',
+            code: '123',
+            phone: '123',
+            createdDate: '123',
+            playedDate: '123'
+          }
       }
     ]
   };
@@ -82,6 +87,8 @@ export class ResultManagementComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.eventModel = this.eventService.converJsonToEvent(resJson.data);
+              let giftArr = this.eventModel.giftArray;
+              giftArr = FNC.sortByKey(giftArr, 'id');
               this.calValueReport();
               FNC.hideSpinner(1000);
             } else {

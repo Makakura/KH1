@@ -59,4 +59,11 @@ import { Md5 } from 'ts-md5/dist/md5';
     public static cloneJSON = (json1): any => {
       return JSON.parse(JSON.stringify(json1));
     }
+
+    public static sortByKey = (array, key) => {
+      return array.sort(function(a, b) {
+          let x = a[key]; let y = b[key];
+          return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+      });
+    }
  }

@@ -103,6 +103,11 @@ router.get('/eventresult/:_id', function(req, res){
 router.get('/searchbyphone/:_phone', function(req, res){
 	searchByPhone(req, res);
 });
+
+// reset code of event
+router.get('/resetcodeevent/:_id', function(req, res){
+	resetCodeOfEvent(req, res);
+});
 // >>>>>>> END OF MANAGEMENT ROUTER
 
 // >>>>>>> EXPORT CODE TO EXCEL 
@@ -255,7 +260,7 @@ var addCodeInfo = (req, res) => {
   });
   req.on('end', () => {
     var jsonData = JSON.parse(jsonString);
-    if (jsonData.eventID && jsonData.giftID && jsonData.codeItem) {
+    if (jsonData.eventID && jsonData.giftID !== undefined && jsonData.codeItem) {
       var eventIDParam = jsonData.eventID;
       var giftIDParam = jsonData.giftID;
       var codeItemParam = jsonData.codeItem;
@@ -512,8 +517,8 @@ var createCode =  (req, res) => {
   });
   req.on('end', () => {
     var jsonData = JSON.parse(jsonString);
-    if (!jsonData.eventID 
-      || jsonData.gift) {
+    if (jsonData.eventID 
+      && jsonData.gift) {
         var giftParam = jsonData.gift;
         var dateParam = jsonData.createDate;
         var clientCreatedDateParam = jsonData.clientCreatedDate;
@@ -572,6 +577,21 @@ var searchByPhone = (req, res) => {
         queryErrorHandle(res);
       } else {
         queryReturnData(res, 'success', arr);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var resetCodeOfEvent = (req, res) => {
+  if (req.params._id) {
+    GiftModel.update({ eventID: req.params._id}, { codeArray: [] }, { multi: true }, (err, arr) => {
+      if (err || !arr) {
+        queryErrorHandle(res);
+      } else {
+        console.log(arr);
+        queryReturnData(res, 'success', []);
       }
     });
   } else {

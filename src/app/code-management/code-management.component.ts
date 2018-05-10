@@ -24,7 +24,7 @@ export class CodeManagementComponent implements OnInit {
   currentCodeArrayShow = [];
   currentCodeOfGiftGroupByDate = [];
   currentCodeExport = '';
-  
+  isCreateCode = false;
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
     private router: Router) { }
@@ -55,6 +55,8 @@ export class CodeManagementComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.eventModel = this.eventService.converJsonToEvent(resJson.data);
+              let giftArr = this.eventModel.giftArray;
+              giftArr = FNC.sortByKey(giftArr, 'id');
               this.calValueReport();
               FNC.hideSpinner(1000);
             } else {
@@ -89,11 +91,17 @@ export class CodeManagementComponent implements OnInit {
   }
 
   showConfirmCreateCode = () => {
+    let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
+    if (!numberOfCode || numberOfCode <= 0 || !this.currentGift){
+      return;
+    }
+    this.isCreateCode = true;
     this.displayConfirmDialog('LƯU Ý:', 'Bạn có muốn xuất '+ Number.parseInt($('#inputNumberOfCode').val()) +' mã cho phần thưởng: ' + this.currentGift.name, 'closeConfirmDialog', 'createCode');
   }
 
   createCode = () => {
     let numberOfCode = Number.parseInt($('#inputNumberOfCode').val());
+    
     let thisDate = new Date();
     let bodydata = {
       eventID: this.eventModel._id,
@@ -138,7 +146,7 @@ export class CodeManagementComponent implements OnInit {
       this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id + ';' + dateSelected;
       this.currentCodeArrayShow = this.getCodeArrayByDate(this.currentCodeOfGiftGroupByDate, dateSelected);
     }
-    this.currentCodeArrayShow = this.sortByKey(this.currentCodeArrayShow, 'isPlayed').reverse();    
+    this.currentCodeArrayShow = FNC.sortByKey(this.currentCodeArrayShow, 'isPlayed').reverse();    
   }
 
   getUnUsedCodeCount = (codeArr) => {
@@ -191,13 +199,6 @@ export class CodeManagementComponent implements OnInit {
     } else {
       this.router.navigate(['/' + page]);
     }
-  }
-
-  sortByKey(array, key) {
-    return array.sort(function(a, b) {
-        let x = a[key]; let y = b[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
   }
 
   groupByDate = (array, key) => {
@@ -262,15 +263,26 @@ export class CodeManagementComponent implements OnInit {
     $('#export-excel-modal').modal('hide');
   }
 
-
   displayConfirmDialog (header, body, cancelFunction, okFunction) {
     $('#confirm-header').text(header);
     $('#confirm-body').text(body);
-    $('#confirm-cancel').click(() => {
-      this[cancelFunction]();
+    $('#confirm-cancel').click((e) => {
+      if (this.isCreateCode === false){
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      } else {
+        this.isCreateCode = false;
+        this[cancelFunction]();
+      }
     })
-    $('#confirm-ok').click(() => {
-      this[okFunction]();
+    $('#confirm-ok').click((e) => {
+      if (this.isCreateCode === false){
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      } else {
+        this.isCreateCode = false;
+        this[okFunction]();
+      }
     })
     $('#confirm-model').modal('show');
   }
