@@ -27,7 +27,8 @@ export class ResultManagementComponent implements OnInit {
         name: '',
         code: '',
         phone: '',
-        createdDate: ''
+        createdDate: '',
+        playedDate: ''
       }
     
   };
