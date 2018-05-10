@@ -104,8 +104,13 @@ router.get('/searchbyphone/:_phone', function(req, res){
 // >>>>>>> END OF MANAGEMENT ROUTER
 
 // Get result
-router.get('/getresult/:_id', function(req, res){
-	getResultEvent(req, res);
+router.get('/getallresult/:_id', function(req, res){
+	getAllResultEvent(req, res);
+});
+
+// Get result
+router.get('/getresultbygift/:_id', function(req, res){
+	getResultEventByGift(req, res);
 });
 
 // Get code
@@ -722,22 +727,15 @@ var authorize = (req, res) => {
 // END OF AUTHOR HANDLE 
 
 // REPORT HANDLE 
-var getResultEvent = function (req, res) {
-  EventModel.findById(req.params._id, function(err,event){
-  if(err){
-    res.status(500).send(err);
-  } else if(event){
-    let array = [];
-    for(var i = 0; i < event.giftArray.length; i++) {
-      var gift = event.giftArray[i];
-      for(var j = 0; j < gift.codeArray.length; j++) {
-        let code = gift.codeArray[j];
-        if (code.isPlayed) {
-          code.giftName = gift.name;
-          array.push(code);
-        }
-      }
-    }
+var getAllResultEvent = (req, res) => {
+  if (req.params._id) {
+    let query = [
+      { $match: { eventID: req.params._id}},
+      { $unwind: "$codeArray"}, 
+      { $match : {"codeArray.isPlayed": true}},
+      { $project : {_id: 0, name: 1, codeArray: 1}}
+    ];
+
     resultArray = {
       code: [], // 0 code
       name: [], // 1 name
@@ -745,90 +743,130 @@ var getResultEvent = function (req, res) {
       giftName: [], // 3 giftName
       playedDate: []  // 4 playedDate
     };
-     
-    for(var i = 0; i < array.length; i++) {
-      let codeItem = array[i];
-      resultArray.code.push(codeItem.code);
-      resultArray.name.push(codeItem.name);
-      resultArray.phone.push(codeItem.phone);
-      resultArray.giftName.push(codeItem.giftName);
-      resultArray.playedDate.push(codeItem.clientPlayedDate);
-    }
-
-    res.json(resultArray);
-  }
-  else{
-    res.json({
-      result: false,
-      message: 'Không tìm thấy sự kiện',
-      data: {}
+    
+    GiftModel.aggregate(query, (err, arr) => {
+      if (err || !arr) {
+        queryReturnData(res, 'success', resultArray);
+      } else {
+        for(var i = 0; i < arr.length; i++) {
+          let codeItem = arr[i];
+          resultArray.code.push(codeItem.codeArray.code);
+          resultArray.name.push(codeItem.codeArray.name);
+          resultArray.phone.push(codeItem.codeArray.phone);
+          resultArray.giftName.push(codeItem.name);
+          resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
+        }
+        queryReturnData(res, 'success', resultArray);
+      }
     });
+  } else {
+    queryReturnData(res, 'success', resultArray);
   }
-  });
+}
+
+var getResultEventByGift = (req, res) => {
+  if (req.params._id) {
+    let query = [
+      { $match: {_id: ObjectId(req.params._id)}},
+      { $unwind: "$codeArray"}, 
+      { $match : {"codeArray.isPlayed": true}},
+      { $project : {_id: 0, name: 1, codeArray: 1}}
+    ];
+    
+    resultArray = {
+      code: [], // 0 code
+      name: [], // 1 name
+      phone: [], // 2 phone
+      giftName: [], // 3 giftName
+      playedDate: []  // 4 playedDate
+    };
+
+    GiftModel.aggregate(query, (err, arr) => {
+      if (err || !arr) {
+        queryReturnData(res, 'success', resultArray);
+      } else {
+        for(var i = 0; i < arr.length; i++) {
+          let codeItem = arr[i];
+          resultArray.code.push(codeItem.codeArray.code);
+          resultArray.name.push(codeItem.codeArray.name);
+          resultArray.phone.push(codeItem.codeArray.phone);
+          resultArray.giftName.push(codeItem.name);
+          resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
+        }
+        queryReturnData(res, 'success', resultArray);
+      }
+    });
+  } else {
+    queryReturnData(res, 'success', resultArray);
+  }
 }
 
 var getCodeByGiftAndDate = function (req, res) {
   let params = req.params._params.split(';'); 
-  if (params.length > 0) {
-    let eventID;
-    let giftID;
-    let date;
+  let resultArray = {
+    code: [], // 0 code
+    giftName: [], // 1 giftName
+    clientCreatedDate: [], // 2 giftName
+    isPlayed: [], // 3 giftName
+  };
+  let query;
+
+  if (params.length > 0 
+    && ((!params[1]) || (params[1] >= 0 && params[1] <= 8)) ) {
+    let eventIDParam;
+    let giftIDParam;
+    let dateParam;
     if (params[0]) {
-      eventID = params[0];
+      eventIDParam = params[0];
     }
     if (params[1]) {
-      giftID = params[1];
+      giftIDParam = params[1];
     }
-    if (params[2]) {
-      date = params[2];
+    if (params[2] && params[2] >= 0 && params[2] <= 8) {
+      dateParam = params[2];
     }
 
-    EventModel.findById(eventID, function(err,event){
-    if(err){
-      res.status(500).send(err);
-    } else if(event){
-      let array = [];
-      for(var i = 0; i < event.giftArray.length; i++) {
-        var gift = event.giftArray[i];
-        if ((giftID && gift.id === Number(giftID))
-            || !giftID) {
-            for(var j = 0; j < gift.codeArray.length; j++) {
-              let code = gift.codeArray[j];
-              if ((JSON.stringify(code.createdDate) === JSON.stringify(date))
-                  || !date) {
-                code.giftName = gift.name;
-                array.push(code);
-              }
-            }
+    if (eventIDParam && giftIDParam && dateParam) {
+      query = [
+        { $match: { eventID: eventIDParam, id: Number(giftIDParam)}},
+        { $unwind: "$codeArray"}, 
+        { $match : {"codeArray.createdDate": dateParam}},
+        { $project : {_id: 0, name: 1, codeArray: 1}}
+      ];
+    } else if (eventIDParam && giftIDParam) {
+      query = [
+        { $match: { eventID: eventIDParam, id: Number(giftIDParam)}},
+        { $unwind: "$codeArray"}, 
+        { $project : {_id: 0, name: 1, codeArray: 1}}
+      ];
+    } else if (eventIDParam) {
+      query = [
+        { $match: { eventID: eventIDParam}},
+        { $unwind: "$codeArray"}, 
+        { $project : {_id: 0, name: 1, codeArray: 1}}
+      ];
+    }
+
+    if (query) {
+      GiftModel.aggregate(query, (err, arr) => {
+        if (err || !arr) {
+          queryReturnData(res, 'success', resultArray);
+        } else {
+          for(var i = 0; i < arr.length; i++) {
+            let codeItem = arr[i];
+            resultArray.code.push(codeItem.codeArray.code);
+            resultArray.giftName.push(codeItem.name);
+            resultArray.clientCreatedDate.push(codeItem.codeArray.clientCreatedDate);
+            resultArray.isPlayed.push(codeItem.codeArray.isPlayed ? 'Rồi':'Chưa');
+          }
+          queryReturnData(res, 'success', resultArray);
         }
-      }
-
-      resultArray = {
-        code: [], // 0 code
-        giftName: [], // 1 giftName
-        clientCreatedDate: [], // 2 giftName
-        isPlayed: [], // 3 giftName
-      };
-      
-      for(var i = 0; i < array.length; i++) {
-        let codeItem = array[i];
-        resultArray.code.push(codeItem.code);
-        resultArray.giftName.push(codeItem.giftName);
-        resultArray.clientCreatedDate.push(codeItem.clientCreatedDate);
-        resultArray.isPlayed.push(codeItem.isPlayed?'Rồi':'Chưa');
-      }
-      res.json(resultArray);
-    }
-    else{
-      res.json({
-        result: false,
-        message: 'Không tìm thấy sự kiện',
-        data: {}
       });
+    } else {
+      queryReturnData(res, 'success', resultArray);
     }
-    });
   } else {
-    res.status(500);
+    queryReturnData(res, 'success', resultArray);
   }
 }
 // END OF REPORT HANDLE 
