@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators';
     }
 
     requestOptions = (): RequestOptions => {
-        let header: any = new Headers({'token': FNC.token});
+        let header: any = new Headers({'token': FNC.getToken()});
         let options = new RequestOptions({ headers: header });
         return options; 
     }
