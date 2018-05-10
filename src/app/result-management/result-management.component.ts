@@ -169,12 +169,10 @@ export class ResultManagementComponent implements OnInit {
           input.value = '';
           let resJson = res.json();
           if (resJson.result) {
-            let results = {};
-            results['codeArray'] = resJson.data;
-            results['name'] ='Kết quả tìm kiếm';
-            results['playedCounter'] = resJson.data.length;
-            results['numberOfReward'] = resJson.data.length;
-            this.currentGift = results;
+            this.currentGift.codeArray = resJson.data;
+            this.currentGift.name ='Kết quả tìm kiếm';
+            this.currentGift.playedCounter = resJson.data.length;
+            this.currentGift.numberOfReward = resJson.data.length;
             // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
             $('#gift-detail').modal('show');
             FNC.hideSpinner(500);
