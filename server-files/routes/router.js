@@ -9,7 +9,6 @@ var GiftModel = require('../model/gift-model');
 var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
-  var token = req.headers['token'];
   // check header or url parameters or post parameters for token
   var token = req.headers['token'];
   if (token) {
@@ -20,7 +19,6 @@ router.use(function(req, res, next) {
       message: 'Invalid token'
     });
   }
-  next();
 });
 // >>>>>>> CLIENT ROUTER
 
@@ -698,14 +696,16 @@ var sortByDate = (c, d) => {
 var checkValidToken = (paramToken, req, res, next) => {
   // Check for client
   if(checkIsClientReq(req.url)) {
-      if (paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
-        next();
-      } else {
-        res.json({
-          result: false,
-          message: 'Invalid token'
-        });
-      }
+    console.log('@1');
+    if (paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
+      next();
+    } else {
+      console.log('@2');
+      res.json({
+        result: false,
+        message: 'Invalid token'
+      });
+    }
   } else {
     // Check for manager
     let isValid = false;
