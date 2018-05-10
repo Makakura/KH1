@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   }
 
   getEvent = () => {
-    FNC.token = '6ad14ba9986e3615423dfca256d04e3f';
+    FNC.saveToken('6ad14ba9986e3615423dfca256d04e3f');
     FNC.showSpinner();
     this.sub = this.route.params.subscribe(params => {
       let id = params['id'];
