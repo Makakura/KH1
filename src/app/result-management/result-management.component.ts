@@ -195,7 +195,7 @@ export class ResultManagementComponent implements OnInit {
 
   showExportExcel = (eventID, giftID?) => {
     this.currentCodeExport = eventID;
-    if (giftID) {
+    if (giftID !== undefined) {
       this.currentCodeExport+= ';' + giftID;
     }
     $('#export-excel-modal').modal('show');
