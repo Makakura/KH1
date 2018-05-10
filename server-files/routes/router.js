@@ -485,7 +485,9 @@ var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
   let lengthGifts = gifts.length;
   if (eventID && gifts && lengthGifts > 0) {
     for(let i = 0; i < lengthGifts; i++) {
-      gifts[i].eventID = eventID;
+      let curGift = gifts[i];
+      curGift.eventID = eventID;
+      delete curGift['_id'];
       let gift = new GiftModel(gifts[i]);
       if (gift.id >=0 && gift.id <= 8) {
         gift.save((err) => {

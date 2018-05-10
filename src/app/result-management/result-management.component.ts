@@ -112,25 +112,6 @@ export class ResultManagementComponent implements OnInit {
     }
   }
 
-  // getResult = (id) => {
-  //   this.eventService.getResult(id).subscribe(
-  //     res => {
-  //       let resJson = res.json();
-  //       if (resJson.result) {
-  //         this.results = resJson.data;
-  //         this.calValueReport("-1");
-  //         FNC.hideSpinner(1000);
-  //       } else {
-  //         FNC.hideSpinner(1000);
-  //         FNC.displayNotify("Đã xảy ra lỗi","Để được giải đáp liên hệ: shaharaki@gmail.com", resJson.message);
-  //       }
-  //     },
-  //     err => {
-  //       FNC.hideSpinner(1000);
-  //       FNC.displayNotify("THÔNG BÁO", "Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng");
-  //     });
-  // }
-
   selectGift = (gift) => {
     if (!gift.codeArray || gift.codeArray.length === 0) {
       this.isShowButtonExportGiftResult = true;
@@ -139,9 +120,8 @@ export class ResultManagementComponent implements OnInit {
         res => {
           let resJson = res.json();
           if (resJson.result) {
-            gift.codeArray = resJson.data;
-            this.currentGift = gift;
-            // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+            gift.codeArray = resJson.data.reverse();
+            this.currentGift = FNC.cloneJSON(gift);
             $('#gift-detail').modal('show');
             FNC.hideSpinner(500);
           } else {
@@ -155,8 +135,7 @@ export class ResultManagementComponent implements OnInit {
         }
       );
     } else {
-      this.currentGift = gift;
-      // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
+      this.currentGift = FNC.cloneJSON(gift);
       $('#gift-detail').modal('show');
     }
   }
@@ -170,11 +149,10 @@ export class ResultManagementComponent implements OnInit {
           input.value = '';
           let resJson = res.json();
           if (resJson.result) {
-            this.currentGift.codeArray = resJson.data;
+            this.currentGift.codeArray = FNC.cloneJSON(resJson.data.reverse());
             this.currentGift.name ='Kết quả tìm kiếm';
             this.currentGift.playedCounter = resJson.data.length;
             this.currentGift.numberOfReward = resJson.data.length;
-            // this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
             $('#gift-detail').modal('show');
             FNC.hideSpinner(500);
           } else {
@@ -196,7 +174,7 @@ export class ResultManagementComponent implements OnInit {
   }
 
   selectCode = (codeIem) => {
-    this.currentCode = codeIem;
+    this.currentCode = FNC.cloneJSON(codeIem);
     $('#show-code').modal('show');
   }
 
@@ -222,5 +200,14 @@ export class ResultManagementComponent implements OnInit {
     } else {
       this.router.navigate(['/' + page]);
     }
+  }
+
+  getDateNumber = (date) => {
+    var oneDay = 24*60*60*1000;
+    var curDate = new Date().getTime();
+    var pastDate = new Date(date).getTime();
+    var diffDays = 0;
+    diffDays = Math.round(Math.abs((curDate - pastDate)/(oneDay)));
+    return diffDays;
   }
 }

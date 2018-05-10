@@ -17,7 +17,6 @@ import { FNC } from '../services/functioncommon';
 })
 export class CodeManagementComponent implements OnInit {
   eventModel: EventWheelModel = new EventWheelModel();
-  codeArray = [];
   currentTotalReward = 0;
   currentTotalCodeUsed = 0;
   sub: any;
@@ -73,16 +72,6 @@ export class CodeManagementComponent implements OnInit {
       }
     });
     this.sub.unsubscribe();
-  }
-
-  generateCodeArray = (eventParam) => {
-    this.codeArray = [];
-    for (let i = 0; i < eventParam.giftArray.length; i++) {
-      let gift = eventParam.giftArray[i];
-      for (let j = 0; j < gift.codeArray.length; j++) {
-        this.codeArray.push();
-      }
-    }
   }
 
   showPopupCreateCode() {
@@ -171,7 +160,7 @@ export class CodeManagementComponent implements OnInit {
           let resJson = res.json();
           if (resJson.result) {
             gift.codeArray = resJson.data;
-            this.currentGift = gift;
+            this.currentGift = FNC.cloneJSON(gift);
             this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
             this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
             this.selectDate('-1');
@@ -188,7 +177,7 @@ export class CodeManagementComponent implements OnInit {
         }
       );
     } else {
-      this.currentGift = gift;
+      this.currentGift = FNC.cloneJSON(gift);
       this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
       this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
       this.selectDate('-1');

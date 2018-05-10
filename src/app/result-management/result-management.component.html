@@ -21,7 +21,7 @@
 
   <div class="row" style="margin: 10px;">
     <div class="input-group">
-      <input #searchInput type="number" class="form-control" placeholder="SĐT" style="max-width: 30%;" aria-describedby="basic-addon2">
+      <input #searchInput type="number" class="form-control" placeholder="Nhập SĐT" style="max-width: 30%;" aria-describedby="basic-addon2">
       <span class="input-group-addon" id="basic-addon2"><button type="button" (click) = "searchPhone(searchInput)" class="btn btn-dark">Tìm kiếm</button></span>
     </div>
   </div>
@@ -69,19 +69,22 @@
                 <input id='searchGiftResults' type="text" class="form-control" placeholder="Tìm kiếm" style="margin: 20px" aria-describedby="basic-addon2">
               </div>
             </div>
+            <div class="form-group">
+              <p style="color:black"><b>Danh sách trúng giải:</b></p>
+            </div>
           <div class="form-group">
             <div style="width: 100%; max-height: 350px; margin-top: 10px; overflow-y: scroll;">
                 <table class="event-table table-fixed" class="table table-dark">
                   <thead>
                     <tr>
                       <th scope="col">SĐT</th>
-                      <th scope="col">Date</th>
+                      <th scope="col">Cách đây</th>
                     </tr>
                   </thead>
                   <tbody id="giftResults">
                     <tr *ngFor="let codeItem of currentGift.codeArray; let i = index" [attr.data-index]="i" (click) = "selectCode(codeItem)">
                         <td>{{codeItem.codeArray.phone}}</td>
-                        <td>{{codeItem.codeArray.playedDate | date: 'dd/MM/yyyy hh:mma'}}</td>
+                        <td>{{getDateNumber(codeItem.codeArray.playedDate)}} ngày</td>
                     </tr>
                   </tbody>
                 </table>
@@ -127,6 +130,10 @@
                   <td>Ngày quay:</td>
                   <td class="value">{{currentCode.codeArray.playedDate | date: 'dd/MM/yyyy hh:mma'}}</td>
               </tr>
+              <tr>
+                  <td>Cách đây:</td>
+                  <td class="value">{{getDateNumber(currentCode.codeArray.playedDate)}} ngày</td>
+            </tr>
             </tbody>
           </table>
         </form>
