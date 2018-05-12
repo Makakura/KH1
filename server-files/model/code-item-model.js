@@ -37,6 +37,10 @@ var CodeItemModel = mongoose.Schema({
     giftName: {
         type: String,
         default: ''
+    },
+    isUsed: {
+        type: Boolean,
+        default: false
     }
 });
 module.exports = CodeItemModel;

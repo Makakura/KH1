@@ -10,16 +10,16 @@ var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
-  // var token = req.headers['token'];
-  // if (token) {
-  //   checkValidToken(token, req, res, next);
-  // } else {
-  //   res.json({
-  //     result: false,
-  //     message: 'Invalid token'
-  //   });
-  // }
-  next();
+  var token = req.headers['token'];
+  if (token) {
+    checkValidToken(token, req, res, next);
+  } else {
+    res.json({
+      result: false,
+      message: 'Invalid token'
+    });
+  }
+  //next();
 });
 // >>>>>>> CLIENT ROUTER
 
@@ -81,10 +81,10 @@ router.get('/results/:_id', (req, res) => {
 	getResultsByGiftID(req, res);
 });
 
-// Add gifts for event
-router.post('/gifts', (req, res) => {
-	addGiftsForEvent(req, res);
-});
+// // Add gifts for event
+// router.post('/gifts', (req, res) => {
+// 	addGiftsForEvent(req, res);
+// });
 
 // createCode
 router.put('/createcode', function(req, res){
@@ -99,6 +99,11 @@ router.get('/eventresult/:_id', function(req, res){
 // search result by phone
 router.get('/searchbyphone/:_phone', function(req, res){
 	searchByPhone(req, res);
+});
+
+// reset code of event
+router.get('/releasecode/:_params', function(req, res){
+	releaseCode(req, res);
 });
 
 // reset code of event
@@ -524,6 +529,13 @@ var createCode =  (req, res) => {
           if(err || !gift){
             queryErrorHandle(res);
           } else {
+            if (giftParam.numberOfCode < 0 ) {
+              giftParam.numberOfCode = 0;
+            }
+            if (giftParam.numberOfCode > 500) {
+              giftParam.numberOfCode = 500;
+            }
+
             generateCodeForGift(giftParam.numberOfCode, gift, dateParam, clientCreatedDateParam, arrayCodeCreated);
             gift.save((err) => {
               if(err) {
@@ -581,6 +593,38 @@ var searchByPhone = (req, res) => {
   }
 }
 
+var releaseCode = (req, res) => {
+  if (req.params._params) {
+    let params = req.params._params.split(';');
+    let giftFullID = params[0];
+    let codeParam = params[1];
+    if (giftFullID && codeParam) {
+      GiftModel.findOneAndUpdate({
+        _id: ObjectId(giftFullID),
+        codeArray: {
+          $elemMatch: {
+            code: codeParam
+          }
+        }
+      }, {
+        $set: {
+          'codeArray.$.isUsed': true
+        }
+      },
+      (err, item) => {
+        if (err || !item) {
+          queryErrorHandle(res);
+        } else {
+          queryReturnData(res,'success');
+        }
+      });
+    } else {
+      queryErrorHandle(res);
+    }
+  } else {
+    queryErrorHandle(res);
+  }
+}
 var resetCodeOfEvent = (req, res) => {
   if (req.params._id) {
     GiftModel.update({ eventID: req.params._id}, { codeArray: [] }, { multi: true }, (err, arr) => {
@@ -623,6 +667,7 @@ var generateCodeForGift =  (numberOfCode, gift, dateParam, clientCreatedDatePara
       name: "",
       phone: "",
       fb: "",
+      isUsed: false,
       isPlayed: false,
       createdDate: dateParam,
       clientCreatedDate: clientCreatedDateParam

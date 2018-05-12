@@ -24,6 +24,7 @@ export class CodeManagementComponent implements OnInit {
   currentCodeArrayShow = [];
   currentCodeOfGiftGroupByDate = [];
   currentCodeExport = '';
+  releaseCodeCounter = 0;
   isCreateCode = false;
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
@@ -122,6 +123,7 @@ export class CodeManagementComponent implements OnInit {
           this.currentGift.codeArray.push(element);
           this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
           this.selectGift(this.currentGift);
+          $('#inputNumberOfCode').val('');
           FNC.hideSpinner(500);
           FNC.displayNotify('THÔNG BÁO', 'ĐÃ TẠO MÃ THÀNH CÔNG');
           });
@@ -146,7 +148,14 @@ export class CodeManagementComponent implements OnInit {
       this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id + ';' + dateSelected;
       this.currentCodeArrayShow = this.getCodeArrayByDate(this.currentCodeOfGiftGroupByDate, dateSelected);
     }
-    this.currentCodeArrayShow = FNC.sortByKey(this.currentCodeArrayShow, 'isPlayed').reverse();    
+    this.countReleaseCode();
+    
+  }
+
+  countReleaseCode = () => {
+    let arrayReleasedCode = this.currentCodeArrayShow.filter((item)=> { return item.isUsed });
+    this.releaseCodeCounter = arrayReleasedCode.length;
+    this.currentCodeArrayShow = FNC.sortByKey(this.currentCodeArrayShow, 'isUsed'); 
   }
 
   getUnUsedCodeCount = (codeArr) => {
@@ -168,7 +177,7 @@ export class CodeManagementComponent implements OnInit {
           let resJson = res.json();
           if (resJson.result) {
             gift.codeArray = resJson.data;
-            this.currentGift = FNC.cloneJSON(gift);
+            this.currentGift = gift;
             this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
             this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
             this.selectDate('-1');
@@ -185,7 +194,7 @@ export class CodeManagementComponent implements OnInit {
         }
       );
     } else {
-      this.currentGift = FNC.cloneJSON(gift);
+      this.currentGift = gift;
       this.currentCodeExport = this.eventModel._id + ';' + this.currentGift.id;
       this.currentCodeOfGiftGroupByDate = this.groupByDate(this.currentGift.codeArray, 'createdDate');
       this.selectDate('-1');
@@ -247,6 +256,36 @@ export class CodeManagementComponent implements OnInit {
       gift = this.eventModel.giftArray[i];
       this.currentTotalReward += gift.numberOfReward;
       this.currentTotalCodeUsed += (gift.numberOfReward - gift.playedCounter)
+    }
+  }
+
+  releaseCode = (codeItem) => {
+    FNC.showSpinner();
+      this.eventService.releaseCode(this.currentGift._id, codeItem.code).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result) {
+            codeItem.isUsed = true;
+            this.countReleaseCode();
+            FNC.hideSpinner(0);
+          } else {
+            FNC.hideSpinner(0);
+            FNC.displayNotify('Thông báo','Không cập nhật được thông tin mã');
+          }
+        },
+        err => {
+          FNC.hideSpinner(0);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+        }
+      );
+  }
+
+  valueKeyup = (event) => {
+    if (event.target.value < 0 ) {
+      event.target.value = 0;
+    }
+    if (event.target.value > 500) {
+      event.target.value = 500;
     }
   }
 

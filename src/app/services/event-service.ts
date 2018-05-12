@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
  export class EventService {
     //private url = 'http://localhost:8080/api';
     //private url = 'https://quaythuong.herokuapp.com/api';
-    private url = 'https://quaythuongdev.herokuapp.com/api';
+    private url = '/api';
     constructor (private http: Http) {
     }
 
@@ -54,6 +54,11 @@ import { map } from 'rxjs/operators';
 
     createCode = (bodyData) => {
         return this.http.put(this.url + '/createcode', bodyData, this.requestOptions())
+    }
+
+    releaseCode = (giftFullID, code) => {
+        let params = giftFullID + ';' + code;
+        return this.http.get(this.url + '/releasecode/'+ params, this.requestOptions());
     }
 
     getEventByIDForClient = (id): any => {
