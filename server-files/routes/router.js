@@ -3,7 +3,6 @@ var router = express.Router()
 var crypto = require('crypto');
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-const ISODate = mongoose.Types.ISODate;
 // Import model
 var EventModel = require('../model/event-model');
 var GiftModel = require('../model/gift-model');
@@ -346,7 +345,7 @@ var getCodesByGiftID = (req, res) => {
 var getResultsByGiftID = (req, res) => {
   if (req.params._id) {
     let query = [
-      { $match: {_id: new Date(req.params._id)}},
+      { $match: {_id: ObjectId(req.params._id)}},
       { $unwind: "$codeArray"}, 
       { $match : {"codeArray.isPlayed": true}},
       { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
@@ -845,7 +844,7 @@ var getCodeByGiftAndDate = function (req, res) {
       query = [
         { $match: { eventID: eventIDParam, id: Number(giftIDParam)}},
         { $unwind: "$codeArray"}, 
-        { $match : {"codeArray.createdDate": ISODate(dateParam)}},
+        { $match : {"codeArray.createdDate": new Date(dateParam)}},
         { $project : {_id: 0, name: 1, codeArray: 1}}
       ];
     } else if (eventIDParam && giftIDParam) {
