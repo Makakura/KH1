@@ -346,7 +346,7 @@ var getCodesByGiftID = (req, res) => {
 var getResultsByGiftID = (req, res) => {
   if (req.params._id) {
     let query = [
-      { $match: {_id: ObjectId(req.params._id)}},
+      { $match: {_id: new Date(req.params._id)}},
       { $unwind: "$codeArray"}, 
       { $match : {"codeArray.isPlayed": true}},
       { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
