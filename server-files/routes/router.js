@@ -844,7 +844,7 @@ var getCodeByGiftAndDate = function (req, res) {
       query = [
         { $match: { eventID: eventIDParam, id: Number(giftIDParam)}},
         { $unwind: "$codeArray"}, 
-        { $match : {"codeArray.createdDate": dateParam}},
+        { $match : {"codeArray.createdDate": ISODate(dateParam)}},
         { $project : {_id: 0, name: 1, codeArray: 1}}
       ];
     } else if (eventIDParam && giftIDParam) {
