@@ -10,15 +10,16 @@ var UserModel = require('../model/user-model');
 
 router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
-  var token = req.headers['token'];
-  if (token) {
-    checkValidToken(token, req, res, next);
-  } else {
-    res.json({
-      result: false,
-      message: 'Invalid token'
-    });
-  }
+  // var token = req.headers['token'];
+  // if (token) {
+  //   checkValidToken(token, req, res, next);
+  // } else {
+  //   res.json({
+  //     result: false,
+  //     message: 'Invalid token'
+  //   });
+  // }
+  next();
 });
 // >>>>>>> CLIENT ROUTER
 
@@ -835,7 +836,7 @@ var getCodeByGiftAndDate = function (req, res) {
     if (params[1]) {
       giftIDParam = params[1];
     }
-    if (params[2] && params[2] >= 0 && params[2] <= 8) {
+    if (params[2]) {
       dateParam = params[2];
     }
 
