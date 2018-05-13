@@ -10,7 +10,10 @@ import { Md5 } from 'ts-md5/dist/md5';
     }
 
     public static saveToken (token) {
-      localStorage.setItem('token', token);
+      let savedToken = FNC.getToken();
+      if (!savedToken || savedToken === '6ad14ba9986e3615423dfca256d04e3f') {
+        localStorage.setItem('token', token);
+      }
     }
 
     public static getToken () {

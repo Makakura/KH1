@@ -741,17 +741,8 @@ var sortByDate = (c, d) => {
 // AUTHOR HANDLE 
 var checkValidToken = (paramToken, req, res, next) => {
   // Check for client
-  if(checkIsClientReq(req.url)) {
-    console.log('@1');
-    if (paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
-      next();
-    } else {
-      console.log('@2');
-      res.json({
-        result: false,
-        message: 'Invalid token'
-      });
-    }
+  if(checkIsClientReq(req.url)
+    && paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
   } else {
     // Check for manager
     let isValid = false;
@@ -767,7 +758,7 @@ var checkValidToken = (paramToken, req, res, next) => {
       if (isValid) {
         next();
       } else {
-        queryErrorHandle(res);
+        queryErrorSpecialHandle(res, 'Thông tin xác thực không hợp lệ');
       }
     });
   }
