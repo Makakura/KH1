@@ -741,8 +741,9 @@ var sortByDate = (c, d) => {
 // AUTHOR HANDLE 
 var checkValidToken = (paramToken, req, res, next) => {
   // Check for client
-  if(checkIsClientReq(req.url)
+  if (checkIsClientReq(req.url)
     && paramToken === '6ad14ba9986e3615423dfca256d04e3f') {
+      next();
   } else {
     // Check for manager
     let isValid = false;
