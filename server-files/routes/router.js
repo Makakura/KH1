@@ -14,10 +14,7 @@ router.use(function(req, res, next) {
   if (token) {
     checkValidToken(token, req, res, next);
   } else {
-    res.json({
-      result: false,
-      message: 'Invalid token'
-    });
+    queryErrorSpecialHandle(res, 'Thông tin xác thực không hợp lệ');
   }
   //next();
 });
