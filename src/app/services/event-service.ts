@@ -8,8 +8,7 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    //private url = 'http://localhost:8080/api';
-    //private url = 'https://quaythuong.herokuapp.com/api';
+    //private url = 'https://quaythuongdev.herokuapp.com/api';
     private url = '/api';
     constructor (private http: Http) {
     }
@@ -85,13 +84,14 @@ import { map } from 'rxjs/operators';
         return this.http.post(this.url + '/checkphone', bodyData, this.requestOptions())
     }
 
-    sendResult = (codeItemParam, eventIDParam, giftIDParam): any => {
+    sendResult = (codeItemParam, eventIDParam, giftIDParam, giftNameParam): any => {
         let thisDate =  new Date();
         codeItemParam.playedDate = thisDate
         codeItemParam.clientPlayedDate = thisDate.toLocaleString('en-GB');
         let bodyData = {
             eventID: eventIDParam,
             giftID: giftIDParam,
+            giftName: giftNameParam,
             codeItem: codeItemParam
         }
 

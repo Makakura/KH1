@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 // Import model
 var EventModel = require('../model/event-model');
+var RecentModel = require('../model/recent-model');
 var GiftModel = require('../model/gift-model');
 var UserModel = require('../model/user-model');
 
@@ -46,6 +47,10 @@ router.put('/addcodeinfo', (req, res) => {
 // Get all events
 router.get('/events', (req, res) => {
 	getAllEvents(req, res);
+});
+
+router.get('/getrecent/:_id', (req, res) => {
+	getTopRecentPlayed(req, res);
 });
 
 // Get event by id
@@ -103,10 +108,10 @@ router.get('/releasecode/:_params', function(req, res){
 	releaseCode(req, res);
 });
 
-// reset code of event
-router.get('/resetcodeevent/:_id', function(req, res){
-	resetCodeOfEvent(req, res);
-});
+// // reset code of event
+// router.get('/resetcodeevent/:_id', function(req, res){
+// 	resetCodeOfEvent(req, res);
+// });
 // >>>>>>> END OF MANAGEMENT ROUTER
 
 // >>>>>>> EXPORT CODE TO EXCEL 
@@ -264,6 +269,7 @@ var addCodeInfo = (req, res) => {
       var giftIDParam = jsonData.giftID;
       var codeItemParam = jsonData.codeItem;
       var codeParam = codeItemParam.code;
+      var giftNameParam = jsonData.giftName;
 
       GiftModel.findOneAndUpdate({
         eventID: eventIDParam,
@@ -288,7 +294,15 @@ var addCodeInfo = (req, res) => {
         if (err || !item) {
           queryErrorHandle(res);
         } else {
-          queryReturnData(res,'success');
+          let result = {
+            code: codeParam,
+            name: codeItemParam.name,
+            phone: codeItemParam.phone,
+            playedDate: codeItemParam.playedDate,
+            clientPlayedDate: codeItemParam.clientPlayedDate,
+            giftName: giftNameParam
+          }
+          addResultForRecent(eventIDParam, result);
         }
       });
     } else {
@@ -305,6 +319,38 @@ var getAllEvents = (req, res) => {
       queryErrorHandle(res);
     } else {
       queryReturnData(res, 'success', events);
+    }
+  });
+}
+
+var getTopRecentPlayed = (req, res) => {
+  if (req.params._id) {
+    RecentModel.findOne({eventID: req.params._id}).exec((err, recent) =>{
+      if(err || !recent){
+        queryErrorHandle(res);
+      } else {
+        let results = recent.resultArr;
+        queryReturnData(res, 'success', results);
+      }
+    });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var addResultForRecent = (eventID, result) => {
+  RecentModel.findOne({eventID: eventID}).exec((err, recent) =>{
+    if(err || !recent){
+      queryReturnData(res, 'success');
+    } else {
+      let results = recent.resultArr;
+      if (results.length > 50) {
+        results.splice(0,1);
+      }
+      results.push(result);
+      recent.save(() => {
+        queryReturnData(res, 'success');
+      });
     }
   });
 }
@@ -623,9 +669,10 @@ var releaseCode = (req, res) => {
     queryErrorHandle(res);
   }
 }
+
 var resetCodeOfEvent = (req, res) => {
   if (req.params._id) {
-    GiftModel.update({ eventID: req.params._id}, { codeArray: [] }, { multi: true }, (err, arr) => {
+    GiftModel.update({ eventID: req.params._id}, { codeArray: [], playedCounter: 0 }, { multi: true }, (err, arr) => {
       if (err || !arr) {
         queryErrorHandle(res);
       } else {
