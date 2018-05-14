@@ -70,6 +70,11 @@ export class ResultManagementComponent implements OnInit {
     
     let that = this;
     $('body').css('background-color', 'black');
+
+    $('#gift-detail').on('hide.bs.modal', function (e) {
+      FNC.scrollListToTop('#result-list');
+    });
+
     $("#searchGiftResults").on("keyup", function() {
       var value = $(this).val().toLowerCase();
       $("#giftResults tr").filter(function() {
@@ -147,7 +152,6 @@ export class ResultManagementComponent implements OnInit {
       this.currentGift = FNC.cloneJSON(gift);
       $('#gift-detail').modal('show');
     }
-    FNC.scrollListToTop('result-list');
   }
 
   searchPhone = (input) => {

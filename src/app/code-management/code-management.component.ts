@@ -40,13 +40,17 @@ export class CodeManagementComponent implements OnInit {
     let that = this;
     this.getCodeToView();
     // on exit edit popup
+    $('#gift-detail').on('hide.bs.modal', function (e) {
+      FNC.scrollListToTop('#code-list');
+    });
+
     $('#gift-detail').on('hidden.bs.modal', function (e) {
       that.currentGift = new GiftModel(0, '', 0, 0);
       that.currentCodeArrayShow = [];
       that.currentCodeOfGiftGroupByDate = [];
     });
   }
-
+  
   getCodeToView = () => {
     FNC.showSpinner();
     this.sub = this.route.params.subscribe(params => {
@@ -201,7 +205,6 @@ export class CodeManagementComponent implements OnInit {
       this.selectDate('-1');
       $('#gift-detail').modal('show');
     }
-    FNC.scrollListToTop('code-list');
   }
   
   goTo = (page, param?) => {
