@@ -186,7 +186,7 @@ var findCodeAndCheckValid = (req, res, eventIDParam, codeParam) => {
     { $match: { eventID: eventIDParam}},
     { $unwind: "$codeArray"}, 
     { $match : {"codeArray.code": codeParam}},
-    { $project : {_id: 0, status: 1, playedCounter: 1, numberOfReward: 1, id: 1, name: 1, codeItem : "$codeArray"}}
+    { $project : {_id: 1, status: 1, playedCounter: 1, numberOfReward: 1, id: 1, name: 1, codeItem : "$codeArray"}}
   ];
   
   GiftModel.aggregate(query, (err, arr) => {
@@ -198,6 +198,7 @@ var findCodeAndCheckValid = (req, res, eventIDParam, codeParam) => {
         if (arr[0].numberOfReward > arr[0].playedCounter) {
           dataParam.isValid = true;
           dataParam.number = arr[0].id;
+          dataParam.giftFullID = arr[0]._id;
           dataParam.giftName = arr[0].name;
           messageParam = 'success'
         } else {
@@ -270,15 +271,13 @@ var addCodeInfo = (req, res) => {
   req.on('end', () => {
     var jsonData = JSON.parse(jsonString);
     if (jsonData.eventID && jsonData.giftID !== undefined && jsonData.codeItem) {
-      var eventIDParam = jsonData.eventID;
-      var giftIDParam = jsonData.giftID;
+      var giftFullIDParam = jsonData.giftFullID;
       var codeItemParam = jsonData.codeItem;
       var codeParam = codeItemParam.code;
       var giftNameParam = jsonData.giftName;
 
       GiftModel.findOneAndUpdate({
-        eventID: eventIDParam,
-        id: giftIDParam,
+        _id: ObjectId(giftFullIDParam),
         codeArray: {
           $elemMatch: {
             code: codeParam
@@ -305,7 +304,8 @@ var addCodeInfo = (req, res) => {
             phone: codeItemParam.phone,
             playedDate: codeItemParam.playedDate,
             clientPlayedDate: codeItemParam.clientPlayedDate,
-            giftName: giftNameParam
+            giftName: giftNameParam,
+            giftFullID: giftFullIDParam
           }
           addResultForRecent(res, eventIDParam, result);
         }

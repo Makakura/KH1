@@ -22,6 +22,10 @@ var ResultModel = mongoose.Schema({
     giftName: {
         type: String,
         default: ''
+    },
+    giftFullID: {
+        type: String,
+        default: ''
     }
 });
 module.exports = ResultModel;

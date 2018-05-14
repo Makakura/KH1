@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
     'playedDate': ''
   };
   currentNumber = -1;
+  currentGiftID = -1;
   giftName = '';
 
   constructor(private route: ActivatedRoute, 
@@ -149,6 +150,7 @@ export class HomeComponent implements OnInit {
         let resJson = res.json();
         if (resJson.result && resJson.data.isValid) {
           this.currentNumber = resJson.data.number;
+          this.currentGiftID = resJson.data.giftFullID;
           this.giftName = resJson.data.giftName;
           this.isValidCode = true;
           this.isCheckingCode = true;
