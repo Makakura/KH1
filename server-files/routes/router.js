@@ -546,7 +546,7 @@ var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
             let data = {};
             data = JSON.parse(JSON.stringify(savedEvent));
             data['giftArray'] = gifts;
-            addRecentForEvent(res, eventID);
+            addRecentForEvent(res, eventID, data);
           }
         });
       }
@@ -556,7 +556,7 @@ var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
   }
 }
 
-var addRecentForEvent = (res, eventIDParam) => {
+var addRecentForEvent = (res, eventIDParam, data) => {
   recentItem = {
     eventID: eventIDParam,
     resultArr: []
