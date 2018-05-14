@@ -201,6 +201,7 @@ export class CodeManagementComponent implements OnInit {
       this.selectDate('-1');
       $('#gift-detail').modal('show');
     }
+    FNC.scrollListToTop('code-list');
   }
   
   goTo = (page, param?) => {

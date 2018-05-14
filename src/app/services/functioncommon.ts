@@ -69,4 +69,8 @@ import { Md5 } from 'ts-md5/dist/md5';
           return ((x < y) ? -1 : ((x > y) ? 1 : 0));
       });
     }
+
+    public static scrollListToTop(idList) {
+      $('#' + idList).scrollTop(0);
+    }
  }

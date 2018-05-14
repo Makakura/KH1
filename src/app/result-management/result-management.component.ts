@@ -147,6 +147,7 @@ export class ResultManagementComponent implements OnInit {
       this.currentGift = FNC.cloneJSON(gift);
       $('#gift-detail').modal('show');
     }
+    FNC.scrollListToTop('result-list');
   }
 
   searchPhone = (input) => {
