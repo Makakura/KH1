@@ -275,7 +275,8 @@ var addCodeInfo = (req, res) => {
   });
   req.on('end', () => {
     var jsonData = JSON.parse(jsonString);
-    if (jsonData.eventID && jsonData.giftID !== undefined && jsonData.codeItem) {
+    if (jsonData.eventID && jsonData.giftFullID !== undefined && jsonData.codeItem) {
+      var eventIDParam = jsonData.eventID;
       var giftFullIDParam = jsonData.giftFullID;
       var codeItemParam = jsonData.codeItem;
       var codeParam = codeItemParam.code;

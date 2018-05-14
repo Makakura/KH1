@@ -98,11 +98,12 @@ import { map } from 'rxjs/operators';
         return this.http.post(this.url + '/checkphone', bodyData, this.requestOptions())
     }
 
-    sendResult = (codeItemParam, giftFullIDParam, giftNameParam): any => {
+    sendResult = (codeItemParam, eventIDParam, giftFullIDParam, giftNameParam): any => {
         let thisDate =  new Date();
         codeItemParam.playedDate = thisDate
         codeItemParam.clientPlayedDate = thisDate.toLocaleString('en-GB');
         let bodyData = {
+            eventID: eventIDParam,
             giftFullID: giftFullIDParam,
             giftName: giftNameParam,
             codeItem: codeItemParam
