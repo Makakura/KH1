@@ -8,8 +8,8 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    private url = 'https://quaythuongdev.herokuapp.com/api';
-    // private url = '/api';
+    //private url = 'https://quaythuongdev.herokuapp.com/api';
+    private url = '/api';
     constructor (private http: Http) {
     }
 
