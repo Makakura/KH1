@@ -276,6 +276,7 @@ var addCodeInfo = (req, res) => {
       }, {
         $set: {
           'codeArray.$.isPlayed': true,
+          'codeArray.$.isUsed': true,
           'codeArray.$.name': codeItemParam.name,
           'codeArray.$.phone': codeItemParam.phone,
           'codeArray.$.playedDate': codeItemParam.playedDate,
