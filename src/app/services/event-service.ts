@@ -95,7 +95,7 @@ import { map } from 'rxjs/operators';
             codeItem: codeItemParam
         }
 
-        return this.http.put(this.url + '/addcodeinfo/', bodyData, this.requestOptions())
+        return this.http.put(this.url + '/addcodeinfo', bodyData, this.requestOptions())
     }
 
     converJsonToEvent = (event): EventWheelModel => {

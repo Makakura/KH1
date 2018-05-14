@@ -302,7 +302,7 @@ var addCodeInfo = (req, res) => {
             clientPlayedDate: codeItemParam.clientPlayedDate,
             giftName: giftNameParam
           }
-          addResultForRecent(eventIDParam, result);
+          addResultForRecent(res, eventIDParam, result);
         }
       });
     } else {
@@ -338,7 +338,7 @@ var getTopRecentPlayed = (req, res) => {
   }
 }
 
-var addResultForRecent = (eventID, result) => {
+var addResultForRecent = (res, eventID, result) => {
   RecentModel.findOne({eventID: eventID}).exec((err, recent) =>{
     if(err || !recent){
       queryReturnData(res, 'success');
