@@ -1,7 +1,7 @@
 .header-text {
     padding: 5px;
     color: gold;
-    font-size: 2vmin;
+    font-size: calc(12px + 1vmin);
     white-space: nowrap;
 }
 

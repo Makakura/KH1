@@ -546,7 +546,7 @@ var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
             let data = {};
             data = JSON.parse(JSON.stringify(savedEvent));
             data['giftArray'] = gifts;
-            queryReturnData(res, 'success', data);
+            addRecentForEvent(res, eventID);
           }
         });
       }
@@ -554,6 +554,17 @@ var addGiftsForEvent = (eventID, gifts, savedEvent, res) => {
   } else {
     queryErrorHandle(res);
   }
+}
+
+var addRecentForEvent = (res, eventIDParam) => {
+  recentItem = {
+    eventID: eventIDParam,
+    resultArr: []
+  }
+  let recent = new RecentModel(recentItem);
+  recent.save((err) => {
+    queryReturnData(res, 'success', data);
+  });
 }
 
 var createCode =  (req, res) => {

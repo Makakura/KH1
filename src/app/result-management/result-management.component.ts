@@ -125,7 +125,7 @@ export class ResultManagementComponent implements OnInit {
       res => {
         let resJson = res.json();
         if (resJson.result) {
-          this.listRecent = resJson.data;
+          this.listRecent = resJson.data.reverse();
           FNC.hideSpinner(500);
         } else {
           FNC.hideSpinner(500);
