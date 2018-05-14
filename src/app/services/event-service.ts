@@ -42,6 +42,11 @@ import { map } from 'rxjs/operators';
     searchResultByPhone = (phone) => {
         return this.http.get(this.url + '/searchbyphone/'+ phone, this.requestOptions());
     }
+
+    searchResultByCode = (giftFullID, code) => {
+        let params = giftFullID + ';' + code;
+        return this.http.get(this.url + '/searchbycode/'+ params, this.requestOptions());
+    }
     
     getEvents = (): any => {
         return this.http.get(this.url + '/events', this.requestOptions());

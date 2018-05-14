@@ -103,6 +103,11 @@ router.get('/searchbyphone/:_phone', function(req, res){
 	searchByPhone(req, res);
 });
 
+// search result by phone
+router.get('/searchbycode/:_params', function(req, res){
+	searchByCode(req, res);
+});
+
 // release code of event
 router.get('/releasecode/:_params', function(req, res){
 	releaseCode(req, res);
@@ -648,6 +653,31 @@ var searchByPhone = (req, res) => {
         queryReturnData(res, 'success', arr);
       }
     });
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
+var searchByCode = (req, res) => {
+  if (req.params._params) {
+    let params = req.params._params.split(';');
+    let giftFullID = params[0];
+    let codeParam = params[1];
+    if (giftFullID && codeParam) {
+      let query = [
+        { $match : {_id: ObjectId(giftFullID)}},
+        { $unwind: "$codeArray"}, 
+        { $match : {"codeArray.code": codeParam}},
+        { $project : {_id: 1, name: 1, id: 1, codeArray: 1}}
+      ];
+      GiftModel.aggregate(query, (err, arr) => {
+        if (err || !arr) {
+          queryErrorHandle(res);
+        } else {
+          queryReturnData(res, 'success', arr[0]);
+        }
+      });
+    }
   } else {
     queryErrorHandle(res);
   }

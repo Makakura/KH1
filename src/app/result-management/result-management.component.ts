@@ -234,6 +234,26 @@ export class ResultManagementComponent implements OnInit {
       );
   }
 
+  recentClick = (result) => {
+    FNC.showSpinner();
+    this.eventService.searchResultByCode(result.giftFullID, result.code).subscribe(
+      res => {
+        let resJson = res.json();
+        if (resJson.result) {
+          this.selectCode(resJson.data);
+          FNC.hideSpinner(0);
+        } else {
+          FNC.hideSpinner(0);
+          FNC.displayNotify('Thông báo','Không cập nhật được thông tin mã');
+        }
+      },
+      err => {
+        FNC.hideSpinner(0);
+        FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+      }
+    );
+  }
+
   closePopupGift = () => {
     $('#gift-detail').modal('hide');
     this.isShowButtonExportGiftResult = true;

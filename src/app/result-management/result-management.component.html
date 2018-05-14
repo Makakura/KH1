@@ -65,7 +65,7 @@
       </div>
       <table  class="event-table table-fixed" class="table table-dark">
         <tbody>
-          <tr *ngFor="let result of listRecent" >
+          <tr *ngFor="let result of listRecent" (click)="recentClick(result)">
               <td>{{result.name}}</td>
               <td>{{result.phone}}</td>
               <td>{{result.giftName}}</td>
