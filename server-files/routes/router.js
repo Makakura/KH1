@@ -344,7 +344,7 @@ var addResultForRecent = (res, eventID, result) => {
       queryReturnData(res, 'success');
     } else {
       let results = recent.resultArr;
-      if (results.length > 50) {
+      if (results.length > 5) {
         results.splice(0,1);
       }
       results.push(result);
