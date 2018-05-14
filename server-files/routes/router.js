@@ -402,7 +402,7 @@ var getResultsByGiftID = (req, res) => {
       { $match: {_id: ObjectId(req.params._id)}},
       { $unwind: "$codeArray"}, 
       { $match : {"codeArray.isPlayed": true}},
-      { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
+      { $project : {_id: 1, name: 1, id: 1, codeArray: 1}}
     ];
     
     GiftModel.aggregate(query, (err, arr) => {
