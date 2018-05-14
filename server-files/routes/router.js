@@ -103,15 +103,20 @@ router.get('/searchbyphone/:_phone', function(req, res){
 	searchByPhone(req, res);
 });
 
-// reset code of event
+// release code of event
 router.get('/releasecode/:_params', function(req, res){
 	releaseCode(req, res);
 });
 
-// // reset code of event
-// router.get('/resetcodeevent/:_id', function(req, res){
-// 	resetCodeOfEvent(req, res);
-// });
+// given result of event
+router.get('/givencode/:_params', function(req, res){
+	givenCode(req, res);
+});
+
+// reset code of event
+router.get('/resetcodeevent/:_id', function(req, res){
+	resetCodeOfEvent(req, res);
+});
 // >>>>>>> END OF MANAGEMENT ROUTER
 
 // >>>>>>> EXPORT CODE TO EXCEL 
@@ -681,6 +686,42 @@ var releaseCode = (req, res) => {
   }
 }
 
+var givenCode = (req, res) => {
+  if (req.params._params) {
+    let params = req.params._params.split(';');
+    let giftFullID = params[0];
+    let codeParam = params[1];
+    let paramTwo = params[2];
+
+    if (giftFullID && codeParam && paramTwo !== undefined) {
+      let isGivenParam = paramTwo === 1 ? true:false; 
+      GiftModel.findOneAndUpdate({
+        _id: ObjectId(giftFullID),
+        codeArray: {
+          $elemMatch: {
+            code: codeParam
+          }
+        }
+      }, {
+        $set: {
+          'codeArray.$.isGiven': isGivenParam
+        }
+      },
+      (err, item) => {
+        if (err || !item) {
+          queryErrorHandle(res);
+        } else {
+          queryReturnData(res,'success');
+        }
+      });
+    } else {
+      queryErrorHandle(res);
+    }
+  } else {
+    queryErrorHandle(res);
+  }
+}
+
 var resetCodeOfEvent = (req, res) => {
   if (req.params._id) {
     GiftModel.update({ eventID: req.params._id}, { codeArray: [], playedCounter: 0 }, { multi: true }, (err, arr) => {
@@ -724,6 +765,7 @@ var generateCodeForGift =  (numberOfCode, gift, dateParam, clientCreatedDatePara
       phone: "",
       fb: "",
       isUsed: false,
+      isGiven: false,
       isPlayed: false,
       createdDate: dateParam,
       clientCreatedDate: clientCreatedDateParam

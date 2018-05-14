@@ -59,11 +59,11 @@
         </tr>
       </tbody>
     </table>
-    <div>
+    <div [hidden]="isShowOP1">
       <div class="text-center">
         <p class="header-text"><b>DANH SÁCH KHÁCH HÀNG THAM GIA GẦN ĐÂY</b></p>
       </div>
-      <table [hidden]="isShowOP1" class="event-table table-fixed" class="table table-dark">
+      <table  class="event-table table-fixed" class="table table-dark">
         <tbody>
           <tr *ngFor="let result of listRecent" >
               <td>{{result.name}}</td>
@@ -153,7 +153,14 @@
               <tr>
                   <td>Cách đây:</td>
                   <td class="value">{{getDateNumber(currentCode.codeArray.playedDate)}} ngày</td>
-            </tr>
+              </tr>
+              <tr>
+                  <td>Đã trao thưởng: {{currentCode.codeArray.isGiven?' Rồi':'Chưa'}}</td>
+                  <button type="button" class="btn btn-primary">
+                      {{currentCode.codeArray.isGiven?' Hủy':' Trao'}}
+                  </button>
+              </tr>
+            
             </tbody>
           </table>
         </form>

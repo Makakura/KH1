@@ -41,6 +41,10 @@ var CodeItemModel = mongoose.Schema({
     isUsed: {
         type: Boolean,
         default: false
+    },
+    isGiven: {
+        type: Boolean,
+        default: false
     }
 });
 module.exports = CodeItemModel;
