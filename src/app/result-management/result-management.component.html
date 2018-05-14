@@ -99,12 +99,14 @@
                     <tr>
                       <th scope="col">SĐT</th>
                       <th scope="col">Cách đây</th>
+                      <th scope="col">Đã trao</th>
                     </tr>
                   </thead>
                   <tbody id="giftResults">
                     <tr *ngFor="let codeItem of currentGift.codeArray; let i = index" [attr.data-index]="i" (click) = "selectCode(codeItem)">
                         <td>{{codeItem.codeArray.phone}}</td>
                         <td>{{getDateNumber(codeItem.codeArray.playedDate)}} ngày</td>
+                        <td>{{codeItem.codeArray.isGiven?' Rồi':'Chưa'}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -155,8 +157,9 @@
                   <td class="value">{{getDateNumber(currentCode.codeArray.playedDate)}} ngày</td>
               </tr>
               <tr>
-                  <td>Đã trao thưởng: {{currentCode.codeArray.isGiven?' Rồi':'Chưa'}}</td>
-                  <button type="button" class="btn btn-primary">
+                  <td>Đã trao thưởng:</td>
+                  <td class="value">{{currentCode.codeArray.isGiven?' Rồi':'Chưa'}}</td>
+                  <button type="button" class="btn btn-primary" style="margin: 5px;" (click)="isGivenClick(currentCode.codeArray)">
                       {{currentCode.codeArray.isGiven?' Hủy':' Trao'}}
                   </button>
               </tr>

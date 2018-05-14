@@ -207,6 +207,10 @@ export class ResultManagementComponent implements OnInit {
     }
   }
 
+  isGivenClick = (codeItem) => {
+    
+  }
+
   closePopupGift = () => {
     $('#gift-detail').modal('hide');
     this.isShowButtonExportGiftResult = true;

@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 
  @Injectable()
  export class EventService {
-    //private url = 'https://quaythuongdev.herokuapp.com/api';
+    // private url = 'https://quaythuongdev.herokuapp.com/api';
     private url = '/api';
     constructor (private http: Http) {
     }
@@ -57,6 +57,11 @@ import { map } from 'rxjs/operators';
 
     createCode = (bodyData) => {
         return this.http.put(this.url + '/createcode', bodyData, this.requestOptions())
+    }
+
+    setGivenCode = (giftFullID, code, isGiven): any => { // isGiven: 0 or 1
+        let params = giftFullID + ';' + code + ';' + isGiven;
+        return this.http.get(this.url + '/givencode/'+ params, this.requestOptions());
     }
 
     releaseCode = (giftFullID, code) => {

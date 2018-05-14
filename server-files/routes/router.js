@@ -384,7 +384,7 @@ var getEventByID = (req, res) => {
 
 var getCodesByGiftID = (req, res) => {
   if (req.params._id) {
-    GiftModel.findById(req.params._id, {codeArray: 1, _id: 0}, (err, gift) => {
+    GiftModel.findById(req.params._id, {codeArray: 1, _id: 1}, (err, gift) => {
       if(err|| !gift){
         queryErrorHandle(res);
       } else{
@@ -419,7 +419,7 @@ var getResultsByGiftID = (req, res) => {
 
 var getGiftsByEventID = (req, res) => {
   if (req.params._id) {
-    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 0}, (err, giftArr) => {
+    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 1}, (err, giftArr) => {
       if(err|| !giftArr){
         queryErrorHandle(res);
       } else{
@@ -638,7 +638,7 @@ var searchByPhone = (req, res) => {
     let query = [
       { $unwind: "$codeArray"}, 
       { $match : {"codeArray.phone": {$regex : ".*" + req.params._phone + ".*"}}},
-      { $project : {_id: 0, name: 1, id: 1, codeArray: 1}}
+      { $project : {_id: 1, name: 1, id: 1, codeArray: 1}}
     ];
     
     GiftModel.aggregate(query, (err, arr) => {
@@ -692,9 +692,8 @@ var givenCode = (req, res) => {
     let giftFullID = params[0];
     let codeParam = params[1];
     let paramTwo = params[2];
-
     if (giftFullID && codeParam && paramTwo !== undefined) {
-      let isGivenParam = paramTwo === 1 ? true:false; 
+      let isGivenParam = paramTwo === '1' ? true:false; 
       GiftModel.findOneAndUpdate({
         _id: ObjectId(giftFullID),
         codeArray: {
@@ -896,7 +895,8 @@ var getAllResultEvent = (req, res) => {
     name: [], // 1 name
     phone: [], // 2 phone
     giftName: [], // 3 giftName
-    playedDate: []  // 4 playedDate
+    playedDate: [] , // 4 playedDate
+    isGiven: []  // 5 isGiven
   };
   let query;
   if (params.length > 0 
@@ -938,6 +938,7 @@ var getAllResultEvent = (req, res) => {
             resultArray.phone.push(codeItem.codeArray.phone);
             resultArray.giftName.push(codeItem.name);
             resultArray.playedDate.push(codeItem.codeArray.clientPlayedDate);
+            resultArray.isGiven.push(codeItem.codeArray.isGiven? 'Rồi':'Chưa');
           }
           queryReturnData(res, 'success', resultArray);
         }
