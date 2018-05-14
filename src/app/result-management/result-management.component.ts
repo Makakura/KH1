@@ -29,7 +29,8 @@ export class ResultManagementComponent implements OnInit {
         code: '',
         phone: '',
         createdDate: '',
-        playedDate: ''
+        playedDate: '',
+        isGiven: ''
       }
     
   };
@@ -48,7 +49,8 @@ export class ResultManagementComponent implements OnInit {
             code: '123',
             phone: '123',
             createdDate: '123',
-            playedDate: '123'
+            playedDate: '123',
+            isGiven: ''
           }
       }
     ]
