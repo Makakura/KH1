@@ -221,7 +221,7 @@ export class HomeComponent implements OnInit {
 
   sendResult = () => {
     if (this.codeItem.code && this.codeItem.name && this.codeItem.phone && this.currentNumber !== -1) {
-      this.eventService.sendResult(this.codeItem, this.currentEvent._id, this.currentNumber, this.giftName).subscribe(
+      this.eventService.sendResult(this.codeItem, this.currentGiftID, this.giftName).subscribe(
         res => {
           let resJson = res.json();
           if (!resJson.result) {
