@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 import { ResultManagementComponent } from './result-management/result-management.component';
 import { CodeManagementComponent } from './code-management/code-management.component';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { ReversePipe } from './services/revertpipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LoginPageComponent } from './login-page/login-page.component';
     EventManagementComponent,
     ResultManagementComponent,
     CodeManagementComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    ReversePipe
   ],
   imports: [
     BrowserModule,

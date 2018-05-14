@@ -23,6 +23,10 @@ import { map } from 'rxjs/operators';
         return this.http.get(this.url + '/events/'+ id, this.requestOptions());
     }
 
+    getRecent = (eventID): any => {
+        return this.http.get(this.url + '/getrecent/'+ eventID, this.requestOptions());
+    }
+
     getGifts = (eventID): any => {
         return this.http.get(this.url + '/gifts/'+ eventID, this.requestOptions());
     }

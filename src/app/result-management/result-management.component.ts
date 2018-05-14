@@ -11,11 +11,12 @@ import { FNC } from "../services/functioncommon";
   selector: 'app-result-management',
   templateUrl: './result-management.component.html',
   styleUrls: ['./result-management.component.css'],
-  providers: [EventService] 
+  providers: [EventService]
 })
 export class ResultManagementComponent implements OnInit {
   eventModel: EventWheelModel = new EventWheelModel();
   currentTotalCode = 0;
+  isShowOP1 = false;
   sub: any;
   searchFilter = '';
   giftFilter = '';
@@ -56,6 +57,7 @@ export class ResultManagementComponent implements OnInit {
   isShowButtonExportGiftResult = true;
   currentTotalReward = 0;
   currentTotalCodeUsed = 0;
+  listRecent = [];
 
   constructor(private eventService: EventService,
     private route: ActivatedRoute, 
@@ -94,9 +96,11 @@ export class ResultManagementComponent implements OnInit {
             let resJson = res.json();
             if (resJson.result) {
               this.eventModel = this.eventService.converJsonToEvent(resJson.data);
+              
               let giftArr = this.eventModel.giftArray;
               giftArr = FNC.sortByKey(giftArr, 'id');
               this.calValueReport();
+              this.getRecent(id);
               FNC.hideSpinner(500);
             } else {
               FNC.hideSpinner(500);
@@ -113,6 +117,25 @@ export class ResultManagementComponent implements OnInit {
       }
     });
     this.sub.unsubscribe();
+  }
+
+  getRecent = (eventID) => {
+    FNC.showSpinner();
+    this.eventService.getRecent(eventID).subscribe(
+      res => {
+        let resJson = res.json();
+        if (resJson.result) {
+          this.listRecent = resJson.data;
+          FNC.hideSpinner(500);
+        } else {
+          FNC.hideSpinner(500);
+          FNC.displayNotify('Thông báo','Không lấy được thông tin kết quả gần đây');
+        }
+      },
+      err => {
+        FNC.hideSpinner(500);
+        FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
+    });
   }
 
   calValueReport = () => {
