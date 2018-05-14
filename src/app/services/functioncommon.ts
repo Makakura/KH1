@@ -71,6 +71,6 @@ import { Md5 } from 'ts-md5/dist/md5';
     }
 
     public static scrollListToTop(idList) {
-      $('#' + idList).scrollTop(0);
+      $(idList).scrollTop(0);
     }
  }
