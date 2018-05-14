@@ -209,29 +209,29 @@ export class ResultManagementComponent implements OnInit {
 
   isGivenClick = (codeItem) => {
     let isGivenParam = 0;
-    if (codeItem.isGiven) {
+    if (codeItem.codeArray.isGiven) {
       isGivenParam = 0;
     } else {
       isGivenParam = 1
     }
-    // FNC.showSpinner();
-    //   this.eventService.setGivenCode(this.currentGift._id, codeItem.code, isGivenParam).subscribe(
-    //     res => {
-    //       let resJson = res.json();
-    //       if (resJson.result) {
-    //         codeItem.isUsed = true;
-    //         this.countReleaseCode();
-    //         FNC.hideSpinner(0);
-    //       } else {
-    //         FNC.hideSpinner(0);
-    //         FNC.displayNotify('Thông báo','Không cập nhật được thông tin mã');
-    //       }
-    //     },
-    //     err => {
-    //       FNC.hideSpinner(0);
-    //       FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
-    //     }
-    //   );
+
+    FNC.showSpinner();
+      this.eventService.setGivenCode(codeItem._id, codeItem.codeArray.code, isGivenParam).subscribe(
+        res => {
+          let resJson = res.json();
+          if (resJson.result) {
+            codeItem.codeArray.isGiven = !codeItem.codeArray.isGiven;
+            FNC.hideSpinner(0);
+          } else {
+            FNC.hideSpinner(0);
+            FNC.displayNotify('Thông báo','Không cập nhật được thông tin mã');
+          }
+        },
+        err => {
+          FNC.hideSpinner(0);
+          FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
+        }
+      );
   }
 
   closePopupGift = () => {

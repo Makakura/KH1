@@ -419,7 +419,7 @@ var getResultsByGiftID = (req, res) => {
 
 var getGiftsByEventID = (req, res) => {
   if (req.params._id) {
-    GiftModel.find({eventID: req.params._id}, {codeArray: 0, _id: 1}, (err, giftArr) => {
+    GiftModel.find({eventID: req.params._id}, {codeArray: 0}, (err, giftArr) => {
       if(err|| !giftArr){
         queryErrorHandle(res);
       } else{
