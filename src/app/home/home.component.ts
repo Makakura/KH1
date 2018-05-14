@@ -60,14 +60,14 @@ export class HomeComponent implements OnInit {
             if (resJson.result) {
               this.currentEvent = this.eventService.converJsonToEvent(resJson.data);
               this.isShowWheel = true;
-              FNC.hideSpinner(1000);
+              FNC.hideSpinner(500);
             } else {
-              FNC.hideSpinner(1000);
+              FNC.hideSpinner(500);
               FNC.displayNotify('Thông báo','Không tìm thấy sự kiện, liên hệ với chúng tôi để được hỗ trợ');
             }
           },
           err => {
-            FNC.hideSpinner(1000);
+            FNC.hideSpinner(500);
             FNC.displayNotify('THÔNG BÁO','Không kết nối được tới server, xin vui lòng kiểm tra và thử lại');
           });
       }

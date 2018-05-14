@@ -47,14 +47,14 @@ export class EventManagementComponent implements OnInit {
         let resJson = res.json();
         if (resJson.result) {
           this.listEvent = this.eventService.converJsontoArrayEvent(resJson.data).reverse();
-          FNC.hideSpinner(1000);
+          FNC.hideSpinner(500);
         } else {
-          FNC.hideSpinner(1000);
+          FNC.hideSpinner(500);
           FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
         }
       },
       err => {
-        FNC.hideSpinner(1000);
+        FNC.hideSpinner(500);
         FNC.displayNotify('THÔNG BÁO', 'Không tìm thấy kết nối, xin vui lòng kiểm tra lại mạng');
       });
   }

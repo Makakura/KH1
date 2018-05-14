@@ -60,18 +60,18 @@ export class CodeManagementComponent implements OnInit {
               let giftArr = this.eventModel.giftArray;
               giftArr = FNC.sortByKey(giftArr, 'id');
               this.calValueReport();
-              FNC.hideSpinner(1000);
+              FNC.hideSpinner(500);
             } else {
-              FNC.hideSpinner(1000);
+              FNC.hideSpinner(500);
               FNC.displayNotify('Đã xảy ra lỗi','Để được giải đáp liên hệ: shaharaki@gmail.com', resJson.message);
             }
           },
           err => {
-            FNC.hideSpinner(1000);
+            FNC.hideSpinner(500);
             FNC.displayNotify('THÔNG BÁO', 'Không kết nối được tới server vui lòng kiểm tra lại đường dẫn hoặc kết nối mạng');
           });
       } else {
-        FNC.hideSpinner(1000);
+        FNC.hideSpinner(500);
         FNC.displayNotify('THÔNG BÁO', 'Đường dẫn bị sai, xin vui lòng kiểm tra lại');
       }
     });
